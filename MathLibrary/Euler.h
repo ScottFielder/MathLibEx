@@ -9,9 +9,6 @@ namespace MATH {
 		struct {
 			float pitch, yaw, roll;
 		};
-		struct {
-			float pitch, heading, bank;
-		};
 
 	public:
 		/// Just a little utility to populate a Euler
