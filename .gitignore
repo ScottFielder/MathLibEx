@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+MathLibrary/[Dd]ebug/
+MathLibrary/[Rr]elease/
+MathLibraryEx/[Dd]ebug/
+
+
 # User-specific files
 *.rsuser
 *.suo
