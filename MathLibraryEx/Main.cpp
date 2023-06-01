@@ -20,9 +20,9 @@ void DualQuatTest();
 
 
 int main( int argc, char* argv){
-    //QuadraticTest();
-    //SphereTest();
-    //DualQuatTest();
+    QuadraticTest();
+    SphereTest();
+    DualQuatTest();
  
     Matrix4 rmat = MMath::rotate(45.0f,Vec3(0.0f,0.0f,1.0f));
     rmat.print("my rotate");
