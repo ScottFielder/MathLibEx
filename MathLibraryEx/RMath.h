@@ -12,10 +12,9 @@ namespace MATHEX {
     public:
           /// Done but not tested
         static bool doesIntersect(const Ray &ray, const Plane &plane){
-            Vec3 n = plane;/// extracts the normal from the plane
             /// If the dot product of the ray's direction and the plane's normal are nearly zero,
             /// then the plane are ray are perpendicular therefore there is no intersection 
-            if (abs(VMath::dot(ray.direction, n) < VERY_SMALL)) {
+            if (abs(VMath::dot(ray.direction, plane.n) < VERY_SMALL)) {
                 return false;
             }
             return true;
@@ -23,15 +22,14 @@ namespace MATHEX {
 
         /// Done but not tested
         static Vec3 intersection(const Ray &ray, const Plane &plane){
-            Vec3 n = plane;/// extracts the normal from the plane
-            float denominator = VMath::dot(ray.direction,n);
+            float denominator = VMath::dot(ray.direction,plane.n);
 #ifdef _DEBUG  /// If in debug mode let's worry about no intersection at all 	
 			if (abs(denominator) < VERY_SMALL) {
 				std::string errorMsg = __FILE__ + __LINE__;
 				throw errorMsg.append(": The ray and Plane are parallel - no intersection");
 			}
 #endif
-            float t = -(VMath::dot(ray.start,n) - plane.d) / denominator;
+            float t = -(VMath::dot(ray.start,plane.n) - plane.d) / denominator;
             return ray.start + t * ray.direction;
         }
 
