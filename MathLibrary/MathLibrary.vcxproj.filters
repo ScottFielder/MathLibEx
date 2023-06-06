@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\MathEx Headers">
+      <UniqueIdentifier>{5b29e94a-01ae-498b-9f79-1fb54b83d0d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Fourier.cpp">
@@ -73,6 +76,15 @@
     </ClInclude>
     <ClInclude Include="Hash.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Header Files\MathEx Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="RMath.h">
+      <Filter>Header Files\MathEx Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Quadratic.h">
+      <Filter>Header Files\MathEx Headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

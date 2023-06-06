@@ -90,8 +90,11 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PMath.h" />
     <ClInclude Include="QMath.h" />
+    <ClInclude Include="Quadratic.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Randomizer.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="RMath.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VMath.h" />
