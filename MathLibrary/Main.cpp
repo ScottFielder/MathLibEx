@@ -304,10 +304,16 @@ void planeTest() {
 	distance5 = PMath::distance(v5, far);
 	printf("far %f\n", distance5);
 
-	Plane p1(1, 2, 3, 4);
+	Plane p1(1, 0, 0, 4);
 	Plane p1Inverse = PMath::inverse(p1);
 	p1.print("Plane before inverse");
 	p1Inverse.print("Plane after inverse");
+
+	Plane p2(4, 0, 0, 2);
+	Plane p2Normalized = PMath::normalize(p2);
+	p2.print("Plane before normalizing");
+	p2Normalized.print("Plane after normalizing");
+
 }
 
 

@@ -19,7 +19,7 @@ namespace MATH {
 			return v - (2.0f * VMath::dot(p.n, v)) * p.n;
 		}
 
-		// TODO: Check if I should really flip e0 for inversing a plane reflection
+		// TODO: Check if I should really flip the sign on e0 for inversing a plane reflection
 		static const Plane inverse(const Plane& p) {
 			return p * -1.0f;
 		}
