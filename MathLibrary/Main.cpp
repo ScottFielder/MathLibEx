@@ -303,6 +303,11 @@ void planeTest() {
 	printf("near %f\n", distance5);
 	distance5 = PMath::distance(v5, far);
 	printf("far %f\n", distance5);
+
+	Plane p1(1, 2, 3, 4);
+	Plane p1Inverse = PMath::inverse(p1);
+	p1.print("Plane before inverse");
+	p1Inverse.print("Plane after inverse");
 }
 
 
