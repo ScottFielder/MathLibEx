@@ -313,7 +313,11 @@ void planeTest() {
 	Plane p2Normalized = PMath::normalize(p2);
 	p2.print("Plane before normalizing");
 	p2Normalized.print("Plane after normalizing");
-
+	std::cout << "-------------------\n";
+	p2.set(1, 0, 0, 8);
+	p1.print("Starting plane");
+	p2.print("Ending plane");
+	PMath::normalize(PMath::midPlane(p1, p2)).print("Mid plane");
 }
 
 

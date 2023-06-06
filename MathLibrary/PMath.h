@@ -23,6 +23,10 @@ namespace MATH {
 		static const Plane inverse(const Plane& p) {
 			return p * -1.0f;
 		}
+
+		static const Plane midPlane(const Plane& p1, const Plane& p2) {
+			return normalize(p1) + normalize(p2);
+		}
 	};
 }
 
