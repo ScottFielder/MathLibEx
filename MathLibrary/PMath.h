@@ -24,6 +24,9 @@ namespace MATH {
 			return p * -1.0f;
 		}
 
+		// Return plane in between the two arguments by distance and angle
+		// Be careful, you need to normalize the plane afterwards 
+		// to convert to Standard Euclidean definition 
 		static const Plane midPlane(const Plane& p1, const Plane& p2) {
 			return normalize(p1) + normalize(p2);
 		}
