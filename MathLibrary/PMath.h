@@ -12,13 +12,11 @@ namespace MATH {
 
 		/// Get the distance form a point (Vec3) to a plane
 		static float distance(const Vec3 &v, const Plane &p){
-			Vec3 n = p;
 			return (p.x*v.x + p.y*v.y + p.z*v.z + p.d);
 		}
 
 		static Vec3 reflect(const Vec3 &v, const Plane &p){
-			Vec3 n = p; /// Extract the normal from the plane
-			return v - (2.0f * VMath::dot(n, v)) * n;
+			return v - (2.0f * VMath::dot(p.n, v)) * p.n;
 		}
 	};
 }
