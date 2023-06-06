@@ -3,27 +3,42 @@
 #include <iostream>
 #include "VMath.h"
 
-///http://www.songho.ca/math/plane/plane.html
-///http://mathworld.wolfram.com/HessianNormalForm.html
+
 namespace  MATH {
-	struct Plane : public Vec3 {
-		float d;
+	union Plane {
+		struct { /// Standard Euclidean definition  
+			float x;
+			float y;
+			float z;
+			float d;
+		};
+
+		/// See note 1 at the end of this file
+		struct { /// A plane in projective geometric algebra 	
+			float e1;
+			float e2;
+			float e3;
+			float e0;
+		};
+
+		struct {
+			Vec3 n;
+			float distance;  /// Distance from the orgin along the normal;
+		};
+
 
 		/// Just a little utility to populate a Plane
 		inline void set(float x_, float y_, float z_, float d_) {
-			x = x_; y = y_; z = z_, d = d_;
+			x = x_, y = y_, z = z_, d = d_;
 		}
 
-	  
 		/// Here's a set of constructors:
-		///http://www.songho.ca/math/plane/plane.html
-		///http://mathworld.wolfram.com/HessianNormalForm.html
-		/// If the plane is defined by a normal (that is normalized), 
-		/// the equation of a Plane is Ax + By + Cz - D = 0; where 
-		/// A,B,C are the values of the normal n <A,B,C> and D is the 
+		/// If the plane is defined by a normal, 
+		/// the equation of a Plane is ax + by + cz - d = 0; where 
+		/// a,b,c are the values of the normal n <a,b,c> and d is the 
 		/// distance from the origin to the plane
 		Plane(Vec3 n, float d) {
-			set(n.x, n.y, n.z, -d);
+			set(n.x, n.y, n.z, d);
 
 #ifdef _DEBUG  /// If in debug mode let's worry the normal being normalized
 			float mag = VMath::mag(n);
@@ -51,25 +66,89 @@ namespace  MATH {
 			set(p.x, p.y, p.z, p.d);
 		}
 
-		/// An assignment operator   
-		inline Plane& operator = (const Plane& p) {
-			set(p.x, p.y, p.z, p.d);
-			return *this;
-		}
 
 		/// These just set numbers - be careful.  
 		Plane(float x, float y, float z, float d) {
 			set(x, y, z, d);
 		}
-		
+
+		float magGrade1() const {
+			return sqrt(e1 * e1 + e2 * e2 + e3 * e3);
+		}
+
+		float magGrade1Infinity() const {
+			return sqrt(e0 * e0);
+		}
+
+
+
+		///////////////////////// Operator overloads ////////////////////////////
+
+
+		inline Plane& operator = (const Plane& p) {
+			set(p.x, p.y, p.z, p.d);
+			return *this;
+		}
+
+		const Plane operator * (float s) const {
+			return Plane(e1 * s, e2 * s, e3 * s, e0 * s);
+		}
+
+		friend const Plane operator * (const float s, const Plane& p) {
+			return p * s;
+		}
+
+		const Plane operator / (float s) const {
+			return Plane(e1 / s, e2 / s, e3 / s, e0 / s);
+		}
+
+		friend const Plane operator / (const float s, const Plane& p) {
+			return p / s;
+		}
+
+		const Plane operator + (const Plane& p) const {
+			return Plane(e1 + p.e1, e2 + p.e2, e3 + p.e3, e0 + p.e0);
+		}
+
+		const Plane operator - (const Plane& p) const {
+			return Plane(e1 - p.e1, e2 - p.e2, e3 - p.e3, e0 - p.e0);
+		}
+
+		Plane& operator += (const Plane& p) {
+			e1 += p.e1;
+			e2 += p.e2;
+			e3 += p.e3;
+			e0 += p.e0;
+			return *this;
+		}
+
+		Plane& operator -= (const Plane& p) {
+			e1 -= p.e1;
+			e2 -= p.e2;
+			e3 -= p.e3;
+			e0 -= p.e0;
+			return *this;
+		}
+
+
 		/// print the values of the plane and add a comment if you wish
 		void print(const char* comment = nullptr) const {
 			if (comment) printf("%s\n", comment);
 			printf("%f %f %f %f\n", x, y, z, d);
 		}
-	
+
+
 	};
 }
-
+/*** Note 1
+// 2023 May - Umer Noor
+// A mirror plane in projective geometric algebra is just a like a regular plane
+// REFERENCE: 2023 GDC Talks by Hamish Todd and information at bivector.net
+//            Find the talks at https://library.humber.ca/atoz_landing/G
+// TODO: I was going to call this class just "Plane" but I know Scott already has one
+//       Come up with a plan to potentially merge. MirrorPlane just sounds a bit odd
+// TODO: I need to avoid a circular dependency to code up the plane * plane overload
+//       because DualQuat.h includes MirrorPlane.h
+***/
 
 #endif
