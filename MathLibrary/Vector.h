@@ -13,7 +13,6 @@ namespace  MATH {
 /// This is used in normalizing vectors. Dividing by zero is a well known
 /// problem but dividing by nearly zero is also a problem. 1.0x10-7 is very
 /// small in "float" percision. 
-
 	#ifndef VERY_SMALL
 	#define VERY_SMALL 1.0e-7f
 	#endif
@@ -33,43 +32,19 @@ namespace  MATH {
 	#define RADIANS_TO_DEGREES (180.0f / M_PI)
 	#endif
 
-	struct Vec2 {
-		float  x, y;
-		/// Just a little utility to populate a vector
-		void set(float x_, float y_) {
-			x = x_; y = y_;
-		}
-		/// Here's a set of constructors
-		inline  Vec2(){
-			set(0.0f,0.0f);
-		}
-
-		inline Vec2( float x, float y ){
-			set(x,y);
-		}
-
-		/// A copy constructor
-		inline Vec2( const Vec2& v ) { 
-			set(v.x,v.y); 
-		}
-
-		///////////////////////////////////////////////////////////
-		/// Operator overloads (see note 1 at the end of this file)
-		///////////////////////////////////////////////////////////
-		inline Vec2& operator = (const Vec2& v){
-			set(v.x, v.y); 
-			return *this;
-		}
-
-		inline void print(const char* comment = nullptr) const {
-			if (comment) printf("%s\n", comment);
-			printf("%1.8f %1.8f\n", x,y);		  
-		}
-	};
+	
 	
 
-	struct Vec3 {
-		float  x,y,z;	///  Structures are default public
+	union Vec3 {
+		struct {
+			float  x, y, z;
+		};
+
+		struct {
+			float  e032;
+			float  e013;
+			float  e021;
+		};
 
 		/// Just a little utility to populate a vector
 		inline void set( float x_, float y_, float z_ ) {
@@ -85,7 +60,6 @@ namespace  MATH {
 			set(x,y,z);
 		}
 		
-		/// A copy constructor
 		inline Vec3( const Vec3& v ) { 
 			set(v.x,v.y,v.z); 
 		}
@@ -150,7 +124,7 @@ namespace  MATH {
 		}
 
 		
-		/// Multiply a scaler by a Vec3   It's the scalar first then the Vec3
+		/// Multiply a scaler by a Vec3  It's the scalar first then the Vec3
 		/// Overloaded and a friend, ouch! It's the only way to make it work with a scalar first.
 		/// Friends are tricky, look them up. 
 		inline friend Vec3 operator * ( const float s, const Vec3& v ) { 
@@ -208,17 +182,23 @@ namespace  MATH {
 			return static_cast<float*>(&x);
 		}
 	};
-
+	 
 
 		/// Vec4 definitions
-		/// I am intentionally creating a Vec4 from a Vec3 so I can pass a Vec4 into a Subroutine that wants a Vec3
-		/// in many cases this will be mathamatically OK, just be careful Vec4's are not quaterinians
 		
-	struct Vec4: public Vec3 {
-		///float  x;	///
-		///float  y;	///  
-		///float  z;	/// From Vec3
-		float  w;
+	union Vec4 {
+		struct {
+			float  x;
+			float  y;
+			float  z;
+			float  w;
+		};
+		struct {
+			float  e032;
+			float  e013;
+			float  e021;
+			float  e123;
+		};
 
 		inline void set(float x_, float y_, float z_, float w_) {
 			x = x_; y = y_; z = z_; w = w_;
@@ -262,7 +242,7 @@ namespace  MATH {
 			return *this;
 		}
 
-		/// See Vec3 definition 
+		/// See how I did it in the Vec3 definition 
 		inline float& operator [] ( int index ) { 
 			return *(&x + index); 
 		}
@@ -270,12 +250,12 @@ namespace  MATH {
 			return *(&x + i); 
 		}
 
-		/// See Vec3 definition 
+		/// See the Vec3 definition 
 		inline Vec4 operator + ( const Vec4& v ) const { 
 			return Vec4( x + v.x, y + v.y, z + v.z, w + v.w ); 
 		}
 
-		/// See Vec3 definition 
+		
 		inline Vec4& operator += ( const Vec4& v ){ 
 			x += v.x;
 			y += v.y;
@@ -284,17 +264,17 @@ namespace  MATH {
 			return *this; 
 		}
 
-		//// See Vec3 definition 
+		
 		inline Vec4 operator - () const  { 
 			return Vec4( -x, -y, -z, -w );
 		}   
 
-		/// See Vec3 definition 
+		
 		inline Vec4 operator - ( const Vec4& v ) const { 
 			return Vec4( x - v.x, y - v.y, z - v.z, v.w - w);
 		}
 
-		/// See Vec3 definition 
+		
 		inline Vec4& operator -= ( const Vec4& v ){ 
 			x -= v.x;
 			y -= v.y;
@@ -303,12 +283,12 @@ namespace  MATH {
 			return *this;
 		}
 
-		/// See Vec3 definition 
+		
 		inline Vec4 operator * ( const float s ) const { 
 			return Vec4( s*x, s*y, s*z, s*w);
 		}
 
-		/// See Vec3 definition 
+		
 		inline Vec4& operator *= ( const float s ) { 
 			x *= s;
 			y *= s;
@@ -317,7 +297,7 @@ namespace  MATH {
 			return *this;
 		}
 
-		/// See Vec3 definition 
+		
 		 friend Vec4 operator * ( const float s, const Vec4& v ) { 
 			 return v * s; 
 		 }
@@ -352,9 +332,8 @@ namespace  MATH {
 			printf("%1.8f %1.8f %1.8f %1.8f\n", x,y,z,w);		  
 		}
 
-		///
+		
 		/// Type conversion operators 
-		///
 		inline operator const float* () const { 
 			return static_cast<const float*>( &x );
 		}
@@ -364,6 +343,40 @@ namespace  MATH {
 		}
 
 	};
+
+	struct Vec2 {
+		float  x, y;
+		/// Just a little utility to populate a vector
+		void set(float x_, float y_) {
+			x = x_; y = y_;
+		}
+		/// Here's a set of constructors
+		inline  Vec2(){
+			set(0.0f,0.0f);
+		}
+
+		inline Vec2( float x, float y ){
+			set(x,y);
+		}
+
+		/// A copy constructor
+		inline Vec2( const Vec2& v ) { 
+			set(v.x,v.y); 
+		}
+
+		///////////////////////////////////////////////////////////
+		/// Operator overloads (see note 1 at the end of this file)
+		///////////////////////////////////////////////////////////
+		inline Vec2& operator = (const Vec2& v){
+			set(v.x, v.y); 
+			return *this;
+		}
+
+		inline void print(const char* comment = nullptr) const {
+			if (comment) printf("%s\n", comment);
+			printf("%1.8f %1.8f\n", x,y);		  
+		}
+	};
 	
 }
 
@@ -372,7 +385,7 @@ namespace  MATH {
 
 		/*** Note 1.
 		I know, I hate operator overloading as a general rule but a few make sense!! Just be careful and 
-		consistent. In the following code, I will overload many operators. I don't believe in 
+		be consistent. In the following code, I will overload many operators. I don't believe in 
 		overloading when the operator is less than obvious.  
 		For example, in this class, the relational operators (== != < > <= >=) might mean "in relation 
 		to their magnitude or direction" I'm just not sure. Just write a function to do that and don't make 
@@ -391,13 +404,4 @@ namespace  MATH {
 		To read this precicely, &x is the address of the x variable (the first in the list of x,y,z) add to that 
 		address the index as if it were an array. Then *(&x + index) dereferences that address back into the 
 		object, the float& reference returns it as an address and thus an lvalue.
-		***/
-
-		/*** Note 3.
-		The issue here is that I need to use functions in Vector from VMath which require Vector but VMath
-		also requires Vector - this is a classic circular dependency problem or sometimes known as mutual recursion.
-		To solve this it requires a forward declaration.  A "forward declaration" is the declaration of a class for which 
-		the you have not yet given a complete definition of (whateverClass.h). To do this all you need is the statement:  
-		"class VMath;"  This warns the compiler that I will be using VMath in Vector; HOWEVER, in this case, it won't work because
-		I'm using the vector.h as a totally inlined set of functions - sometimes you're just screwed 
 		***/
