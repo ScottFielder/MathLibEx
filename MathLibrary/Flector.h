@@ -18,6 +18,14 @@ namespace MATH {
 			point += f.point;
 			return *this;
 		}
+
+		void print(const char* comment = nullptr) const {
+			if (comment) printf("%s\n", comment);
+			printf("Plane(%f %f %f %f) Point(%f %f %f %f)\n", 
+				plane.x, plane.y, plane.z, plane.d,
+				point.x, point.y, point.z, point.w
+			);
+		}
 	};
 }
 #endif

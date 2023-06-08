@@ -17,6 +17,7 @@
 #include "Quadratic.h"
 #include "RMath.h"
 #include "DualQuat.h"
+#include "Flector.h"
 
 
 #include <glm/vec3.hpp> /// glm::vec3
@@ -50,6 +51,7 @@ void QuadraticTest();
 void RaySphereTest();
 void RayTest();
 void dualQuatTest();
+void flectorTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -66,7 +68,22 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	dualQuatTest();
+	flectorTest();
+}
+
+void flectorTest() {
+	Flector f1;
+	f1.plane = Plane(1.0f, 0.0f, 0.0f, 0.0f);
+	f1.point = Vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+	Flector f2;
+	f2.plane = Plane(1.0f, 0.0f, 0.0f, 0.0f);
+	f2.point = Vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+	f1.print("f1");
+	f2.print("f2");
+	f1 += f2;
+	f1.print("f1 after adding f2");
 }
 
 void dualQuatTest() {
