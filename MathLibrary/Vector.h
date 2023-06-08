@@ -33,8 +33,9 @@ namespace  MATH {
 	#define RADIANS_TO_DEGREES (180.0f / M_PI)
 	#endif
 
-	/// I will need to forward declare the union Vec4 for the Vec3(const Vec4& v) 
-	/// and Vec3& operator = (const Vec4& v);
+	/// I will need to forward declare the union Vec4 for the "Vec3(const Vec4& v)" 
+	/// and "Vec3& operator = (const Vec4& v);" prototypes.  See the Vec3 code and the end of the 
+	/// Vec4 for the body of the code
 	union Vec4;
 
 	union Vec3 {
@@ -47,20 +48,20 @@ namespace  MATH {
 		};
 
 		/// Just a little utility to populate a vector
-		inline void set( float x_, float y_, float z_ ) {
+		void set( float x_, float y_, float z_ ) {
 			x = x_; y = y_; z = z_; 
 		}
 
 		/// Here's a set of constructors
-		inline  Vec3(){
+		Vec3(){
 			set(0.0f,0.0f,0.0f);
 		}
 
-		inline Vec3( float x, float y, float z ){
+		Vec3( float x, float y, float z ){
 			set(x,y,z);
 		}
 		
-		inline Vec3( const Vec3& v ) { 
+		Vec3( const Vec3& v ) { 
 			set(v.x,v.y,v.z); 
 		}
 
@@ -69,27 +70,27 @@ namespace  MATH {
 		///////////////////////////////////////////////////////////
 
 		/// An assignment operator   
-		inline Vec3& operator = (const Vec3& v){
+		const Vec3& operator = (const Vec3& v){
 			set(v.x, v.y, v.z); 
 			return *this;
 		}
 
 		/// Now we can use the Vec3 like an array but we'll need two overloads
-		inline const float operator [] ( int index) const {  /// This one is for reading the Vec3 as if where an array
+		const float operator [] ( int index) const {  /// This one is for reading the Vec3 as if where an array
 			return *(&x + index); 
 		}
 
-		inline float& operator [] ( int index ) {	/// This one is for writing to the Vec3 as if where an array.  
+		float& operator [] ( int index ) {	/// This one is for writing to the Vec3 as if where an array.  
 			return *(&x + index);					/// See note 2 at the end of this file about lvalues and rvalues
 		}
 	
 		/// Add two Vec3s
-		inline const Vec3 operator + ( const Vec3& v ) const { 
+		const Vec3 operator + ( const Vec3& v ) const { 
 			return Vec3( x + v.x, y + v.y, z + v.z ); 
 		}
 
 		/// Add a Vec3 to itself
-		inline Vec3& operator += ( const Vec3& v ){ 
+		const Vec3& operator += ( const Vec3& v ){ 
 			x += v.x;  
 			y += v.y;  
 			z += v.z;  
@@ -97,17 +98,17 @@ namespace  MATH {
 		}
 
 		/// Take the negative of a Vec3
-		inline const Vec3 operator - () const  { 
+		const Vec3 operator - () const  { 
 			return Vec3( -x, -y, -z ); 
 		}   
 
 		/// Subtract two Vec3s
-		inline const Vec3 operator - ( const Vec3& v ) const { 
+		const Vec3 operator - ( const Vec3& v ) const { 
 			return Vec3(x - v.x, y - v.y, z - v.z ); 
 		}
 
 		/// Subtract a Vec 3 from itself
-		inline Vec3& operator -= ( const Vec3& v ){ 
+		const Vec3& operator -= ( const Vec3& v ){ 
 			x -= v.x;  
 			y -= v.y;  
 			z -= v.z;  
@@ -123,12 +124,12 @@ namespace  MATH {
 		/// Multiply a scaler by a Vec3  It's the scalar first then the Vec3
 		/// Overloaded and a friend, ouch! It's the only way to make it work with a scalar first.
 		/// Friends are tricky, look them up. 
-		inline friend Vec3 operator * ( const float s, const Vec3& v ) { 
+		friend Vec3 operator * ( const float s, const Vec3& v ) { 
 			return v * s; 
 		}
 
 		/// Multiply a Vec3 by a scalar and assign it to itself
-		inline Vec3& operator *= ( const float s ) { 
+		Vec3& operator *= ( const float s ) { 
 			x *= s; 
 			y *= s;  
 			z *= s;  
@@ -137,11 +138,11 @@ namespace  MATH {
 		
 
 		/// Divide by a scalar - Watch for divide by zero issues
-		inline const Vec3 operator / ( const float s ) const {
-	#ifdef _DEBUG  /// If in debug mode let's worry about divide by zero or nearly zero!!! 
+		const Vec3 operator / ( const float s ) const {
+	#ifdef _DEBUG  /// If in debug mode let's worry about divide by zero or nearly zero 
 		if ( fabs(s) < VERY_SMALL ) {
 			std::string errorMsg = __FILE__ + __LINE__;
-			throw errorMsg.append(": Divide by nearly zero! ");	
+			throw errorMsg.append(": Divide by nearly zero ");	
 		}
 	#endif
 		float r = 1.0f / s;
@@ -162,7 +163,7 @@ namespace  MATH {
 		return *this;
 		}
 
-		inline void print(const char* comment = nullptr) const {
+		void print(const char* comment = nullptr) const {
 			if (comment) printf("%s\n", comment);
 			printf("%1.8f %1.8f %1.8f\n", x,y,z);		  
 		}
@@ -170,11 +171,11 @@ namespace  MATH {
 		///
 		/// Type conversion operators 
 		///
-		inline operator const float* () const {
+		operator const float* () const {
 			return static_cast<const float*>(&x);
 		}
 
-		inline operator float* () {
+		operator float* () {
 			return static_cast<float*>(&x);
 		}
 

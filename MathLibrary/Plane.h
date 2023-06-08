@@ -7,18 +7,12 @@
 namespace  MATH {
 	union Plane {
 		struct { /// Standard Euclidean definition  
-			float x;
-			float y;
-			float z;
-			float d;
+			float x,y,z,d;
 		};
 
 		/// See note 1 at the end of this file
 		struct { /// A plane in projective geometric algebra 	
-			float e1;
-			float e2;
-			float e3;
-			float e0;
+			float e1, e2, e3, e0;
 		};
 
 		struct {
@@ -80,10 +74,7 @@ namespace  MATH {
 			return sqrt(e0 * e0);
 		}
 
-
-
 		///////////////////////// Operator overloads ////////////////////////////
-
 
 		inline Plane& operator = (const Plane& p) {
 			set(p.x, p.y, p.z, p.d);
