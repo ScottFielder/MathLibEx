@@ -3,7 +3,6 @@
 #include "QMath.h"
 
 /// A dual quaternion can handle rotations and translations. Contains 8 floats
-/// There are notes at the bottom of this file you might want to read
 
 namespace MATH {
 	struct DualQuat

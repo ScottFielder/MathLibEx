@@ -84,6 +84,7 @@
     <ClInclude Include="DualQuat.h" />
     <ClInclude Include="EMath.h" />
     <ClInclude Include="Euler.h" />
+    <ClInclude Include="Flector.h" />
     <ClInclude Include="Fourier.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="Matrix.h" />
