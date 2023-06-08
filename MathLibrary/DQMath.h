@@ -53,6 +53,17 @@ namespace MATH {
 			return result;
 		}
 
+		/// A rigid transform is a rotate and/or translate. Dual quats can't scale reliably
+		/// REFERENCE: https://bivector.net/PROJECTIVE_GEOMETRIC_ALGEBRA.pdf
+		static const Vec4 rigidTransformation(const DualQuat& dq, const Vec4& p){
+			// Turns out the translation part is 1 - delta/2 * (e01, 2, 3) rather that 1 + delta/2 * (e01, 2, 3)
+			DualQuat fix = dq;
+			fix.e01 *= -1.0f;
+			fix.e02 *= -1.0f;
+			fix.e03 *= -1.0f;
+			// Note that the sandwich needs the inverse rather than the congujate in geometric algebra vs traditional dual quat math
+			return (fix * p * inverse(fix)).point;
+		}
 
 	};
 }

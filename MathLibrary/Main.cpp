@@ -111,6 +111,11 @@ void dualQuatTest() {
 	pureRotation.print("Pure rotation of 90 degrees about y axis");
 	DualQuat pureTranslation = DQMath::translate(Vec3(1, 2, 3));
 	pureTranslation.print("Pure translation by (1, 2, 3)");
+	Vec4 initialPos(1, 0, 0, 1);
+	initialPos.print("Initial position");
+	DQMath::rigidTransformation(pureRotation, initialPos).print("Rotated position");
+	DQMath::rigidTransformation(pureTranslation, initialPos).print("Translated position");
+
 
 }
 
