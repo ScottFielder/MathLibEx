@@ -16,6 +16,7 @@
 #include "Hash.h"
 #include "Quadratic.h"
 #include "RMath.h"
+#include "DualQuat.h"
 
 
 #include <glm/vec3.hpp> /// glm::vec3
@@ -48,6 +49,7 @@ void slerpTest();
 void QuadraticTest();
 void RaySphereTest();
 void RayTest();
+void dualQuatTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -64,8 +66,18 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	RaySphereTest();
+	dualQuatTest();
+}
 
+void dualQuatTest() {
+	DualQuat identity;
+	identity.print("Identity dual quaternion");
+	DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
+	translate1.print("Translate 4 units along x");
+	DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
+	translate2.print("Translate 10 units along x");
+	DualQuat combine = translate1 * translate2;
+	combine.print("Multiply two translate dual quaternions to get 14 units along x");
 }
 
 void QuadraticTest() {
