@@ -13,6 +13,7 @@ namespace  MATH {
 /// This is used in normalizing vectors. Dividing by zero is a well known
 /// problem but dividing by nearly zero is also a problem. 1.0x10-7 is very
 /// small in "float" percision. 
+
 	#ifndef VERY_SMALL
 	#define VERY_SMALL 1.0e-7f
 	#endif
@@ -32,43 +33,18 @@ namespace  MATH {
 	#define RADIANS_TO_DEGREES (180.0f / M_PI)
 	#endif
 
-	struct Vec2 {
-		float  x, y;
-		/// Just a little utility to populate a vector
-		void set(float x_, float y_) {
-			x = x_; y = y_;
-		}
-		/// Here's a set of constructors
-		inline  Vec2(){
-			set(0.0f,0.0f);
-		}
+	/// I will need to forward declare the union Vec4 for the Vec3(const Vec4& v) 
+	/// and Vec3& operator = (const Vec4& v);
+	union Vec4;
 
-		inline Vec2( float x, float y ){
-			set(x,y);
-		}
+	union Vec3 {
+		struct {
+			float x, y, z;
+		};
 
-		/// A copy constructor
-		inline Vec2( const Vec2& v ) { 
-			set(v.x,v.y); 
-		}
-
-		///////////////////////////////////////////////////////////
-		/// Operator overloads (see note 1 at the end of this file)
-		///////////////////////////////////////////////////////////
-		inline Vec2& operator = (const Vec2& v){
-			set(v.x, v.y); 
-			return *this;
-		}
-
-		inline void print(const char* comment = nullptr) const {
-			if (comment) printf("%s\n", comment);
-			printf("%1.8f %1.8f\n", x,y);		  
-		}
-	};
-	
-
-	struct Vec3 {
-		float  x,y,z;	///  Structures are default public
+		struct {
+			float e032, e013,e021;
+		};
 
 		/// Just a little utility to populate a vector
 		inline void set( float x_, float y_, float z_ ) {
@@ -201,18 +177,17 @@ namespace  MATH {
 		inline operator float* () {
 			return static_cast<float*>(&x);
 		}
-	};
 
 
-		/// Vec4 definitions
-		/// I am intentionally creating a Vec4 from a Vec3 so I can pass a Vec4 into a Subroutine that wants a Vec3
-		/// in many cases this will be mathamatically OK, just be careful Vec4's are not quaterinians
+		/// Create a Vec3 from a Vec4 - This is a bit of trouble. 
+		/// The Vec4 definition has not been read yet so the compiler has no idea
+		/// about Vec4. Just above the Vec3 definition, I do a forward declaration of 
+		/// union Vec4. This allows this prototype to exist. The actual code for this 
+		/// constructor is listed just after the end of the Vec4 definition. 
+		inline Vec3(const Vec4& v);
+		inline Vec3& operator = (const Vec4& v); /// An assignment operator from a Vec4 
 		
-	struct Vec4: public Vec3 {
-		///float  x;	///
-		///float  y;	///  
-		///float  z;	/// From Vec3
-		float  w;
+	};
 
 	/// Vec4 definitions		
 	union Vec4 {
@@ -343,6 +318,51 @@ namespace  MATH {
 			return static_cast<float*>( &x );
 		}
 
+	};
+
+
+	/// These are defined in the Vec3 definition but because they have a Vec4 in them 
+	/// I can't code them until after the Vec4 definition
+	Vec3::Vec3(const Vec4& v): x(v.x), y(v.y), z(v.z) {}
+	Vec3& Vec3::operator = (const Vec4& v){
+			set(v.x, v.y, v.z); 
+			return *this;
+	}
+
+
+
+	struct Vec2 {
+		float  x, y;
+		/// Just a little utility to populate a vector
+		void set(float x_, float y_) {
+			x = x_; y = y_;
+		}
+		/// Here's a set of constructors
+		inline  Vec2(){
+			set(0.0f,0.0f);
+		}
+
+		inline Vec2( float x, float y ){
+			set(x,y);
+		}
+
+		/// A copy constructor
+		inline Vec2( const Vec2& v ) { 
+			set(v.x,v.y); 
+		}
+
+		///////////////////////////////////////////////////////////
+		/// Operator overloads (see note 1 at the end of this file)
+		///////////////////////////////////////////////////////////
+		inline Vec2& operator = (const Vec2& v){
+			set(v.x, v.y); 
+			return *this;
+		}
+
+		inline void print(const char* comment = nullptr) const {
+			if (comment) printf("%s\n", comment);
+			printf("%1.8f %1.8f\n", x,y);		  
+		}
 	};
 	
 }
