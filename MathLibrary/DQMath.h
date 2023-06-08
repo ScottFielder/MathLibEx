@@ -2,6 +2,7 @@
 #define DQMATH_H
 #include "DualQuat.h"
 #include "Vector.h"
+#include "Quaternion.h"
 
 namespace MATH {
 
@@ -20,6 +21,38 @@ namespace MATH {
 			result.e03 *= -1.0f;
 			return result;
 		}
+
+		/// Return a pure rotation dual quaternion
+		static const DualQuat rotate(const Quaternion& rotation) {
+			// No translation, but use the quaternion to build the first four floats
+			// Remember e23 = -i, e31 = -j, e12 = -k
+			DualQuat result;
+			result.w = rotation.w;
+			result.e23 = -rotation.ijk.x;
+			result.e31 = -rotation.ijk.y;
+			result.e12 = -rotation.ijk.z;
+			result.e01 = 0.0f;
+			result.e02 = 0.0f;
+			result.e03 = 0.0f;
+			result.e0123 = 0.0f;
+			return result;
+		}
+
+		/// Return a pure translation dual quaternion
+		static const DualQuat translate(const Vec3& translation) {
+			// No rotation, but set the last four floats to be half the translation
+			DualQuat result;
+			result.w = 1.0f;
+			result.e23 = 0.0f; 
+			result.e31 = 0.0f; 
+			result.e12 = 0.0f;
+			result.e01 = translation.x / 2.0f;
+			result.e02 = translation.y / 2.0f;
+			result.e03 = translation.z / 2.0f;
+			result.e0123 = 0.0f;
+			return result;
+		}
+
 
 	};
 }

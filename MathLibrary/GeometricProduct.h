@@ -40,6 +40,7 @@ namespace MATH {
 	}
 
 	inline const Flector operator * (const Vec4& p, const DualQuat& q) {
+		/// A few signs flip when you multiply the other way round
 		Flector result;
 		result.plane.e0 = q.e12 * p.e021 + q.e31 * p.e013 + q.e23 * p.e032 + q.e0123 * p.e123;
 		result.plane.e1 = -q.e23 * p.e123;

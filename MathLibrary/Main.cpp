@@ -19,6 +19,7 @@
 #include "DualQuat.h"
 #include "Flector.h"
 #include "GeometricProduct.h"
+#include "DQMath.h"
 
 
 #include <glm/vec3.hpp> /// glm::vec3
@@ -70,7 +71,7 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	intersectionTest();
+	dualQuatTest();
 }
 
 void intersectionTest() {
@@ -98,14 +99,19 @@ void flectorTest() {
 }
 
 void dualQuatTest() {
-	MATH::DualQuat identity;
+	DualQuat identity;
 	identity.print("Identity dual quaternion");
-	MATH::DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
+	DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
 	translate1.print("Translate 4 units along x");
-	MATH::DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
+	DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
 	translate2.print("Translate 10 units along x");
 	DualQuat combine = translate1 * translate2;
 	combine.print("Multiply two translate dual quaternions to get 14 units along x");
+	DualQuat pureRotation = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(0, 1, 0)));
+	pureRotation.print("Pure rotation of 90 degrees about y axis");
+	DualQuat pureTranslation = DQMath::translate(Vec3(1, 2, 3));
+	pureTranslation.print("Pure translation by (1, 2, 3)");
+
 }
 
 void QuadraticTest() {
