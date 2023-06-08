@@ -15,11 +15,24 @@ namespace MATH {
 			return(a.x * b.x + a.y * b.y + a.z * b.z);
 		}
 
-		/// Calulate the cross product
+		/// Calculate the dot product between Vec4s a & b 
+		inline static float dot(const Vec4 &a, const Vec4 &b){
+			return(a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w);
+		}
+
+		/// Calulate the cross product with Vec3
 		inline static const Vec3 cross(const Vec3 &a, const Vec3 &b){
 			return Vec3(a.y * b.z - a.z * b.y,
 						a.z * b.x - a.x * b.z,
 						a.x * b.y - a.y * b.x);
+		}
+
+		/// Calulate the cross product with Vec4
+		inline static const Vec4 cross(const Vec4 &a, const Vec4 &b){
+			return Vec4(a.y * b.z - a.z * b.y,
+						a.z * b.x - a.x * b.z,
+						a.x * b.y - a.y * b.x,
+						0.0f);
 		}
 
 		inline static float mag(const Vec3 &a) {
