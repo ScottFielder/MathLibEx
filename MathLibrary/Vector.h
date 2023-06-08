@@ -207,7 +207,7 @@ namespace  MATH {
 		Vec4():x(0.0f), y(0.0f), z(0.0f), w(0.0f){}
 		Vec4( float x_, float y_, float z_, float w_):x(x_),y(y_),z(z_),w(w_){} 
 		Vec4( const Vec4& v ): x(v.x), y(v.y), z(v.z), w(v.w) {}
-		Vec4(const Vec3& v, const float w_): x(v.x), y(v.y), z(v.z), w(w){}
+		Vec4(const Vec3& v, const float w_): x(v.x), y(v.y), z(v.z), w(w_){}
 		Vec4( const Vec3& v ) :x(v.x), y(v.y), z(v.z), w(1.0f){}
 		
 		/// An assignment operator

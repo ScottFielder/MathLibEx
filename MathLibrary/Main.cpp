@@ -16,6 +16,10 @@
 #include "Hash.h"
 #include "Quadratic.h"
 #include "RMath.h"
+#include "DualQuat.h"
+#include "Flector.h"
+#include "GeometricProduct.h"
+#include "DQMath.h"
 
 
 #include <glm/vec3.hpp> /// glm::vec3
@@ -48,6 +52,9 @@ void slerpTest();
 void QuadraticTest();
 void RaySphereTest();
 void RayTest();
+void dualQuatTest();
+void flectorTest();
+void intersectionTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -64,8 +71,50 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	RaySphereTest();
+	dualQuatTest();
+}
 
+void intersectionTest() {
+	Plane xPlane(1, 0, 0, 0);
+	Plane yPlane(0, 1, 0, 0);;
+	DualQuat dqIntersection = yPlane * xPlane;
+	xPlane.print("x plane");
+	yPlane.print("y plane");
+	dqIntersection.print("intersection line of both planes");
+}
+
+void flectorTest() {
+	Flector f1;
+	f1.plane = Plane(1.0f, 0.0f, 0.0f, 0.0f);
+	f1.point = Vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+	Flector f2;
+	f2.plane = Plane(1.0f, 0.0f, 0.0f, 0.0f);
+	f2.point = Vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+	f1.print("Flector 1");
+	f2.print("Flector 2");
+	f1 += f2;
+	f1.print("f1 after adding f2");
+}
+
+void dualQuatTest() {
+	DualQuat identity;
+	identity.print("Identity dual quaternion");
+	DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
+	translate1.print("Translate 4 units along x");
+	DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
+	translate2.print("Translate 10 units along x");
+	DualQuat combine = translate1 * translate2;
+	combine.print("Multiply two translate dual quaternions to get 14 units along x");
+	DualQuat pureRotation = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(0, 1, 0)));
+	pureRotation.print("Pure rotation of 90 degrees about y axis");
+	DualQuat pureTranslation = DQMath::translate(Vec3(1, 2, 3));
+	pureTranslation.print("Pure translation by (1, 2, 3)");
+	Vec4 initialPos(1, 0, 0, 1);
+	initialPos.print("Initial position");
+	DQMath::rigidTransformation(pureRotation, initialPos).print("Rotated position");
+	DQMath::rigidTransformation(pureTranslation, initialPos).print("Translated position");
 }
 
 void QuadraticTest() {
