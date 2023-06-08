@@ -92,5 +92,11 @@
     <ClInclude Include="Flector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DQMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometricProduct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

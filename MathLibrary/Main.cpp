@@ -18,6 +18,7 @@
 #include "RMath.h"
 #include "DualQuat.h"
 #include "Flector.h"
+#include "GeometricProduct.h"
 
 
 #include <glm/vec3.hpp> /// glm::vec3
@@ -52,6 +53,7 @@ void RaySphereTest();
 void RayTest();
 void dualQuatTest();
 void flectorTest();
+void intersectionTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -68,7 +70,16 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	flectorTest();
+	intersectionTest();
+}
+
+void intersectionTest() {
+	Plane xPlane(1, 0, 0, 0);
+	Plane yPlane(0, 1, 0, 0);;
+	DualQuat dqIntersection = yPlane * xPlane;
+	xPlane.print("x plane");
+	yPlane.print("y plane");
+	dqIntersection.print("intersection line of both planes");
 }
 
 void flectorTest() {
@@ -80,18 +91,18 @@ void flectorTest() {
 	f2.plane = Plane(1.0f, 0.0f, 0.0f, 0.0f);
 	f2.point = Vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
-	f1.print("f1");
-	f2.print("f2");
+	f1.print("Flector 1");
+	f2.print("Flector 2");
 	f1 += f2;
 	f1.print("f1 after adding f2");
 }
 
 void dualQuatTest() {
-	DualQuat identity;
+	MATH::DualQuat identity;
 	identity.print("Identity dual quaternion");
-	DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
+	MATH::DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
 	translate1.print("Translate 4 units along x");
-	DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
+	MATH::DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
 	translate2.print("Translate 10 units along x");
 	DualQuat combine = translate1 * translate2;
 	combine.print("Multiply two translate dual quaternions to get 14 units along x");

@@ -1,6 +1,5 @@
-#ifndef DUALQUATH
+#ifndef DUALQUAT_H
 #define DUALQUAT_H
-#include "QMath.h"
 
 /// A dual quaternion can handle rotations and translations. Contains 8 floats
 
@@ -39,25 +38,6 @@ namespace MATH {
 		inline DualQuat& operator = (const DualQuat& dq) {
 			set(dq.w, dq.e23, dq.e31, dq.e12, dq.e01, dq.e02, dq.e03, dq.e0123);
 			return *this;
-		}
-
-		/// I wrote this out on paper. My wrist is still hurting.
-		/// You don't need the brackets, it just helps my eyes
-		inline const DualQuat operator * (const DualQuat& b) const {
-			DualQuat result;
-			result.w = (w * b.w) - (e23 * b.e23) - (e31 * b.e31) - (e12 * b.e12);
-			result.e23 = (w * b.e23) + (e23 * b.w) - (e31 * b.e12) + (e12 * b.e31);
-			result.e31 = (w * b.e31) + (e23 * b.e12) + (e31 * b.w) - (e12 * b.e23);
-			result.e12 = (w * b.e12) - (e23 * b.e31) + (e31 * b.e23) + (e12 * b.w);
-			result.e01 = (w * b.e01) - (e23 * b.e0123) - (e31 * b.e03) + (e12 * b.e02)
-				+ (e01 * b.w) - (e02 * b.e12) + (e03 * b.e31) - (e0123 * b.e23);
-			result.e02 = (w * b.e02) + (e23 * b.e03) - (e31 * b.e0123) - (e12 * b.e01)
-				+ (e01 * b.e12) - (e03 * b.e23) + (e02 * b.w) - (e0123 * b.e31);
-			result.e03 = (w * b.e03) - (e23 * b.e02) + (e31 * b.e01) - (e12 * b.e0123)
-				- (e01 * b.e31) + (e02 * b.e23) + (e03 * b.w) - (e0123 * b.e12);
-			result.e0123 = (w * b.e0123) + (e23 * b.e01) + (e31 * b.e02) + (e12 * b.e03)
-				+ (e01 * b.e23) + (e02 * b.e31) + (e03 * b.e12) + (e0123 * b.w);
-			return result;
 		}
 
 		inline const DualQuat operator * (float c) const {
