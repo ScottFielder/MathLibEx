@@ -33,43 +33,20 @@ namespace  MATH {
 	#define RADIANS_TO_DEGREES (180.0f / M_PI)
 	#endif
 
-	struct Vec2 {
-		float  x, y;
-		/// Just a little utility to populate a vector
-		void set(float x_, float y_) {
-			x = x_; y = y_;
-		}
-		/// Here's a set of constructors
-		inline  Vec2(){
-			set(0.0f,0.0f);
-		}
+	/// I will need to forward declare the union Vec4 for the Vec3(const Vec4& v) 
+	/// and Vec3& operator = (const Vec4& v); prototypes. The actual code will be 
+	/// created at the end of the Vec4 definition. 
+	union Vec4;
 
-		inline Vec2( float x, float y ){
-			set(x,y);
-		}
 
-		/// A copy constructor
-		inline Vec2( const Vec2& v ) { 
-			set(v.x,v.y); 
-		}
+	union Vec3 {
+		struct {
+			float x, y, z;
+		};
 
-		///////////////////////////////////////////////////////////
-		/// Operator overloads (see note 1 at the end of this file)
-		///////////////////////////////////////////////////////////
-		inline Vec2& operator = (const Vec2& v){
-			set(v.x, v.y); 
-			return *this;
-		}
-
-		inline void print(const char* comment = nullptr) const {
-			if (comment) printf("%s\n", comment);
-			printf("%1.8f %1.8f\n", x,y);		  
-		}
-	};
-	
-
-	struct Vec3 {
-		float  x,y,z;	///  Structures are default public
+		struct {
+			float e032, e013,e021;
+		};
 
 		/// Just a little utility to populate a vector
 		inline void set( float x_, float y_, float z_ ) {
@@ -85,12 +62,9 @@ namespace  MATH {
 			set(x,y,z);
 		}
 		
-		/// A copy constructor
 		inline Vec3( const Vec3& v ) { 
 			set(v.x,v.y,v.z); 
 		}
-
-		
 
 		///////////////////////////////////////////////////////////
 		/// Operator overloads (see note 1 at the end of this file)
@@ -102,7 +76,6 @@ namespace  MATH {
 			return *this;
 		}
 
-		
 		/// Now we can use the Vec3 like an array but we'll need two overloads
 		inline const float operator [] ( int index) const {  /// This one is for reading the Vec3 as if where an array
 			return *(&x + index); 
@@ -112,7 +85,6 @@ namespace  MATH {
 			return *(&x + index);					/// See note 2 at the end of this file about lvalues and rvalues
 		}
 	
-
 		/// Add two Vec3s
 		inline const Vec3 operator + ( const Vec3& v ) const { 
 			return Vec3( x + v.x, y + v.y, z + v.z ); 
@@ -150,7 +122,7 @@ namespace  MATH {
 		}
 
 		
-		/// Multiply a scaler by a Vec3   It's the scalar first then the Vec3
+		/// Multiply a scaler by a Vec3  It's the scalar first then the Vec3
 		/// Overloaded and a friend, ouch! It's the only way to make it work with a scalar first.
 		/// Friends are tricky, look them up. 
 		inline friend Vec3 operator * ( const float s, const Vec3& v ) { 
@@ -207,51 +179,37 @@ namespace  MATH {
 		inline operator float* () {
 			return static_cast<float*>(&x);
 		}
+
+
+		/// Create a Vec3 from a Vec4 - This is a bit of trouble. 
+		/// The Vec4 definition has not been read yet so the compiler has no idea
+		/// about Vec4. Just above the Vec3 definition, I do a forward declaration of 
+		/// union Vec4. This allows this prototype to exist. The actual code for this 
+		/// constructor is listed just after the end of the Vec4 definition. 
+		inline Vec3(const Vec4& v);
+		inline Vec3& operator = (const Vec4& v); /// An assignment operator from a Vec4 
+		
 	};
 
-
-		/// Vec4 definitions
-		/// I am intentionally creating a Vec4 from a Vec3 so I can pass a Vec4 into a Subroutine that wants a Vec3
-		/// in many cases this will be mathamatically OK, just be careful Vec4's are not quaterinians
-		
-	struct Vec4: public Vec3 {
-		///float  x;	///
-		///float  y;	///  
-		///float  z;	/// From Vec3
-		float  w;
+	/// Vec4 definitions		
+	union Vec4 {
+		struct {
+			float  x,y,z,w;
+		};
+		struct {
+			float  e032, e013, e021, e123;
+		};
 
 		inline void set(float x_, float y_, float z_, float w_) {
 			x = x_; y = y_; z = z_; w = w_;
 		}
 
 		/// Here's a set of constructors
-		inline Vec4(){ 
-			set(0.0f,0.0f,0.0f,0.0f);
-		}
-		inline Vec4( float _x, float _y, float _z, float _w){ 
-			x=_x; 
-			y=_y;
-			z=_z;
-			w=_w;
-		} 
-		inline Vec4( const Vec4& v ) { 
-			x = v.x;  
-			y = v.y;  
-			z = v.z; 
-			w = v.w;
-		}
-		inline Vec4(const Vec3& v, const float w_) {
-			x = v.x;
-			y = v.y;
-			z = v.z;
-			w = w_;
-		}
-		inline Vec4( const Vec3& v ) { 
-			x = v.x;  
-			y = v.y;  
-			z = v.z; 
-			w = 1.0f;
-		}
+		Vec4():x(0.0f), y(0.0f), z(0.0f), w(0.0f){}
+		Vec4( float x_, float y_, float z_, float w_):x(x_),y(y_),z(z_),w(w_){} 
+		Vec4( const Vec4& v ): x(v.x), y(v.y), z(v.z), w(v.w) {}
+		Vec4(const Vec3& v, const float w_): x(v.x), y(v.y), z(v.z), w(w){}
+		Vec4( const Vec3& v ) :x(v.x), y(v.y), z(v.z), w(1.0f){}
 		
 		/// An assignment operator
 		inline Vec4& operator = (const Vec4& v){
@@ -262,7 +220,7 @@ namespace  MATH {
 			return *this;
 		}
 
-		/// See Vec3 definition 
+		/// See how I did it in the Vec3 definition 
 		inline float& operator [] ( int index ) { 
 			return *(&x + index); 
 		}
@@ -270,12 +228,12 @@ namespace  MATH {
 			return *(&x + i); 
 		}
 
-		/// See Vec3 definition 
+		/// See the Vec3 definition 
 		inline Vec4 operator + ( const Vec4& v ) const { 
 			return Vec4( x + v.x, y + v.y, z + v.z, w + v.w ); 
 		}
 
-		/// See Vec3 definition 
+		
 		inline Vec4& operator += ( const Vec4& v ){ 
 			x += v.x;
 			y += v.y;
@@ -284,17 +242,17 @@ namespace  MATH {
 			return *this; 
 		}
 
-		//// See Vec3 definition 
+		
 		inline Vec4 operator - () const  { 
 			return Vec4( -x, -y, -z, -w );
 		}   
 
-		/// See Vec3 definition 
+		
 		inline Vec4 operator - ( const Vec4& v ) const { 
 			return Vec4( x - v.x, y - v.y, z - v.z, v.w - w);
 		}
 
-		/// See Vec3 definition 
+		
 		inline Vec4& operator -= ( const Vec4& v ){ 
 			x -= v.x;
 			y -= v.y;
@@ -303,12 +261,12 @@ namespace  MATH {
 			return *this;
 		}
 
-		/// See Vec3 definition 
+		
 		inline Vec4 operator * ( const float s ) const { 
 			return Vec4( s*x, s*y, s*z, s*w);
 		}
 
-		/// See Vec3 definition 
+		
 		inline Vec4& operator *= ( const float s ) { 
 			x *= s;
 			y *= s;
@@ -317,7 +275,7 @@ namespace  MATH {
 			return *this;
 		}
 
-		/// See Vec3 definition 
+		
 		 friend Vec4 operator * ( const float s, const Vec4& v ) { 
 			 return v * s; 
 		 }
@@ -352,9 +310,8 @@ namespace  MATH {
 			printf("%1.8f %1.8f %1.8f %1.8f\n", x,y,z,w);		  
 		}
 
-		///
+		
 		/// Type conversion operators 
-		///
 		inline operator const float* () const { 
 			return static_cast<const float*>( &x );
 		}
@@ -364,6 +321,51 @@ namespace  MATH {
 		}
 
 	};
+
+
+	/// These are defined in the Vec3 definition but because they have a Vec4 in them 
+	/// I can't code them until after the Vec4 definition
+	Vec3::Vec3(const Vec4& v): x(v.x), y(v.y), z(v.z) {}
+	Vec3& Vec3::operator = (const Vec4& v){
+			set(v.x, v.y, v.z); 
+			return *this;
+	}
+
+
+
+	struct Vec2 {
+		float  x, y;
+		/// Just a little utility to populate a vector
+		void set(float x_, float y_) {
+			x = x_; y = y_;
+		}
+		/// Here's a set of constructors
+		inline  Vec2(){
+			set(0.0f,0.0f);
+		}
+
+		inline Vec2( float x, float y ){
+			set(x,y);
+		}
+
+		/// A copy constructor
+		inline Vec2( const Vec2& v ) { 
+			set(v.x,v.y); 
+		}
+
+		///////////////////////////////////////////////////////////
+		/// Operator overloads (see note 1 at the end of this file)
+		///////////////////////////////////////////////////////////
+		inline Vec2& operator = (const Vec2& v){
+			set(v.x, v.y); 
+			return *this;
+		}
+
+		inline void print(const char* comment = nullptr) const {
+			if (comment) printf("%s\n", comment);
+			printf("%1.8f %1.8f\n", x,y);		  
+		}
+	};
 	
 }
 
@@ -372,7 +374,7 @@ namespace  MATH {
 
 		/*** Note 1.
 		I know, I hate operator overloading as a general rule but a few make sense!! Just be careful and 
-		consistent. In the following code, I will overload many operators. I don't believe in 
+		be consistent. In the following code, I will overload many operators. I don't believe in 
 		overloading when the operator is less than obvious.  
 		For example, in this class, the relational operators (== != < > <= >=) might mean "in relation 
 		to their magnitude or direction" I'm just not sure. Just write a function to do that and don't make 
@@ -391,13 +393,4 @@ namespace  MATH {
 		To read this precicely, &x is the address of the x variable (the first in the list of x,y,z) add to that 
 		address the index as if it were an array. Then *(&x + index) dereferences that address back into the 
 		object, the float& reference returns it as an address and thus an lvalue.
-		***/
-
-		/*** Note 3.
-		The issue here is that I need to use functions in Vector from VMath which require Vector but VMath
-		also requires Vector - this is a classic circular dependency problem or sometimes known as mutual recursion.
-		To solve this it requires a forward declaration.  A "forward declaration" is the declaration of a class for which 
-		the you have not yet given a complete definition of (whateverClass.h). To do this all you need is the statement:  
-		"class VMath;"  This warns the compiler that I will be using VMath in Vector; HOWEVER, in this case, it won't work because
-		I'm using the vector.h as a totally inlined set of functions - sometimes you're just screwed 
 		***/
