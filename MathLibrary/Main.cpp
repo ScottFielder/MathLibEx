@@ -115,8 +115,6 @@ void dualQuatTest() {
 	initialPos.print("Initial position");
 	DQMath::rigidTransformation(pureRotation, initialPos).print("Rotated position");
 	DQMath::rigidTransformation(pureTranslation, initialPos).print("Translated position");
-
-
 }
 
 void QuadraticTest() {
