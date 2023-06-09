@@ -3,7 +3,7 @@
 
 /// A dual quaternion can handle rotations and translations. Contains 8 floats
 
-namespace MATH {
+namespace MATHEX {
 	struct DualQuat
 	{
 		float w;   /// real number, just like the w in a regular quaternion

@@ -4,7 +4,7 @@
 #include "Vector.h"
 #include "Quaternion.h"
 
-namespace MATH {
+namespace MATHEX {
 
 	class DQMath {
 	public:

@@ -2,12 +2,12 @@
 #define GEOMETRICPRODUCT_H
 #include "DualQuat.h"
 #include "Flector.h"
-namespace MATH {
+namespace MATHEX {
 
 	/// I wrote this out on paper. My wrist is still hurting.
 	/// You don't need the brackets, it just helps my eyes
 	inline const DualQuat operator * (DualQuat a, DualQuat b) {
-		MATH::DualQuat result;
+		MATHEX::DualQuat result;
 		result.w = (a.w * b.w) - (a.e23 * b.e23) - (a.e31 * b.e31) - (a.e12 * b.e12);
 		result.e23 = (a.w * b.e23) + (a.e23 * b.w) -     (a.e31 * b.e12) + (a.e12 * b.e31);
 		result.e31 = (a.w * b.e31) + (a.e23 * b.e12) +   (a.e31 * b.w) -   (a.e12 * b.e23);
