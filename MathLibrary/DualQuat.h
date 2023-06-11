@@ -4,16 +4,28 @@
 /// A dual quaternion can handle rotations and translations. Contains 8 floats
 
 namespace MATHEX {
-	struct DualQuat
-	{
-		float w;   /// real number, just like the w in a regular quaternion
-		float e23; /// This is like -i for a regular quaternion
-		float e31; /// -j
-		float e12; /// -k
-		float e01; /// Every term with a zero in it squares to zero. It's how translations are handled. 
-		float e02;
-		float e03;
-		float e0123; /// Hamish Todd calls this one "screwiness", for a rotation + translation type motion
+	union DualQuat {
+		struct {
+			float w;  /// Just like the w in a regular quaternion
+			float yz; /// A rotation about x takes you from y to z
+			float zx; /// A rotation about y takes you from z to x
+			float xy; /// A rotation about z takes you from x to y
+			float dx; /// The d terms encode translations
+			float dy; 
+			float dz;
+			float dxyz; /// Hamish Todd calls this one "screwiness", for a rotation + translation type motion
+		};
+
+		struct {
+			float real; 
+			float e23;  /// This is like -i for a regular quaternion. Squares to -1
+			float e31;  /// -j
+			float e12;  /// -k
+			float e01;  /// Every term with a zero in it squares to zero. It's how translations are handled. 
+			float e02;
+			float e03;
+			float e0123;
+		};
 
 		inline void set(float w_, float e23_, float e31_, float e12_, float e01_, float e02_, float e03_, float e0123_){
 			w = w_; e23 = e23_; e31 = e31_; e12 = e12_; e01 = e01_; e02 = e02_; e03 = e03_; e0123 = e0123_;
