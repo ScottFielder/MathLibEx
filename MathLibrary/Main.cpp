@@ -91,7 +91,6 @@ void poincareDualityTest() {
 	DualQuat dqDual = !dq;
 	dq.print("Dual quaternion that rotates 90 degrees abt x");
 	dqDual.print("Dual of the dual quaternion. Sounds weird like that");
-
 }
 
 void intersectionTest() {
