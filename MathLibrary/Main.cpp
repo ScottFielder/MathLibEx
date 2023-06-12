@@ -20,6 +20,7 @@
 #include "Flector.h"
 #include "GeometricProduct.h"
 #include "DQMath.h"
+#include "PoincareDuality.h"
 
 
 #include <glm/vec3.hpp> /// glm::vec3
@@ -55,6 +56,7 @@ void RayTest();
 void dualQuatTest();
 void flectorTest();
 void intersectionTest();
+void poincareDualityTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -71,7 +73,25 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	dualQuatTest();
+	poincareDualityTest();
+}
+
+void poincareDualityTest() {
+	Plane xPlane(1, 0, 0, 0);
+	Vec4 xPlaneDual = !xPlane;
+	xPlane.print("x plane");
+	xPlaneDual.print("the dual of the plane");
+	std::cout << "***********************\n";
+	Vec4 point(1, 2, 3, 1);
+	Plane pointDual = !point;
+	point.print("Original point");
+	pointDual.print("Dual of the point");
+	std::cout << "***********************\n";
+	DualQuat dq = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(1, 0, 0)));
+	DualQuat dqDual = !dq;
+	dq.print("Dual quaternion that rotates 90 degrees abt x");
+	dqDual.print("Dual of the dual quaternion. Sounds weird like that");
+
 }
 
 void intersectionTest() {
