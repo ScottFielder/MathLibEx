@@ -18,12 +18,12 @@ namespace  MATH {
 			r = 0.0f;
 		}
 
-		Sphere(const Vec3 &center, const float r) {
-			set(center.x, center.y, center.z, r);
+		Sphere(const Vec3 &center, const float r_) {
+			set(center.x, center.y, center.z, r_);
 		}
 
-		Sphere(float x, float y, float z, float r) {
-			set(x, y, z, r);
+		Sphere(float x, float y, float z, float r_) {
+			set(x, y, z, r_);
 		}
 
 		Sphere(const Sphere& s) {
