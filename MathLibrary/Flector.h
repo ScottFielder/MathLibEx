@@ -8,7 +8,7 @@
 #include "Plane.h"
 #include "Vector.h"
 
-namespace MATH {
+namespace MATHEX {
 	struct Flector {
 		Plane plane;
 		Vec4 point;

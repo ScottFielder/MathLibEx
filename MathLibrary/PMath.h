@@ -1,6 +1,8 @@
 #ifndef PMATH_H
 #define PMATH_H
 #include "Plane.h"
+#include "DualQuat.h"
+#include "Meet.h"
 #include <cmath>
 namespace MATH {
 	class PMath {
@@ -30,6 +32,12 @@ namespace MATH {
 		// to convert to Standard Euclidean definition 
 		static const Plane midPlane(const Plane& p1, const Plane& p2) {
 			return normalize(p1) + normalize(p2);
+		}
+
+		// The meet operator in namespace MATHEX gives us the intersection point
+		static const Vec4 intersection(const Plane& p1, const MATHEX::DualQuat& line) {
+			using namespace MATHEX;
+			return p1 ^ line;
 		}
 	};
 }
