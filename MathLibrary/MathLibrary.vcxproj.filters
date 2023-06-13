@@ -101,5 +101,8 @@
     <ClInclude Include="Meet.h">
       <Filter>Header Files\MathEx Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Join.h">
+      <Filter>Header Files\MathEx Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -25,7 +25,7 @@ namespace MATHEX {
 
 	// It's amazing that a plane and a point pops out when you multiply a dual quat with a Vec4 
 	// That's why we need the Flectors
-	inline const Flector operator * (const DualQuat& dq, const Vec4& p){
+	inline const Flector operator * (const DualQuat& dq, const MATH::Vec4& p){
 		Flector result;
 		result.plane.e0 =  dq.e12 * p.e021 + dq.e31 * p.e013 + dq.e23 * p.e032 + dq.e0123 * p.e123;
 		result.plane.e1 = -dq.e23 * p.e123;
@@ -39,7 +39,7 @@ namespace MATHEX {
 		return result;
 	}
 
-	inline const Flector operator * (const Vec4& p, const DualQuat& q) {
+	inline const Flector operator * (const MATH::Vec4& p, const DualQuat& q) {
 		/// A few signs flip when you multiply the other way round
 		Flector result;
 		result.plane.e0 = q.e12 * p.e021 + q.e31 * p.e013 + q.e23 * p.e032 + q.e0123 * p.e123;
@@ -54,7 +54,7 @@ namespace MATHEX {
 		return result;
 	}
 
-	inline const Flector operator * (const Plane& p, const DualQuat& q) {
+	inline const Flector operator * (const MATH::Plane& p, const DualQuat& q) {
 		Flector result;
 		result.plane.e0 = p.e0 * q.w - p.e2 * q.e02 - p.e1 * q.e01 - p.e3 * q.e03;
 		result.plane.e1 = p.e1 * q.w - p.e2 * q.e12 + p.e3 * q.e31;
@@ -74,7 +74,7 @@ namespace MATHEX {
 		return result;
 	}
 
-	inline const DualQuat operator * (const Plane& plane, const Vec4& point){
+	inline const DualQuat operator * (const MATH::Plane& plane, const MATH::Vec4& point){
 		DualQuat result;
 		result.w = 0.0f;
 		result.e23 = plane.e1 * point.e123;
@@ -88,7 +88,7 @@ namespace MATHEX {
 		return result;
 	}
 
-	inline const DualQuat operator * (const Plane& p1, const Plane& p2)
+	inline const DualQuat operator * (const MATH::Plane& p1, const MATH::Plane& p2)
 	{
 		// Plane 1 * Plane 2 = a dual quaternion
 		// This one wasn't too bad to figure out on paper, as a plane only has e0, e1, e2, and e3 inside
@@ -105,7 +105,7 @@ namespace MATHEX {
 		return result;
 	}
 
-	inline const DualQuat operator * (const Vec4& p1, const Vec4& p2)
+	inline const DualQuat operator * (const MATH::Vec4& p1, const MATH::Vec4& p2)
 	{
 		// Point 1 * Point 2 = a dual quaternion
 		// This one wasn't too bad to figure out on paper either, just end up with the infinite line 

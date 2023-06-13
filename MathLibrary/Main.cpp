@@ -22,6 +22,7 @@
 #include "DQMath.h"
 #include "PoincareDuality.h"
 #include "Meet.h"
+#include "Join.h"
 
 
 #include <glm/vec3.hpp> /// glm::vec3
@@ -59,6 +60,7 @@ void flectorTest();
 void intersectionTest();
 void poincareDualityTest();
 void meetTest();
+void joinTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -75,7 +77,19 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	meetTest();
+	joinTest();
+}
+
+void joinTest() {
+	Vec4 pointA(-5, -5, 0, 1);
+	Vec4 pointB(-5, 5, 0, 1);
+	DualQuat lineJoiningPoints = pointA & pointB;
+	pointA.print("Point A");
+	pointB.print("Point B");
+	lineJoiningPoints.print("Line AB");
+	Plane yPlane(0, 1, 0, 0);
+	(yPlane ^ lineJoiningPoints).print("Line pierces y plane this this point");
+
 }
 
 void meetTest() {

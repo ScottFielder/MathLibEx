@@ -1,7 +1,8 @@
 #ifndef POINCAREDUALITY_H
 #define POINCAREDUALITY_H
 #include "DualQuat.h"
-#include "Flector.h"
+#include "Plane.h"
+#include "Vector.h"
 namespace MATHEX {
 
 	// The Poincare duality returns whatever e basis vectors are missing
@@ -20,8 +21,8 @@ namespace MATHEX {
 	}
 
 	// Its crazy, the dual of a point returns a plane
-	inline const Plane operator ! (const Vec4& point){
-		Plane result;
+	inline const MATH::Plane operator ! (const MATH::Vec4& point){
+		MATH::Plane result;
 		result.e0 = point.e123;
 		result.e1 = point.e032;
 		result.e2 = point.e013;
@@ -30,8 +31,8 @@ namespace MATHEX {
 	}
 
 	// The dual of a plane is a point. The world makes sense
-	inline const Vec4 operator ! (const Plane& plane) {
-		Vec4 result;
+	inline const MATH::Vec4 operator ! (const MATH::Plane& plane) {
+		MATH::Vec4 result;
 		result.e032 = plane.e1;
 		result.e013 = plane.e2;
 		result.e021 = plane.e3;

@@ -10,8 +10,8 @@
 
 namespace MATHEX {
 	struct Flector {
-		Plane plane;
-		Vec4 point;
+		MATH::Plane plane;
+		MATH::Vec4 point;
 
 		inline Flector& operator += (const Flector& f) {
 			plane += f.plane;

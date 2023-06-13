@@ -89,6 +89,7 @@
     <ClInclude Include="Fourier.h" />
     <ClInclude Include="GeometricProduct.h" />
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="Join.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Meet.h" />
     <ClInclude Include="MMath.h" />

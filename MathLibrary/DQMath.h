@@ -23,7 +23,7 @@ namespace MATHEX {
 		}
 
 		/// Return a pure rotation dual quaternion
-		static const DualQuat rotate(const Quaternion& rotation) {
+		static const DualQuat rotate(const MATH::Quaternion& rotation) {
 			// No translation, but use the quaternion to build the first four floats
 			// Remember e23 = -i, e31 = -j, e12 = -k
 			DualQuat result;
@@ -39,7 +39,7 @@ namespace MATHEX {
 		}
 
 		/// Return a pure translation dual quaternion
-		static const DualQuat translate(const Vec3& translation) {
+		static const DualQuat translate(const MATH::Vec3& translation) {
 			// No rotation, but set the last four floats to be half the translation
 			DualQuat result;
 			result.w = 1.0f;
@@ -55,7 +55,7 @@ namespace MATHEX {
 
 		/// A rigid transform is a rotate and/or translate. Dual quats can't scale reliably
 		/// REFERENCE: https://bivector.net/PROJECTIVE_GEOMETRIC_ALGEBRA.pdf
-		static const Vec4 rigidTransformation(const DualQuat& dq, const Vec4& p){
+		static const MATH::Vec4 rigidTransformation(const DualQuat& dq, const MATH::Vec4& p){
 			// Turns out the translation part is 1 - delta/2 * (e01, 2, 3) rather that 1 + delta/2 * (e01, 2, 3)
 			DualQuat fix = dq;
 			fix.e01 *= -1.0f;
