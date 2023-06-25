@@ -2,7 +2,9 @@
 #define DQMATH_H
 #include "DualQuat.h"
 #include "Vector.h"
-#include "Quaternion.h"
+#include "QMath.h"
+#include "GeometricProduct.h"
+
 
 namespace MATHEX {
 
@@ -63,6 +65,75 @@ namespace MATHEX {
 			fix.e03 *= -1.0f;
 			// Note that the sandwich needs the inverse rather than the congujate in geometric algebra vs traditional dual quat math
 			return (fix * p * inverse(fix)).point;
+		}
+
+		static const MATH::Quaternion getRotation(const DualQuat& dq)
+		{
+			// Find the rotation using the first four elements of the dual quaternion
+			MATH::Quaternion rot;
+			rot.w = dq.w;
+			rot.ijk.x = -dq.e23;
+			rot.ijk.y = -dq.e31;
+			rot.ijk.z = -dq.e12;
+			return rot;
+		}
+
+		static const MATH::Vec3 getTranslation(const DualQuat& dq)
+		{
+			// We are doing old school dual quaternion math here
+			// Where a dual quaternion is literally made up of two quaternions
+			// A real one (that holds the rotation), and a dual one (that encodes translation)
+			// So dual quaternion = q_rot + dualBasis * q_t * q_rot
+			// Find translation from the last bit of the dual quaternion
+			DualQuat dualPart = translate(MATH::Vec3(2.0f * dq.e01, 2.0f * dq.e02, 2.0f * dq.e03));
+			DualQuat realPart = rotate(getRotation(dq));
+			// Rebuild the translation using t * r.conjugate * 2
+			// To conjugate our dual quaternion, we flip the sign on the axis of the real part 
+			realPart.e23 *= -1.0f;
+			realPart.e31 *= -1.0f;
+			realPart.e12 *= -1.0f;
+			DualQuat transformed = dualPart * realPart * 2.0f;
+			MATH::Vec3 translation(transformed.e01, transformed.e02, transformed.e03);
+			return translation;
+		}
+
+		static const MATH::Matrix4 toMatrix4(const DualQuat& dq)
+		{
+			// Old school dual quaternion math gives us a nice way of building a transformation matrix
+			return MATH::MMath::translate(getTranslation(dq)) * MATH::MMath::toMatrix4(getRotation(dq));
+		}
+
+
+
+		/// Slerp from one translation and orientation to another translation and orientation
+		/// Just like the regular quaternion slerp, but now we can include position too!
+		static const DualQuat slerp(const DualQuat& start, const DualQuat& end, float t) {
+			// The slerp is written as 
+			// exp(t * log(end/start)) * start
+			// Let's turn this into something human readable
+			DualQuat endOverStart = end * inverse(start);
+
+			// The log brings out the rotation axis & angle/2 
+			// and the translation axis and displacement/2
+			MATH::Vec3 translation = getTranslation(endOverStart);
+			MATH::Quaternion rotation = getRotation(endOverStart);
+			float angle = acos(rotation.w) * 2.0f;
+			MATH::Vec3 rotAxis(0, 1, 0); // pick a random rotn axis just in case angle is zero
+			if (fabs(angle) > VERY_SMALL) {
+				rotAxis = VMath::normalize(rotation.ijk);
+			}
+			// Now multiply the angle and translation by t
+			translation *= t;
+			angle *= t;
+
+			// The exp means turn it all back into a dual quaternion
+			DualQuat transformedDqRot = rotate(QMath::angleAxisRotation(angle * RADIANS_TO_DEGREES, rotAxis));
+			DualQuat transformedDqTra = translate(translation);
+			DualQuat transformedDq = transformedDqTra * transformedDqRot;
+
+			// Lastly multiply it with the start
+			return transformedDq * start;
+
 		}
 
 	};
