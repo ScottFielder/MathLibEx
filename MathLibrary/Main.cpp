@@ -61,6 +61,7 @@ void intersectionTest();
 void poincareDualityTest();
 void meetTest();
 void joinTest();
+void dualQuatSlerpTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -77,7 +78,36 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	joinTest();
+	dualQuatSlerpTest();
+}
+
+void dualQuatSlerpTest() {
+	Vec3 startPos(-1, -2, -3);
+	Vec3 endPos(1, 2, 3);
+	Quaternion startRot = QMath::angleAxisRotation(0, Vec3(0, 1, 0));
+	Quaternion endRot = QMath::angleAxisRotation(90, Vec3(0, 1, 0));
+	DualQuat startDQ = DQMath::translate(startPos) * DQMath::rotate(startRot);
+	DualQuat endDQ = DQMath::translate(endPos) * DQMath::rotate(endRot);
+	DualQuat slerpDQStart  = DQMath::slerp(startDQ, endDQ, 0.0f);
+	DualQuat slerpDQMiddle = DQMath::slerp(startDQ, endDQ, 0.5f);
+	DualQuat slerpDQEnd    = DQMath::slerp(startDQ, endDQ, 1.0f);
+
+	startPos.print("Starting pos");
+	startRot.print("Starting rot");
+	endPos.print("Ending pos");
+	endRot.print("Ending rot");
+	std::cout << "***********************\n";
+	slerpDQStart.print("Slerp with t = 0");
+	DQMath::getTranslation(slerpDQStart).print("pos");
+	DQMath::getRotation(slerpDQStart).print("rot");
+	std::cout << "***********************\n";
+	slerpDQMiddle.print("Slerp with t = 0.5");
+	DQMath::getTranslation(slerpDQMiddle).print("pos");
+	DQMath::getRotation(slerpDQMiddle).print("rot");
+	std::cout << "***********************\n";
+	slerpDQEnd.print("Slerp with t = 1");
+	DQMath::getTranslation(slerpDQEnd).print("pos");
+	DQMath::getRotation(slerpDQEnd).print("rot");
 }
 
 void joinTest() {

@@ -5,7 +5,6 @@
 #include "QMath.h"
 #include "GeometricProduct.h"
 
-
 namespace MATHEX {
 
 	class DQMath {
@@ -13,6 +12,8 @@ namespace MATHEX {
 
 		/// Flip the sign on the axis of rotation and translation bivectors
 		/// TODO: Not sure if I need to flip e0123 as well?
+ 		/// If I do flip, the rigid transform seems to work for slerping
+		/// If I don't then dq * dq.inverse = 1 which is the definition
 		static const DualQuat inverse(const DualQuat& dq) {
 			DualQuat result = dq;
 			result.e23 *= -1.0f;
@@ -55,6 +56,20 @@ namespace MATHEX {
 			return result;
 		}
 
+		/// Return just the translation parts of a dual quaternion and the screwiness
+		static const DualQuat translate(const DualQuat& dq) {
+			DualQuat result;
+			result.w = 1.0f;
+			result.e23 = 0.0f;
+			result.e31 = 0.0f;
+			result.e12 = 0.0f;
+			result.e01 = dq.e01;
+			result.e02 = dq.e02;
+			result.e03 = dq.e03;
+			result.e0123 = dq.e0123;
+			return result;
+		}
+
 		/// A rigid transform is a rotate and/or translate. Dual quats can't scale reliably
 		/// REFERENCE: https://bivector.net/PROJECTIVE_GEOMETRIC_ALGEBRA.pdf
 		static const MATH::Vec4 rigidTransformation(const DualQuat& dq, const MATH::Vec4& p){
@@ -64,7 +79,14 @@ namespace MATHEX {
 			fix.e02 *= -1.0f;
 			fix.e03 *= -1.0f;
 			// Note that the sandwich needs the inverse rather than the congujate in geometric algebra vs traditional dual quat math
-			return (fix * p * inverse(fix)).point;
+			// TODO: For some reason, I need to flip the sign on the e0123 part when doing the inverse
+			// to have a pure point flector result. Otherwise, I need to combine the plane and the point in the flector
+			// somehow to get the right answer. Need to figure this out...
+			// Flector result = (fix * p * inverse(fix));
+			DualQuat inverseFix = inverse(fix);
+			inverseFix.e0123 *= -1.0f;
+			Flector result = (fix * p * inverseFix);
+			return result.point;
 		}
 
 		static const MATH::Quaternion getRotation(const DualQuat& dq)
@@ -85,7 +107,7 @@ namespace MATHEX {
 			// A real one (that holds the rotation), and a dual one (that encodes translation)
 			// So dual quaternion = q_rot + dualBasis * q_t * q_rot
 			// Find translation from the last bit of the dual quaternion
-			DualQuat dualPart = translate(MATH::Vec3(2.0f * dq.e01, 2.0f * dq.e02, 2.0f * dq.e03));
+			DualQuat dualPart = translate(dq);
 			DualQuat realPart = rotate(getRotation(dq));
 			// Rebuild the translation using t * r.conjugate * 2
 			// To conjugate our dual quaternion, we flip the sign on the axis of the real part 
@@ -102,8 +124,6 @@ namespace MATHEX {
 			// Old school dual quaternion math gives us a nice way of building a transformation matrix
 			return MATH::MMath::translate(getTranslation(dq)) * MATH::MMath::toMatrix4(getRotation(dq));
 		}
-
-
 
 		/// Slerp from one translation and orientation to another translation and orientation
 		/// Just like the regular quaternion slerp, but now we can include position too!
@@ -132,8 +152,8 @@ namespace MATHEX {
 			DualQuat transformedDq = transformedDqTra * transformedDqRot;
 
 			// Lastly multiply it with the start
-			return transformedDq * start;
-
+			DualQuat result = transformedDq * start;
+			return result;
 		}
 
 	};
