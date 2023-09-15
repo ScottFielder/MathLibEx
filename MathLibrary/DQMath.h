@@ -5,6 +5,8 @@
 #include "QMath.h"
 #include "GeometricProduct.h"
 
+// stuff
+
 namespace MATHEX {
 
 	class DQMath {
