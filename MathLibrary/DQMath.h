@@ -142,14 +142,14 @@ namespace MATHEX {
 			float angle = acos(rotation.w) * 2.0f;
 			MATH::Vec3 rotAxis(0, 1, 0); // pick a random rotn axis just in case angle is zero
 			if (fabs(angle) > VERY_SMALL) {
-				rotAxis = VMath::normalize(rotation.ijk);
+				rotAxis = MATH::VMath::normalize(rotation.ijk);
 			}
 			// Now multiply the angle and translation by t
 			translation *= t;
 			angle *= t;
 
 			// The exp means turn it all back into a dual quaternion
-			DualQuat transformedDqRot = rotate(QMath::angleAxisRotation(angle * RADIANS_TO_DEGREES, rotAxis));
+			DualQuat transformedDqRot = rotate(MATH::QMath::angleAxisRotation(angle * RADIANS_TO_DEGREES, rotAxis));
 			DualQuat transformedDqTra = translate(translation);
 			DualQuat transformedDq = transformedDqTra * transformedDqRot;
 
