@@ -65,6 +65,7 @@ void dualQuatSlerpTest();
 void rotateTest();
 void gradeTest();
 void normalizeLineTest();
+void translateAlongLineTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -81,9 +82,19 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	normalizeLineTest();
+	translateAlongLineTest();
 }
 
+void translateAlongLineTest() {
+	Vec4 point1(-1, -1, -1, 1);
+	Vec4 point2(1, 1, 1, 1);
+	DualQuat line = point1 & point2;
+	DualQuat tr = DQMath::translateAlongLine(5, line);
+	Vec4 pointToTranslate(0, 0, 0, 1);
+	pointToTranslate.print("Point to translate");
+	Vec4 translatedPoint = DQMath::rigidTransformation(tr, pointToTranslate);
+	translatedPoint.print("Translated point");
+}
 void normalizeLineTest() {
 	DualQuat dq(1, 2, 3, 4, 5, 6, 7, 8);
 	dq.print("whole dual quaternion (Euclidean)");

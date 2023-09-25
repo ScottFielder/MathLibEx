@@ -47,7 +47,7 @@ namespace MATHEX {
 			return rotate(quat);
 		}
 
-		/// Return a pure translation dual quaternion
+		/// Return a pure translation dual quaternion from a Vec3
 		static const DualQuat translate(const MATH::Vec3& translation) {
 			// No rotation, but set the last four floats to be half the translation
 			DualQuat result;
@@ -60,6 +60,15 @@ namespace MATHEX {
 			result.e03 = translation.z / 2.0f;
 			result.e0123 = 0.0f;
 			return result;
+		}
+
+		// TODO (UN): I have no idea if this will work
+		// Reference: https://www.youtube.com/watch?v=2DgxeizE3E8	New Hope I
+		/// Return a pure translation dual quaternion using a distance and a Dual Quat line
+		static const DualQuat translateAlongLine(float dist, const DualQuat& line) {
+			Plane eZero(0.0f, 0.0f, 0.0f, 1.0f);
+			Vec4 eOneTwoThree(0.0f, 0.0f, 0.0f, 1.0f);
+			return DualQuat() - eZero * (normalize(line) * dist / 2.0f) * eOneTwoThree;
 		}
 
 		/// Return just the translation parts of a dual quaternion and the screwiness

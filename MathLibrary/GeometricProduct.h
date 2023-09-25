@@ -69,10 +69,11 @@ namespace MATHEX {
 	}
 
 	inline const Flector operator * (const Flector& f, const DualQuat& dq) {
-		Flector result = f.point * dq;;
+		Flector result = f.point * dq;
 		result += f.plane * dq;
 		return result;
 	}
+
 
 	inline const DualQuat operator * (const MATH::Plane& plane, const MATH::Vec4& point){
 		DualQuat result;
@@ -120,6 +121,12 @@ namespace MATHEX {
 		result.e03 = p1.e021 * p2.e123 - p1.e123 * p2.e021;
 		result.e0123 = 0.0f;
 		return result;
+	}
+
+	// TODO (UN)
+	// I'm guessing this one... Not tested yet
+	inline const DualQuat operator * (const Flector& f, const MATH::Vec4& point) {
+		return f.point * point + f.plane * point;
 	}
 }
 #endif
