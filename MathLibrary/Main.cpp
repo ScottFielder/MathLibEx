@@ -64,6 +64,7 @@ void joinTest();
 void dualQuatSlerpTest();
 void rotateTest();
 void gradeTest();
+void normalizeLineTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -80,7 +81,19 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	gradeTest();
+	normalizeLineTest();
+}
+
+void normalizeLineTest() {
+	DualQuat dq(1, 2, 3, 4, 5, 6, 7, 8);
+	dq.print("whole dual quaternion (Euclidean)");
+	DualQuat normalized = DQMath::normalize(dq);
+	normalized.print("normalized Euclidean line");
+
+	dq.set(0, 0, 0, 0, 5, 6, 7, 8);
+	dq.print("whole dual quaternion (Ideal)");
+	normalized = DQMath::normalize(dq);
+	normalized.print("normalized Ideal line");
 }
 
 void gradeTest() {

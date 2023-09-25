@@ -197,6 +197,19 @@ namespace MATHEX {
 			return result;
 		}
 
+		// TODO (UN)
+		// Wonder if it only makes sense to normalize a line rather than the whole dual quat?
+		static const DualQuat normalize(const DualQuat& dq)
+		{
+			// Just care about the line part of the dual quat
+			DualQuat line = extractLine(dq);
+			// Figure out whether this is a Euclidean line or one in the horizon at infinity
+			float mag = magGrade2(line);
+			if (mag < VERY_SMALL) {
+				mag = magGrade2Infinity(line);
+			}
+			return line / mag;
+		}
 	};
 }
 #endif
