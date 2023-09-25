@@ -41,6 +41,12 @@ namespace MATHEX {
 			return result;
 		}
 
+		/// Return a pure rotation dual quaternion. This time, build the quaternion from the argument list
+		static const DualQuat rotate(float angleDeg, const MATH::Vec3& axis) {
+			MATH::Quaternion quat = MATH::QMath::angleAxisRotation(angleDeg, axis);
+			return rotate(quat);
+		}
+
 		/// Return a pure translation dual quaternion
 		static const DualQuat translate(const MATH::Vec3& translation) {
 			// No rotation, but set the last four floats to be half the translation

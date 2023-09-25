@@ -62,6 +62,7 @@ void poincareDualityTest();
 void meetTest();
 void joinTest();
 void dualQuatSlerpTest();
+void rotateTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -78,7 +79,14 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	dualQuatSlerpTest();
+	rotateTest();
+}
+
+void rotateTest() {
+	DualQuat dq1 = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(0, 1, 0)));
+	DualQuat dq2 = DQMath::rotate(90, Vec3(0, 1, 0));
+	dq1.print("Rotated dq using a quaternion");
+	dq2.print("Rotated dq using angle and vector");
 }
 
 void dualQuatSlerpTest() {
