@@ -162,6 +162,41 @@ namespace MATHEX {
 			return result;
 		}
 
+		// Extract grades out of the dual quaternion
+		// grade 0 is the w component
+		// grade 2 is the e23, e31, e12 parts
+		// grade 2 at infinity is the e01, e02, e03 parts
+		// grade 4 is the e0123 part
+		// Line part of the dual quaternion is just the two grade 2 parts
+		static const float magGrade0(const DualQuat& dq) {
+			return fabs(dq.w);
+		}
+
+		static const float magGrade2(const DualQuat& dq) {
+			return sqrt(dq.e23 * dq.e23 + dq.e31 * dq.e31 + dq.e12 * dq.e12);
+		}
+
+		static const float magGrade2Infinity(const DualQuat& dq) {
+			return sqrt(dq.e01 * dq.e01 + dq.e02 * dq.e02 + dq.e03 * dq.e03);
+		}
+
+		static const float magGrade4Infinity(const DualQuat& dq) {
+			return fabs(dq.e0123);
+		}
+
+		static const DualQuat extractLine(const DualQuat& dq) {
+			DualQuat result;
+			result.w = 0.0f;
+			result.e23 = dq.e23;
+			result.e31 = dq.e31;
+			result.e12 = dq.e12;
+			result.e01 = dq.e01;
+			result.e02 = dq.e02;
+			result.e03 = dq.e03;
+			result.e0123 = 0.0f;
+			return result;
+		}
+
 	};
 }
 #endif

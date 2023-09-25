@@ -63,6 +63,7 @@ void meetTest();
 void joinTest();
 void dualQuatSlerpTest();
 void rotateTest();
+void gradeTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -79,7 +80,17 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	rotateTest();
+	gradeTest();
+}
+
+void gradeTest() {
+	DualQuat dq(1, 2, 3, 4, 5, 6, 7, 8);
+	dq.print("whole dual quaternion");
+	std::cout << "Grade 0 part (w part): " << DQMath::magGrade0(dq) << "\n";
+	std::cout << "Grade 2 part (e23, e31, e12 parts): " << DQMath::magGrade2(dq) << " --> Check it matches " << VMath::mag(Vec3(2, 3, 4))<< "\n";
+	std::cout << "Grade 2 part at infinity (e01, e02, e03 parts): " << DQMath::magGrade2Infinity(dq) << " --> Check it matches " << VMath::mag(Vec3(5, 6, 7)) << "\n";
+	std::cout << "Grade 4 part (e0123 part): " << DQMath::magGrade4Infinity(dq) << "\n";
+	DQMath::extractLine(dq).print("Line part of the dual quaternion");
 }
 
 void rotateTest() {
