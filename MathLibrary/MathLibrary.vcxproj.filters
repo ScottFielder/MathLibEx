@@ -104,5 +104,8 @@
     <ClInclude Include="Join.h">
       <Filter>Header Files\MathEx Headers</Filter>
     </ClInclude>
+    <ClInclude Include="PoincareDuality.h">
+      <Filter>Header Files\MathEx Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

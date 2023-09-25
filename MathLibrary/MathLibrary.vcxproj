@@ -95,6 +95,7 @@
     <ClInclude Include="MMath.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PMath.h" />
+    <ClInclude Include="PoincareDuality.h" />
     <ClInclude Include="QMath.h" />
     <ClInclude Include="Quadratic.h" />
     <ClInclude Include="Quaternion.h" />
