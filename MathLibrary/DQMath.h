@@ -62,8 +62,8 @@ namespace MATHEX {
 			return result;
 		}
 
-		// TODO (UN): I have no idea if this will work
-		// Reference: https://www.youtube.com/watch?v=2DgxeizE3E8	New Hope I
+		// TODO (UN): Why do the eZero and eOneTwoThree do the magic?
+		//	Reference: https://www.youtube.com/watch?v=2DgxeizE3E8	New Hope I
 		/// Return a pure translation dual quaternion using a distance and a Dual Quat line
 		static const DualQuat translateAlongLine(float dist, const DualQuat& line) {
 			Plane eZero(0.0f, 0.0f, 0.0f, 1.0f);
