@@ -66,6 +66,7 @@ void rotateTest();
 void gradeTest();
 void normalizeLineTest();
 void translateAlongLineTest();
+void rayPlaneTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -82,8 +83,42 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	translateAlongLineTest();
+	rayPlaneTest();
 }
+
+void rayPlaneTest() {
+	// Test out intersection of a ray and a plane two ways
+	// First the traditional way using regular old vectors
+	Vec3 rayStart(-5, 0, 0);
+	Vec3 rayDir(0.7071, 0.7071, 0);
+	rayStart.print("Ray start");
+	rayDir.print("Ray direction");
+
+	Vec3 planeNormal(-1, 0, 0);
+	Vec3 pointOnPlane(10, 0, 0);
+	float planeD = VMath::dot(planeNormal, pointOnPlane);
+	planeNormal.print("Plane normal");
+	pointOnPlane.print("Point on plane");
+	std::cout << "Plane D: " << planeD << "\n\n";
+
+	// Shove the ray equation (S +Dt) into the plane equation (ax + by + cz - d = 0) 
+	// to find t
+	float t = (planeD - VMath::dot(planeNormal, rayStart)) / VMath::dot(planeNormal, rayDir);
+	Vec3 intersectionPoint = rayStart + t * rayDir;
+	intersectionPoint.print("Intersection point using the regular way");
+
+	// Now try using geometric algebra
+	// Ray is a line joining two points
+	Vec3 pointOnRay = rayStart + rayDir;
+	DualQuat rayDualQuat = pointOnRay & rayStart;
+	// Intersection point is the meet of the ray and the plane
+	// TODO (UN) I wonder if the Plane constructor is ambiguous here on whether it is +d or -d
+	Vec4 intersectionPoint2 = rayDualQuat ^ Plane(planeNormal, -planeD);
+	// Normalize the point by dividing by the w component
+	intersectionPoint2 = intersectionPoint2 / intersectionPoint2.w;
+	intersectionPoint2.print("Intersection point using Plane Based Geometric Algebra");
+}
+
 
 void translateAlongLineTest() {
 	Vec4 point1(-1, -1, -1, 1);
