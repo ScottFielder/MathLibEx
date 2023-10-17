@@ -116,7 +116,14 @@ void rayPlaneTest() {
 	Vec4 intersectionPoint2 = rayDualQuat ^ Plane(planeNormal, -planeD);
 	// Normalize the point by dividing by the w component
 	intersectionPoint2 = intersectionPoint2 / intersectionPoint2.w;
-	intersectionPoint2.print("Intersection point using Plane Based Geometric Algebra");
+	intersectionPoint2.print("Intersection point using Geometric Algebra");
+	// Now try the same thing but building a plane using three points
+	// Say (10,0,0), (10,1,0), (10,0,1)
+	Plane plane = Vec4(10, 0, 0, 1) & Vec4(10, 1, 0, 1) & Vec4(10, 0, 1, 1);
+	plane.print("Plane built using three points");
+	Vec4 intersectionPoint3 = rayDualQuat ^ plane;
+	intersectionPoint3 = intersectionPoint3 / intersectionPoint3.w;
+	intersectionPoint3.print("Intersection point using Geometric Algebra with a plane built using three points");
 }
 
 
