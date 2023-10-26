@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "QMath.h"
 #include "GeometricProduct.h"
+#include "MMath.h"
 
 namespace MATHEX {
 
