@@ -79,6 +79,11 @@ namespace MATH {
 			return (v1 + t * (v2 - v1));
 
 		}
+
+		static Vec4 inverse(const Vec4& v) {
+			// Flip all the signs, except for w
+			return Vec4(-v.x, -v.y, -v.z, v.w);
+		}
 	};
 
 }

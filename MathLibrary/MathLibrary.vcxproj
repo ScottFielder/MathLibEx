@@ -81,6 +81,7 @@
   <ItemGroup>
     <ClInclude Include="AAMath.h" />
     <ClInclude Include="AxisAngle.h" />
+    <ClInclude Include="Dot.h" />
     <ClInclude Include="DQMath.h" />
     <ClInclude Include="DualQuat.h" />
     <ClInclude Include="EMath.h" />

@@ -23,6 +23,7 @@
 #include "PoincareDuality.h"
 #include "Meet.h"
 #include "Join.h"
+#include "Dot.h"
 
 
 #include <glm/vec3.hpp> /// glm::vec3
@@ -67,6 +68,7 @@ void gradeTest();
 void normalizeLineTest();
 void translateAlongLineTest();
 void rayPlaneTest();
+void dotTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -83,7 +85,17 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	rayPlaneTest();
+	dotTest();
+}
+
+void dotTest() {
+	DualQuat line1 = Vec4(0, 0, 0, 1) & Vec4(1, 0, 0, 1);
+	DualQuat line2 = Vec4(0, 0, 0, 1) & Vec4(-0.7071, 0.7071, 0, 1);
+	line1.print("line 1");
+	line2.print("line 2");
+	float angleDegrees = acos(line1 | line2) * RADIANS_TO_DEGREES;
+	std::cout << "Angle between lines: " << angleDegrees << "\n";
+
 }
 
 void rayPlaneTest() {
