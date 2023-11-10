@@ -67,8 +67,8 @@ namespace MATHEX {
 		//	Reference: https://www.youtube.com/watch?v=2DgxeizE3E8	New Hope I
 		/// Return a pure translation dual quaternion using a distance and a Dual Quat line
 		static const DualQuat translateAlongLine(float dist, const DualQuat& line) {
-			Plane eZero(0.0f, 0.0f, 0.0f, 1.0f);
-			Vec4 eOneTwoThree(0.0f, 0.0f, 0.0f, 1.0f);
+			MATH::Plane eZero(0.0f, 0.0f, 0.0f, 1.0f);
+			MATH::Vec4 eOneTwoThree(0.0f, 0.0f, 0.0f, 1.0f);
 			return DualQuat() - eZero * (normalize(line) * dist / 2.0f) * eOneTwoThree;
 		}
 
