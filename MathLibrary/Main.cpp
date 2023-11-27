@@ -69,6 +69,7 @@ void normalizeLineTest();
 void translateAlongLineTest();
 void rayPlaneTest();
 void dotTest();
+void dualQuatSlerpVectorTest();
 
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
@@ -85,8 +86,44 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	dotTest();
+	dualQuatSlerpVectorTest();
 }
+
+void dualQuatSlerpVectorTest() {
+	Vec3 initialVector(1, 0, 0);
+	Vec3 startTranslation(0, 0, 0);
+	Vec3 endTranslation(2, 0, 0);
+	Quaternion startRot = QMath::angleAxisRotation(0, Vec3(0, 1, 0));
+	Quaternion endRot = QMath::angleAxisRotation(180, Vec3(0, 1, 0));
+	DualQuat startDQ = DQMath::translate(startTranslation) * DQMath::rotate(startRot);
+	DualQuat endDQ = DQMath::translate(endTranslation) * DQMath::rotate(endRot);
+	DualQuat slerpDQStart = DQMath::slerp(startDQ, endDQ, 0.0f);
+	DualQuat slerpDQMiddle = DQMath::slerp(startDQ, endDQ, 0.5f);
+	DualQuat slerpDQEnd = DQMath::slerp(startDQ, endDQ, 1.0f);
+
+	initialVector.print("Initial vector");
+	startTranslation.print("Starting translation");
+	startRot.print("Starting rot");
+	endTranslation.print("Ending translation");
+	endRot.print("Ending rot");
+	std::cout << "***********************\n";
+	slerpDQStart.print("Slerp with t = 0");
+	DQMath::getTranslation(slerpDQStart).print("pos");
+	DQMath::getRotation(slerpDQStart).print("rot");
+	DQMath::rigidTransformation(slerpDQStart, initialVector).print("New Vector");
+	std::cout << "***********************\n";
+	slerpDQMiddle.print("Slerp with t = 0.5");
+	DQMath::getTranslation(slerpDQMiddle).print("pos");
+	DQMath::getRotation(slerpDQMiddle).print("rot");
+	DQMath::rigidTransformation(slerpDQMiddle, initialVector).print("New Vector");
+	std::cout << "***********************\n";
+	slerpDQEnd.print("Slerp with t = 1");
+	DQMath::getTranslation(slerpDQEnd).print("pos");
+	DQMath::getRotation(slerpDQEnd).print("rot");
+	DQMath::rigidTransformation(slerpDQEnd, initialVector).print("New Vector");
+
+}
+
 
 void dotTest() {
 	DualQuat line1 = Vec4(0, 0, 0, 1) & Vec4(1, 0, 0, 1);
