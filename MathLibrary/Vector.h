@@ -193,7 +193,7 @@ namespace  MATH {
 	/// Vec4 definitions		
 	union Vec4 {
 		struct {
-			float  x,y,z,w;
+			float     x,    y,    z,    w;
 		};
 		struct {
 			float  e032, e013, e021, e123;
