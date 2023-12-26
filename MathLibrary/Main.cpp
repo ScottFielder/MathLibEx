@@ -34,8 +34,11 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/dual_quaternion.hpp> 
 
 #include <glm/gtx/hash.hpp>
+
+
 
 
 void FFT_Test();
@@ -76,6 +79,7 @@ void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
 void glmPrintM3(glm::mat3  mat, const char* comment = nullptr);
 
 void glmPrintQ(glm::quat q, const char* comment = nullptr);
+void glmPrintDQ(glm::dualquat dq, const char* comment = nullptr);
 void glmPrintV3(glm::vec3 v, const char* comment = nullptr);
 void glmPrintV4(glm::vec4 v, const char* comment = nullptr);
 
@@ -86,7 +90,7 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	dualQuatSlerpVectorTest();
+	dualQuatTest();
 }
 
 void dualQuatSlerpVectorTest() {
@@ -301,21 +305,27 @@ void flectorTest() {
 
 void dualQuatTest() {
 	DualQuat identity;
-	identity.print("Identity dual quaternion");
-	DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
-	translate1.print("Translate 4 units along x");
-	DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
-	translate2.print("Translate 10 units along x");
-	DualQuat combine = translate1 * translate2;
-	combine.print("Multiply two translate dual quaternions to get 14 units along x");
-	DualQuat pureRotation = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(0, 1, 0)));
-	pureRotation.print("Pure rotation of 90 degrees about y axis");
-	DualQuat pureTranslation = DQMath::translate(Vec3(1, 2, 3));
-	pureTranslation.print("Pure translation by (1, 2, 3)");
-	Vec4 initialPos(1, 0, 0, 1);
-	initialPos.print("Initial position");
-	DQMath::rigidTransformation(pureRotation, initialPos).print("Rotated position");
-	DQMath::rigidTransformation(pureTranslation, initialPos).print("Translated position");
+	identity.print("Identity of Umer's dual quaternion");
+	
+	glm::quat rotationQuaternion = glm::angleAxis(glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 translationVector(0.0f, 0.0f, 0.0f);
+	glm::dualquat glmIdeniity(rotationQuaternion,translationVector);
+	glmPrintDQ( glmIdeniity, "GLM's identity (I think) ");
+
+	//DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
+	//translate1.print("Translate 4 units along x");
+	//DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
+	//translate2.print("Translate 10 units along x");
+	//DualQuat combine = translate1 * translate2;
+	//combine.print("Multiply two translate dual quaternions to get 14 units along x");
+	//DualQuat pureRotation = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(0, 1, 0)));
+	//pureRotation.print("Pure rotation of 90 degrees about y axis");
+	//DualQuat pureTranslation = DQMath::translate(Vec3(1, 2, 3));
+	//pureTranslation.print("Pure translation by (1, 2, 3)");
+	//Vec4 initialPos(1, 0, 0, 1);
+	//initialPos.print("Initial position");
+	//DQMath::rigidTransformation(pureRotation, initialPos).print("Rotated position");
+	//DQMath::rigidTransformation(pureTranslation, initialPos).print("Translated position");
 }
 
 void QuadraticTest() {
@@ -869,6 +879,12 @@ void glmPrintQ(glm::quat q, const char* comment) {
 	if (comment) printf("%s\n", comment);
 	///                                    w     i     j     k
 	printf("%1.4f %1.4f %1.4f %1.4f \n", q[3], q[0], q[1], q[2]);
+}
+
+void glmPrintDQ(glm::dualquat dq, const char* comment) {
+	if (comment) printf("%s\n", comment);
+	///  real w,x,y,z  dual w,x,y,z
+	printf("real: %1.4f %1.4f %1.4f %1.4f \ndual: %1.4f %1.4f %1.4f %1.4f \n",dq.real.w, dq.real.x,dq.real.y,dq.real.z,dq.dual.w, dq.dual.x, dq.dual.y,dq.dual.z);
 }
 
 void glmPrintV3(glm::vec3 v, const char* comment) {

@@ -104,7 +104,7 @@ namespace MATHEX {
 
 		void print(const char* comment = nullptr) const {
 			if (comment) printf("%s\n", comment);
-			printf("w = %1.4f yz = %1.4f zx = %1.4f xy = %1.4f dx = %1.4f dy = %1.4f dz = %1.4f dxyz = %1.4f\n", 
+			printf("rotate: w = %1.4f yz = %1.4f zx = %1.4f xy = %1.4f\ntranslate: dx = %1.4f dy = %1.4f dz = %1.4f dxyz = %1.4f\n", 
 				w, yz, zx, xy, dx, dy, dz, dxyz);
 		}
 
