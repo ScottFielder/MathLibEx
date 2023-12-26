@@ -314,8 +314,16 @@ void dualQuatTest() {
 
 	//DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
 	//translate1.print("Translate 4 units along x");
-	//DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
-	//translate2.print("Translate 10 units along x");
+
+	DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
+	translate2.print("Translate 10 units along x");
+	glm::quat rotationQuaternion2 = glm::angleAxis(glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 translationVector2(10.0f, 0.0f, 0.0f);
+	glm::dualquat glmTranslate(rotationQuaternion,translationVector2);
+	glmPrintDQ( glmTranslate, "GLM tranlate by 10");
+
+	
+
 	//DualQuat combine = translate1 * translate2;
 	//combine.print("Multiply two translate dual quaternions to get 14 units along x");
 	//DualQuat pureRotation = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(0, 1, 0)));
@@ -881,10 +889,14 @@ void glmPrintQ(glm::quat q, const char* comment) {
 	printf("%1.4f %1.4f %1.4f %1.4f \n", q[3], q[0], q[1], q[2]);
 }
 
+/// This is a bit messed up in my mind right now. GLM and I write a quarternion as w, i, j, k
+/// While a translate is dx,dy,dz,(w)
 void glmPrintDQ(glm::dualquat dq, const char* comment) {
 	if (comment) printf("%s\n", comment);
-	///  real w,x,y,z  dual w,x,y,z
-	printf("real: %1.4f %1.4f %1.4f %1.4f \ndual: %1.4f %1.4f %1.4f %1.4f \n",dq.real.w, dq.real.x,dq.real.y,dq.real.z,dq.dual.w, dq.dual.x, dq.dual.y,dq.dual.z);
+	///  real w,x,y,z  dual x,y,z,w
+	printf("real: %1.4f %1.4f %1.4f %1.4f \ndual: %1.4f %1.4f %1.4f %1.4f \n",
+		dq.real.w, dq.real.x,dq.real.y,dq.real.z,
+		dq.dual.x, dq.dual.y, dq.dual.z,dq.dual.w);
 }
 
 void glmPrintV3(glm::vec3 v, const char* comment) {
