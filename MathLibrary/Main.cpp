@@ -304,6 +304,7 @@ void flectorTest() {
 }
 
 void dualQuatTest() {
+	/// 
 	DualQuat identity;
 	identity.print("Identity of Umer's dual quaternion");
 	
@@ -311,19 +312,32 @@ void dualQuatTest() {
 	glm::vec3 translationVector(0.0f, 0.0f, 0.0f);
 	glm::dualquat glmIdeniity(rotationQuaternion,translationVector);
 	glmPrintDQ( glmIdeniity, "GLM's identity (I think) ");
-
-	//DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
-	//translate1.print("Translate 4 units along x");
-
+	printf("\n\n");
+	
+	/// Translate test 
 	DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
 	translate2.print("Translate 10 units along x");
+	
 	glm::quat rotationQuaternion2 = glm::angleAxis(glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::vec3 translationVector2(10.0f, 0.0f, 0.0f);
-	glm::dualquat glmTranslate(rotationQuaternion,translationVector2);
-	glmPrintDQ( glmTranslate, "GLM tranlate by 10");
+	glm::dualquat glmTranslate2(rotationQuaternion2,translationVector2);
+	glmPrintDQ(glmTranslate2, "GLM tranlate by 10");
+	printf("\n\n");
 
-	
+	/// Rotate test Oh No, they don't match. If I reverse the axis of rotation Vec3(0.0f, -1.0f, 0.0f)
+	/// it all works. I dumped into this before. 
+	DualQuat pureRotate = DQMath::rotate(QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)));
+	pureRotate.print("90 rotate along Y");
 
+	glm::quat rotationQuaternion3 = glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 translationVector3(0.0f, 0.0f, 0.0f);
+	glm::dualquat glmTranslate3(rotationQuaternion3,translationVector3);
+	glmPrintDQ(glmTranslate3, "GLM 90 along Y");
+	printf("\n\n");
+
+	//DualQuat identity;
+	//DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
+	//translate1.print("Translate 4 units along x");
 	//DualQuat combine = translate1 * translate2;
 	//combine.print("Multiply two translate dual quaternions to get 14 units along x");
 	//DualQuat pureRotation = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(0, 1, 0)));
