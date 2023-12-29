@@ -116,6 +116,12 @@ namespace MATHEX {
 			return rot;
 		}
 
+		// Return a pure rotation dual quaternion from inside a general dual quaternion (that could have translation too)
+		static const DualQuat getRotationDualQuat(const DualQuat& dq) {
+			return DQMath::rotate(DQMath::getRotation(dq));
+		}
+
+		// Return the translation vector from the dual quaternion
 		static const MATH::Vec3 getTranslation(const DualQuat& dq)
 		{
 			// We are doing old school dual quaternion math here
@@ -133,6 +139,11 @@ namespace MATHEX {
 			DualQuat transformed = dualPart * realPart * 2.0f;
 			MATH::Vec3 translation(transformed.e01, transformed.e02, transformed.e03);
 			return translation;
+		}
+
+		// Return a pure translation dual quaternion from inside a general dual quaternion (that could have rotation too)
+		static const DualQuat getTranslationDualQuat(const DualQuat& dq) {
+			return DQMath::translate(DQMath::getTranslation(dq));
 		}
 
 		static const MATH::Matrix4 toMatrix4(const DualQuat& dq)
