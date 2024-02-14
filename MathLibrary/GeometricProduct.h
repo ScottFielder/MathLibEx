@@ -57,6 +57,7 @@ namespace MATHEX {
 		return result;
 	}
 
+	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_plane_with_dq.pdf
 	inline const Flector operator * (const MATH::Plane& p, const DualQuat& q) {
 		Flector result;
 		result.plane.e0 = p.e0 * q.w - p.e2 * q.e02 - p.e1 * q.e01 - p.e3 * q.e03;
@@ -71,13 +72,14 @@ namespace MATHEX {
 		return result;
 	}
 
+	// We can reuse the Vec4 * DualQuat and Plane * DualQuat functions to implement the Flector * DualQuat
 	inline const Flector operator * (const Flector& f, const DualQuat& dq) {
 		Flector result = f.point * dq;
 		result += f.plane * dq;
 		return result;
 	}
 
-
+	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_plane_with_point.pdf
 	inline const DualQuat operator * (const MATH::Plane& plane, const MATH::Vec4& point){
 		DualQuat result;
 		result.w = 0.0f;
@@ -92,11 +94,12 @@ namespace MATHEX {
 		return result;
 	}
 
+	// Plane 1 * Plane 2 = a dual quaternion
+	// This one wasn't too bad to figure out on paper, as a plane only has e0, e1, e2, and e3 inside
+	// After multiplying and keeping track of the e combos you end up with a dual quaternion
+	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_planes.pdf
 	inline const DualQuat operator * (const MATH::Plane& p1, const MATH::Plane& p2)
 	{
-		// Plane 1 * Plane 2 = a dual quaternion
-		// This one wasn't too bad to figure out on paper, as a plane only has e0, e1, e2, and e3 inside
-		// After multiplying and keeping track of the e combos you end up with a dual quaternion
 		DualQuat result;
 		result.w = p1.e1 * p2.e1 + p1.e2 * p2.e2 + p1.e3 * p2.e3;
 		result.e23 = p1.e2 * p2.e3 - p1.e3 * p2.e2;
@@ -109,11 +112,12 @@ namespace MATHEX {
 		return result;
 	}
 
+	// Point 1 * Point 2 = a dual quaternion
+	// This one wasn't too bad to figure out on paper either, just end up with the infinite line 
+	// and a term for w
+	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_points.pdf
 	inline const DualQuat operator * (const MATH::Vec4& p1, const MATH::Vec4& p2)
 	{
-		// Point 1 * Point 2 = a dual quaternion
-		// This one wasn't too bad to figure out on paper either, just end up with the infinite line 
-		// and a term for w
 		DualQuat result;
 		result.w = -p1.e123 * p2.e123;
 		result.e23 = 0.0f;
