@@ -4,9 +4,9 @@
 #include "Flector.h"
 namespace MATHEX {
 
-	/// I wrote this out on paper. My wrist is still hurting.
-	/// You don't need the brackets, it just helps my eyes
-	/// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_dual_quaternions.pdf
+	// I wrote this out on paper. My wrist is still hurting.
+	// You don't need the brackets, it just helps my eyes
+	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_dual_quaternions.pdf
 	inline const DualQuat operator * (DualQuat a, DualQuat b) {
 		MATHEX::DualQuat result;
 		result.w = (a.w * b.w) - (a.e23 * b.e23) - (a.e31 * b.e31) - (a.e12 * b.e12);
@@ -26,6 +26,7 @@ namespace MATHEX {
 
 	// It's amazing that a plane and a point pops out when you multiply a dual quat with a Vec4 
 	// That's why we need the Flectors
+	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_dq_with_point.pdf
 	inline const Flector operator * (const DualQuat& dq, const MATH::Vec4& p){
 		Flector result;
 		result.plane.e0 =  dq.e12 * p.e021 + dq.e31 * p.e013 + dq.e23 * p.e032 + dq.e0123 * p.e123;
