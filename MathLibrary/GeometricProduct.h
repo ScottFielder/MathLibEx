@@ -6,6 +6,7 @@ namespace MATHEX {
 
 	/// I wrote this out on paper. My wrist is still hurting.
 	/// You don't need the brackets, it just helps my eyes
+	/// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_dual_quaternions.pdf
 	inline const DualQuat operator * (DualQuat a, DualQuat b) {
 		MATHEX::DualQuat result;
 		result.w = (a.w * b.w) - (a.e23 * b.e23) - (a.e31 * b.e31) - (a.e12 * b.e12);
