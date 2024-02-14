@@ -132,14 +132,10 @@ namespace  MATH {
 	};
 }
 /*** Note 1
-// 2023 May - Umer Noor
+// 2024 Feb - Umer Noor
 // A mirror plane in projective geometric algebra is just a like a regular plane
 // REFERENCE: 2023 GDC Talks by Hamish Todd and information at bivector.net
 //            Find the talks at https://library.humber.ca/atoz_landing/G
-// TODO: I was going to call this class just "Plane" but I know Scott already has one
-//       Come up with a plan to potentially merge. MirrorPlane just sounds a bit odd
-// TODO: I need to avoid a circular dependency to code up the plane * plane overload
-//       because DualQuat.h includes MirrorPlane.h
 ***/
 
 #endif
