@@ -205,6 +205,7 @@ namespace MATHEX {
 			return fabs(dq.e0123);
 		}
 
+		// WHAT? https://github.com/ScottFielder/MathLibrary/blob/master/Notes/What_is_a_line.pdf
 		static const DualQuat extractLine(const DualQuat& dq) {
 			DualQuat result;
 			result.w = 0.0f;
