@@ -11,22 +11,19 @@ namespace MATHEX {
 
 	// A plane and a line dot to make another plane
 	// This new plane is orthogonal to the original plane and through the line!
-	inline const MATH::Plane operator | (const MATH::Plane& p, const DualQuat& q) {
-		DualQuat line = DQMath::extractLine(q);
+	inline const MATH::Plane operator | (const MATH::Plane& p, const DualQuat& line) {
 		return (p * line).plane;
 	}
 
 	// A plane and a point dot to make a line
 	// This new line is orthogonal to the original plane and through the point!
 	inline const DualQuat operator | (const MATH::Plane& p, const MATH::Vec4& v) {
-		// Extract just the line part (grade 2) of the dual quaternion
-		return DQMath::extractLine((p * MATH::VMath::inverse(v)));	
+		return p * MATH::VMath::inverse(v);	
 	}
 
 	// A line and a point dot to make a plane
 	// This new plane is orthogonal to the original line and through the point!
-	inline const MATH::Plane operator | (const DualQuat& q, const MATH::Vec4& v) {
-		DualQuat line = DQMath::extractLine(q);
+	inline const MATH::Plane operator | (const DualQuat& line, const MATH::Vec4& v) {
 		return (line * v).plane;
 	}
 
@@ -35,9 +32,7 @@ namespace MATHEX {
 		return (p1 * p2).w;
 	}
 
-	inline float operator | (const DualQuat& q1, const DualQuat& q2) {
-		DualQuat line1 = DQMath::extractLine(q1);
-		DualQuat line2 = DQMath::extractLine(q2);
+	inline float operator | (const DualQuat& line1, const DualQuat& line2) {
 		return (line1 * line2).w;
 	}
 

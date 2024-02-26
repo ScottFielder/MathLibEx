@@ -5,6 +5,8 @@
 #include "QMath.h"
 #include "GeometricProduct.h"
 #include "MMath.h"
+#include "Dot.h"
+#include "Meet.h"
 
 namespace MATHEX {
 
