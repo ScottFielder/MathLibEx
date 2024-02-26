@@ -234,7 +234,7 @@ namespace MATHEX {
 		}
 
 		// Oriented distance between a point and a plane (sign tells you which side of the plane)
-		static const float orientedDis(const MATH::Vec4& v, const MATH::Plane& p) {
+		static const float orientedDist(const MATH::Vec4& v, const MATH::Plane& p) {
 			// First normalize the point and plane 
 			// TODO (UN) 
 			// Think whether we should make a method for the Vec4 class to do this, as it's dividing by w rather than what we usually think of normalizing a vector
