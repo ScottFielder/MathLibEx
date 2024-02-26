@@ -39,6 +39,23 @@ namespace MATHEX {
 		result.e0123 = 0.0f;
 		return result;
 	}
+
+	// A point and a plane meet at a dual quaternion (only the e0123 part survives)
+	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Meet_point_with_plane.pdf
+	inline const DualQuat operator ^ (const MATH::Vec4& v, const MATH::Plane& p)
+	{
+		DualQuat result;
+		result.w = 0.0f;
+		result.e23 = 0.0f;
+		result.e31 = 0.0f;
+		result.e12 = 0.0f;
+		result.e01 = 0.0f;
+		result.e02 = 0.0f;
+		result.e03 = 0.0f;
+		result.e0123 = -v.e032 * p.e1 - v.e013 * p.e2 - v.e021 * p.e3 - v.e123 * p.e0;
+		return result;
+	}
+
 }
 #endif
 
