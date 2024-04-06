@@ -222,8 +222,7 @@ namespace MATHEX {
 			return result;
 		}
 
-		// TODO (UN)
-		// Wonder if it only makes sense to normalize a line rather than the whole dual quat?
+		// Divide by the magnitude of the rotational part or the infinite part
 		static const DualQuat normalize(const DualQuat& dq)
 		{
 			// Just care about the line part of the dual quat
@@ -231,9 +230,15 @@ namespace MATHEX {
 			// Figure out whether this is a Euclidean line or one in the horizon at infinity
 			float mag = magGrade2(line);
 			if (mag < VERY_SMALL) {
-				mag = magGrade2Infinity(line);
+				// Divide by the infinite mag instead here
+				float infiniteMag = sqrt(dq.e01 * dq.e01 + dq.e02 * dq.e02 + dq.e03 * dq.e03
+					+ dq.e0123 * dq.e0123
+				);
+				return dq / infiniteMag;
 			}
-			return line / mag;
+			// Just use the regular quaternion mag
+			MATH::Quaternion q = DQMath::getRotation(dq);
+			return dq / MATH::QMath::magnitude(q);
 		}
 
 		// Oriented distance between a point and a plane (sign tells you which side of the plane)
