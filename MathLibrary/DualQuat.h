@@ -89,6 +89,25 @@ namespace MATHEX {
 			return result;
 		}
 
+		// Add to the real part of the dual quaternion
+		inline const DualQuat operator + (float w_) const {
+			DualQuat result;
+			result.w = w + w_;
+			result.e23 = e23;
+			result.e31 = e31;
+			result.e12 = e12;
+			result.e01 = e01;
+			result.e02 = e02;
+			result.e03 = e03;
+			result.e0123 = e0123;
+			return result;
+		}
+
+		// Add the other way around too
+		friend const DualQuat operator + (const float w_, const DualQuat& dq) {
+			return dq + w_;
+		}
+
 		inline const DualQuat operator - (const DualQuat& dq) const {
 			DualQuat result;
 			result.w = w - dq.w;
