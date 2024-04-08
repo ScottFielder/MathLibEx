@@ -14,6 +14,7 @@ namespace MATHEX {
 			Quaternion rotation;
 			Quaternion translation;
 		};
+
 		struct {
 			float real; 
 			float e23;  /// This is like -i for a regular quaternion. Squares to -1
