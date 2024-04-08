@@ -363,6 +363,7 @@ namespace  MATH {
 
 		}
 
+		// WHY? https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Why_does_TR_work.pdf
 		static const Matrix4 toMatrix4(const MATHEX::DualQuat& dq){
 			// Old school dual quaternion math gives us a nice way of building a transformation matrix
 			return MMath::translate(MATHEX::DQMath::getTranslation(dq)) * MMath::toMatrix4(MATHEX::DQMath::getRotation(dq));
