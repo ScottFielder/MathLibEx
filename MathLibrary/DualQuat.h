@@ -5,17 +5,9 @@
 
 namespace MATHEX {
 	union DualQuat {
-		struct {
-			float w;  /// Just like the w in a regular quaternion
-			float yz; /// A rotation about x takes you from y to z
-			float zx; /// A rotation about y takes you from z to x
-			float xy; /// A rotation about z takes you from x to y
-			float dx; /// The d terms encode translations
-			float dy; 
-			float dz;
-			float dxyz; /// Hamish Todd calls this one "screwiness", for a rotation + translation type motion
-		};
-
+	private:
+		float  dq[8]; /// The DQ is the size of 2 Quaternions = 8 floats
+	public:
 		struct {
 			float real; 
 			float e23;  /// This is like -i for a regular quaternion. Squares to -1
@@ -27,8 +19,8 @@ namespace MATHEX {
 			float e0123;
 		};
 
-		inline void set(float w_, float e23_, float e31_, float e12_, float e01_, float e02_, float e03_, float e0123_){
-			w = w_; e23 = e23_; e31 = e31_; e12 = e12_; e01 = e01_; e02 = e02_; e03 = e03_; e0123 = e0123_;
+		inline void set(float real_, float e23_, float e31_, float e12_, float e01_, float e02_, float e03_, float e0123_){
+			real = real_; e23 = e23_; e31 = e31_; e12 = e12_; e01 = e01_; e02 = e02_; e03 = e03_; e0123 = e0123_;
 		}
 
 		/// This is the unit dual quaternion. Doesn't rotate or translate
@@ -37,18 +29,18 @@ namespace MATHEX {
 			set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 		}
 
-		inline DualQuat(float w_, float e23_, float e31_, float e12_, float e01_, float e02_, float e03_, float e0123_) {
-			set(w_, e23_, e31_, e12_, e01_, e02_, e03_, e0123_);
+		inline DualQuat(float real_, float e23_, float e31_, float e12_, float e01_, float e02_, float e03_, float e0123_) {
+			set(real_, e23_, e31_, e12_, e01_, e02_, e03_, e0123_);
 		}
 
 		/// A copy constructor
 		inline DualQuat(const DualQuat& dq) {
-			set(dq.w, dq.e23, dq.e31, dq.e12, dq.e01, dq.e02, dq.e03, dq.e0123);
+			set(dq.real, dq.e23, dq.e31, dq.e12, dq.e01, dq.e02, dq.e03, dq.e0123);
 		}
 
 		/// An assignment operator   
 		inline DualQuat& operator = (const DualQuat& dq) {
-			set(dq.w, dq.e23, dq.e31, dq.e12, dq.e01, dq.e02, dq.e03, dq.e0123);
+			set(dq.real, dq.e23, dq.e31, dq.e12, dq.e01, dq.e02, dq.e03, dq.e0123);
 			return *this;
 		}
 
@@ -57,18 +49,18 @@ namespace MATHEX {
 		/// to read the array and one to write to the array. 
 		///  Returns a const - the rvalue
 		inline const float operator [] (int index) const {
-			return *(m + index);
+			return *(dq + index);
 		}
 
 		/// This one is for writing to the structure as if where an array 
 		/// it returns a modifiable lvalue
 		inline float& operator [] (int index) {
-			return *(m + index);
+			return *(dq + index);
 		}
 
 		inline const DualQuat operator * (float c) const {
 			DualQuat result;
-			result.w = w * c;
+			result.real = real * c;
 			result.e23 = e23 * c;
 			result.e31 = e31 * c;
 			result.e12 = e12 * c;
@@ -92,7 +84,7 @@ namespace MATHEX {
 
 		inline const DualQuat operator + (const DualQuat& dq) const {
 			DualQuat result;
-			result.w = w + dq.w;
+			result.real = real + dq.real;
 			result.e23 = e23 + dq.e23;
 			result.e31 = e31 + dq.e31;
 			result.e12 = e12 + dq.e12;
@@ -106,7 +98,7 @@ namespace MATHEX {
 		// Add to the real part of the dual quaternion
 		inline const DualQuat operator + (float w_) const {
 			DualQuat result;
-			result.w = w + w_;
+			result.real = real + w_;
 			result.e23 = e23;
 			result.e31 = e31;
 			result.e12 = e12;
@@ -124,7 +116,7 @@ namespace MATHEX {
 
 		inline const DualQuat operator - (const DualQuat& dq) const {
 			DualQuat result;
-			result.w = w - dq.w;
+			result.real = real - dq.real;
 			result.e23 = e23 - dq.e23;
 			result.e31 = e31 - dq.e31;
 			result.e12 = e12 - dq.e12;
@@ -138,7 +130,7 @@ namespace MATHEX {
 		void print(const char* comment = nullptr) const {
 			if (comment) printf("%s\n", comment);
 			printf("rotate: w = %1.4f yz = %1.4f zx = %1.4f xy = %1.4f\ntranslate: dx = %1.4f dy = %1.4f dz = %1.4f dxyz = %1.4f\n", 
-				w, yz, zx, xy, dx, dy, dz, dxyz);
+				real, e23, e31, e12, e01, e02, e03, e0123);
 		}
 
 	};

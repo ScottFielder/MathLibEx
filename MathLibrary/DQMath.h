@@ -33,7 +33,7 @@ namespace MATHEX {
 			// No translation, but use the quaternion to build the first four floats
 			// Remember e23 = -i, e31 = -j, e12 = -k
 			DualQuat result;
-			result.w = rotation.w;
+			result.real = rotation.w;
 			result.e23 = -rotation.ijk.x;
 			result.e31 = -rotation.ijk.y;
 			result.e12 = -rotation.ijk.z;
@@ -54,7 +54,7 @@ namespace MATHEX {
 		static const DualQuat translate(const MATH::Vec3& translation) {
 			// No rotation, but set the last four floats to be half the translation
 			DualQuat result;
-			result.w = 1.0f;
+			result.real = 1.0f;
 			result.e23 = 0.0f; 
 			result.e31 = 0.0f; 
 			result.e12 = 0.0f;
@@ -77,7 +77,7 @@ namespace MATHEX {
 		/// Return just the translation parts of a dual quaternion and the screwiness
 		static const DualQuat translate(const DualQuat& dq) {
 			DualQuat result;
-			result.w = 1.0f;
+			result.real = 1.0f;
 			result.e23 = 0.0f;
 			result.e31 = 0.0f;
 			result.e12 = 0.0f;
@@ -111,7 +111,7 @@ namespace MATHEX {
 		{
 			// Find the rotation using the first four elements of the dual quaternion
 			MATH::Quaternion rot;
-			rot.w = dq.w;
+			rot.w = dq.real;
 			rot.ijk.x = -dq.e23;
 			rot.ijk.y = -dq.e31;
 			rot.ijk.z = -dq.e12;
@@ -188,7 +188,7 @@ namespace MATHEX {
 		// grade 4 is the e0123 part
 		// Line part of the dual quaternion is just the two grade 2 parts
 		static const float magGrade0(const DualQuat& dq) {
-			return fabs(dq.w);
+			return fabs(dq.real);
 		}
 
 		static const float magGrade2(const DualQuat& dq) {
@@ -206,7 +206,7 @@ namespace MATHEX {
 		// WHAT? https://github.com/ScottFielder/MathLibrary/blob/master/Notes/What_is_a_line.pdf
 		static const DualQuat extractLine(const DualQuat& dq) {
 			DualQuat result;
-			result.w = 0.0f;
+			result.real = 0.0f;
 			result.e23 = dq.e23;
 			result.e31 = dq.e31;
 			result.e12 = dq.e12;

@@ -29,7 +29,7 @@ namespace MATHEX {
 	inline const DualQuat operator ^ (const MATH::Plane& p1, const MATH::Plane& p2)
 	{
 		DualQuat result;
-		result.w = 0.0f;
+		result.real = 0.0f;
 		result.e23 = p1.e2 * p2.e3 - p1.e3 * p2.e2;
 		result.e31 = p1.e3 * p2.e1 - p1.e1 * p2.e3;
 		result.e12 = p1.e1 * p2.e2 - p1.e2 * p2.e1;
@@ -45,7 +45,7 @@ namespace MATHEX {
 	inline const DualQuat operator ^ (const MATH::Vec4& v, const MATH::Plane& p)
 	{
 		DualQuat result;
-		result.w = 0.0f;
+		result.real = 0.0f;
 		result.e23 = 0.0f;
 		result.e31 = 0.0f;
 		result.e12 = 0.0f;

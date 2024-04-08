@@ -9,18 +9,18 @@ namespace MATHEX {
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_dual_quaternions.pdf
 	inline const DualQuat operator * (DualQuat a, DualQuat b) {
 		MATHEX::DualQuat result;
-		result.w = (a.w * b.w) - (a.e23 * b.e23) - (a.e31 * b.e31) - (a.e12 * b.e12);
-		result.e23 = (a.w * b.e23) + (a.e23 * b.w) -     (a.e31 * b.e12) + (a.e12 * b.e31);
-		result.e31 = (a.w * b.e31) + (a.e23 * b.e12) +   (a.e31 * b.w) -   (a.e12 * b.e23);
-		result.e12 = (a.w * b.e12) - (a.e23 * b.e31) +   (a.e31 * b.e23) + (a.e12 * b.w);
-		result.e01 = (a.w * b.e01) - (a.e23 * b.e0123) - (a.e31 * b.e03) + (a.e12 * b.e02)
-			+ (a.e01 * b.w) - (a.e02 * b.e12) + (a.e03 * b.e31) - (a.e0123 * b.e23);
-		result.e02 = (a.w * b.e02) + (a.e23 * b.e03) - (a.e31 * b.e0123) - (a.e12 * b.e01)
-			+ (a.e01 * b.e12) - (a.e03 * b.e23) + (a.e02 * b.w) - (a.e0123 * b.e31);
-		result.e03 = (a.w * b.e03) - (a.e23 * b.e02) + (a.e31 * b.e01) - (a.e12 * b.e0123)
-			- (a.e01 * b.e31) + (a.e02 * b.e23) + (a.e03 * b.w) - (a.e0123 * b.e12);
-		result.e0123 = (a.w * b.e0123) + (a.e23 * b.e01) + (a.e31 * b.e02) + (a.e12 * b.e03)
-			+ (a.e01 * b.e23) + (a.e02 * b.e31) + (a.e03 * b.e12) + (a.e0123 * b.w);
+		result.real = (a.real * b.real) - (a.e23 * b.e23) - (a.e31 * b.e31) - (a.e12 * b.e12);
+		result.e23 = (a.real * b.e23) + (a.e23 * b.real) -  (a.e31 * b.e12) + (a.e12 * b.e31);
+		result.e31 = (a.real * b.e31) + (a.e23 * b.e12) +   (a.e31 * b.real) - (a.e12 * b.e23);
+		result.e12 = (a.real * b.e12) - (a.e23 * b.e31) +   (a.e31 * b.e23) + (a.e12 * b.real);
+		result.e01 = (a.real * b.e01) - (a.e23 * b.e0123) - (a.e31 * b.e03) + (a.e12 * b.e02)
+			+ (a.e01 * b.real) - (a.e02 * b.e12) + (a.e03 * b.e31) - (a.e0123 * b.e23);
+		result.e02 = (a.real * b.e02) + (a.e23 * b.e03) - (a.e31 * b.e0123) - (a.e12 * b.e01)
+			+ (a.e01 * b.e12) - (a.e03 * b.e23) + (a.e02 * b.real) - (a.e0123 * b.e31);
+		result.e03 = (a.real * b.e03) - (a.e23 * b.e02) + (a.e31 * b.e01) - (a.e12 * b.e0123)
+			- (a.e01 * b.e31) + (a.e02 * b.e23) + (a.e03 * b.real) - (a.e0123 * b.e12);
+		result.e0123 = (a.real * b.e0123) + (a.e23 * b.e01) + (a.e31 * b.e02) + (a.e12 * b.e03)
+			+ (a.e01 * b.e23) + (a.e02 * b.e31) + (a.e03 * b.e12) + (a.e0123 * b.real);
 		return result;
 	}
 
@@ -34,10 +34,10 @@ namespace MATHEX {
 		result.plane.e2 = -dq.e31 * p.e123;
 		result.plane.e3 = -dq.e12 * p.e123;
 
-		result.point.e032 =  dq.e12 * p.e013 - dq.e31 * p.e021 - dq.e01 * p.e123 + dq.w * p.e032;
-		result.point.e013 = -dq.e12 * p.e032 + dq.e23 * p.e021 - dq.e02 * p.e123 + dq.w * p.e013;
-		result.point.e021 =  dq.e31 * p.e032 - dq.e23 * p.e013 - dq.e03 * p.e123 + dq.w * p.e021;
-		result.point.e123 = dq.w * p.e123;
+		result.point.e032 =  dq.e12 * p.e013 - dq.e31 * p.e021 - dq.e01 * p.e123 + dq.real * p.e032;
+		result.point.e013 = -dq.e12 * p.e032 + dq.e23 * p.e021 - dq.e02 * p.e123 + dq.real * p.e013;
+		result.point.e021 =  dq.e31 * p.e032 - dq.e23 * p.e013 - dq.e03 * p.e123 + dq.real * p.e021;
+		result.point.e123 = dq.real * p.e123;
 		return result;
 	}
 
@@ -50,20 +50,20 @@ namespace MATHEX {
 		result.plane.e2 = -q.e31 * p.e123;
 		result.plane.e3 = -q.e12 * p.e123;
 
-		result.point.e032 = -q.e12 * p.e013 + q.e31 * p.e021 + q.e01 * p.e123 + q.w * p.e032;
-		result.point.e013 = q.e12 * p.e032 - q.e23 * p.e021 + q.e02 * p.e123 + q.w * p.e013;
-		result.point.e021 = -q.e31 * p.e032 + q.e23 * p.e013 + q.e03 * p.e123 + q.w * p.e021;
-		result.point.e123 = q.w * p.e123;
+		result.point.e032 = -q.e12 * p.e013 + q.e31 * p.e021 + q.e01 * p.e123 + q.real * p.e032;
+		result.point.e013 = q.e12 * p.e032 - q.e23 * p.e021 + q.e02 * p.e123 + q.real * p.e013;
+		result.point.e021 = -q.e31 * p.e032 + q.e23 * p.e013 + q.e03 * p.e123 + q.real * p.e021;
+		result.point.e123 = q.real * p.e123;
 		return result;
 	}
 
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_plane_with_dq.pdf
 	inline const Flector operator * (const MATH::Plane& p, const DualQuat& q) {
 		Flector result;
-		result.plane.e0 = p.e0 * q.w - p.e2 * q.e02 - p.e1 * q.e01 - p.e3 * q.e03;
-		result.plane.e1 = p.e1 * q.w - p.e2 * q.e12 + p.e3 * q.e31;
-		result.plane.e2 = p.e1 * q.e12 + p.e2 * q.w - p.e3 * q.e23;
-		result.plane.e3 = p.e2 * q.e23 + p.e3 * q.w - p.e1 * q.e31;
+		result.plane.e0 = p.e0 * q.real - p.e2 * q.e02 - p.e1 * q.e01 - p.e3 * q.e03;
+		result.plane.e1 = p.e1 * q.real - p.e2 * q.e12 + p.e3 * q.e31;
+		result.plane.e2 = p.e1 * q.e12 + p.e2 * q.real - p.e3 * q.e23;
+		result.plane.e3 = p.e2 * q.e23 + p.e3 * q.real - p.e1 * q.e31;
 
 		result.point.e032 = -p.e0 * q.e23 + p.e1 * q.e0123 + p.e2 * q.e03 - p.e3 * q.e02;
 		result.point.e013 = -p.e0 * q.e31 - p.e1 * q.e03 + p.e2 * q.e0123 + p.e3 * q.e01;
@@ -82,7 +82,7 @@ namespace MATHEX {
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_plane_with_point.pdf
 	inline const DualQuat operator * (const MATH::Plane& plane, const MATH::Vec4& point){
 		DualQuat result;
-		result.w = 0.0f;
+		result.real = 0.0f;
 		result.e23 = plane.e1 * point.e123;
 		result.e31 = plane.e2 * point.e123;
 		result.e12 = plane.e3 * point.e123;
@@ -101,7 +101,7 @@ namespace MATHEX {
 	inline const DualQuat operator * (const MATH::Plane& p1, const MATH::Plane& p2)
 	{
 		DualQuat result;
-		result.w = p1.e1 * p2.e1 + p1.e2 * p2.e2 + p1.e3 * p2.e3;
+		result.real = p1.e1 * p2.e1 + p1.e2 * p2.e2 + p1.e3 * p2.e3;
 		result.e23 = p1.e2 * p2.e3 - p1.e3 * p2.e2;
 		result.e31 = p1.e3 * p2.e1 - p1.e1 * p2.e3;
 		result.e12 = p1.e1 * p2.e2 - p1.e2 * p2.e1;
@@ -119,7 +119,7 @@ namespace MATHEX {
 	inline const DualQuat operator * (const MATH::Vec4& p1, const MATH::Vec4& p2)
 	{
 		DualQuat result;
-		result.w = -p1.e123 * p2.e123;
+		result.real = -p1.e123 * p2.e123;
 		result.e23 = 0.0f;
 		result.e31 = 0.0f;
 		result.e12 = 0.0f;

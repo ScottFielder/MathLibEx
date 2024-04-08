@@ -29,15 +29,15 @@ namespace MATHEX {
 
 	// Now we are dotting the same type of things together, it returns just a float
 	inline float operator | (const MATH::Plane& p1, const MATH::Plane& p2) {
-		return (p1 * p2).w;
+		return (p1 * p2).real;
 	}
 
 	inline float operator | (const DualQuat& line1, const DualQuat& line2) {
-		return (line1 * line2).w;
+		return (line1 * line2).real;
 	}
 
 	inline float operator | (const MATH::Vec4& v1, const MATH::Vec4& v2) {
-		return (v1 * v2).w;
+		return (v1 * v2).real;
 	}
 }
 #endif
