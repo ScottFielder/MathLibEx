@@ -1,5 +1,7 @@
 #ifndef DUALQUAT_H
 #define DUALQUAT_H
+#include "Quaternion.h"
+using namespace MATH;
 
 /// A dual quaternion can handle rotations and translations. Contains 8 floats
 
@@ -8,6 +10,10 @@ namespace MATHEX {
 	private:
 		float  dq[8]; /// The DQ is the size of 2 Quaternions = 8 floats
 	public:
+		struct {
+			Quaternion rotation;
+			Quaternion translation;
+		};
 		struct {
 			float real; 
 			float e23;  /// This is like -i for a regular quaternion. Squares to -1
