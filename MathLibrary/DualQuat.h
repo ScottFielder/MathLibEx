@@ -52,6 +52,20 @@ namespace MATHEX {
 			return *this;
 		}
 
+		/// Now I can use the structure itself as an array.
+		/// When overloading the [] operator you need to declair one
+		/// to read the array and one to write to the array. 
+		///  Returns a const - the rvalue
+		inline const float operator [] (int index) const {
+			return *(m + index);
+		}
+
+		/// This one is for writing to the structure as if where an array 
+		/// it returns a modifiable lvalue
+		inline float& operator [] (int index) {
+			return *(m + index);
+		}
+
 		inline const DualQuat operator * (float c) const {
 			DualQuat result;
 			result.w = w * c;

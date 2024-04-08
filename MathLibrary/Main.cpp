@@ -73,7 +73,7 @@ void translateAlongLineTest();
 void rayPlaneTest();
 void dotTest();
 void dualQuatSlerpVectorTest();
-
+void dualQuatMatrixTest();
 /// Utility print() calls for glm to Scott's math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
 void glmPrintM3(glm::mat3  mat, const char* comment = nullptr);
@@ -93,6 +93,13 @@ int main(int argc, char* argv[]) {
 	dualQuatTest();
 }
 
+void dualQuatMatrixTest(){
+	glm::quat rotationQuaternion1 = glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 translationVector1(0.0f, 0.0f, 0.0f);
+	glm::dualquat glCombinned(rotationQuaternion1,translationVector1);
+	
+	/// As far as I can tell I'm stuck here
+}
 void dualQuatSlerpVectorTest() {
 	Vec3 initialVector(0, 0, 0);
 	Vec3 startTranslation(2, 0, 0);
@@ -304,7 +311,7 @@ void flectorTest() {
 }
 
 void dualQuatTest() {
-	/// 
+	/// Ok I'm not doing this right 
 	DualQuat identity;
 	identity.print("Identity of Umer's dual quaternion");
 	

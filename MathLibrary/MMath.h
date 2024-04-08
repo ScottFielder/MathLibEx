@@ -6,6 +6,7 @@
 #include "AxisAngle.h"
 #include "Euler.h"
 #include "Quaternion.h"
+#include "DQMath.h"
 namespace  MATH {
 
 	class MMath {
@@ -360,6 +361,11 @@ namespace  MATH {
 			//			-q.ijk.x,   q.ijk.y,   q.ijk.z,   q.w);
 			//return m1 * m2;
 
+		}
+
+		static const Matrix4 toMatrix4(const MATHEX::DualQuat& dq){
+			// Old school dual quaternion math gives us a nice way of building a transformation matrix
+			return MMath::translate(MATHEX::DQMath::getTranslation(dq)) * MMath::toMatrix4(MATHEX::DQMath::getRotation(dq));
 		}
 
 	};

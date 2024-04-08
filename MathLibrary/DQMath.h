@@ -148,11 +148,6 @@ namespace MATHEX {
 			return translate(getTranslation(dq));
 		}
 
-		static const MATH::Matrix4 toMatrix4(const DualQuat& dq)
-		{
-			// Old school dual quaternion math gives us a nice way of building a transformation matrix
-			return MATH::MMath::translate(getTranslation(dq)) * MATH::MMath::toMatrix4(getRotation(dq));
-		}
 
 		// Slerp from one translation and orientation to another translation and orientation
 		// Just like the regular quaternion slerp, but now we can include position too!
