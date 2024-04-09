@@ -4,12 +4,22 @@
 #include "VMath.h"
 #include "Matrix.h"
 
-///A quarternion can be written as a scalar plus a 3-vector (Vec3) component
+/// A quarternion can be written as a scalar plus a 3-vector (Vec3) component or
+/// in a geometric algebra way
 
 namespace  MATH {
-	struct Quaternion {
-		float w;
-		Vec3 ijk; /// These are the ijk components of the Quaternion 
+	union Quaternion {
+		struct {
+			float w;
+			Vec3 ijk; /// These are the ijk components of the Quaternion 
+		};
+
+		struct {
+			float real;
+			float e23;
+			float e31;
+			float e21;
+		};
 
 		/// Just a little utility to populate a quaternion
 		inline void set(float w_, float x_, float y_, float z_) {
