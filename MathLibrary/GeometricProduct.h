@@ -4,6 +4,10 @@
 #include "Flector.h"
 namespace MATHEX {
 
+	// Did your high school teacher say you cannot multiply points, lines, or planes together? Well, think again!
+	// Welcome to the geometric product: AB = A ^ B + A dot B
+	// WHY? https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Why_combine_things.pdf
+
 	// I wrote this out on paper. My wrist is still hurting.
 	// You don't need the brackets, it just helps my eyes
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_dual_quaternions.pdf

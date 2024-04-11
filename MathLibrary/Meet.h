@@ -5,10 +5,11 @@
 #include "Vector.h"
 namespace MATHEX {
 
-	/// The meet represents where two things "meet". Get it?
-	/// For example if you "meet" two planes, it gives you the line of intersection
-	/// It's written as a "^" in  math, so let's override that
-	/// More thoughts at the end of this file
+	// The meet represents where two things "meet". Get it?
+	// For example if you "meet" two planes, it gives you the line of intersection
+	// It's written as a "^" in  math, so let's override that
+	// WHY? https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Why_combine_things.pdf
+	// More thoughts at the end of this file
 
 	// A plane and a line meet at a point
 	inline const MATH::Vec4 operator ^ (const MATH::Plane& p, const DualQuat& q) {
@@ -60,5 +61,5 @@ namespace MATHEX {
 #endif
 
 /// The "meet" is the cross product on steroids. Remember A x A = 0?
-/// The meet (also known as the exterior product) does the same thing
+/// The meet (also known as the exterior product, the wedge, and the outer product) does the same thing
 /// It's the part of the geometric product where there are no repeating terms in the e's

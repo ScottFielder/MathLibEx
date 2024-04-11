@@ -4,10 +4,11 @@
 #include "VMath.h"
 namespace MATHEX {
 
-	/// Ahh, our old friend the dot product. It still means the same thing in geometric algebra plus some extra superpowers
-	/// The consensus in the GA community is to overload the pipe "|" operator for the dot product, so I'll go with that
-	/// https://bivector.net/tools.html?p=3&q=0&r=1
-	/// More thoughts at the end of this file
+	// Ahh, our old friend the dot product. It still means the same thing in geometric algebra plus some extra superpowers
+	// The consensus in the GA community is to overload the pipe "|" operator for the dot product, so I'll go with that
+	// https://bivector.net/tools.html?p=3&q=0&r=1
+	// WHY? https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Why_combine_things.pdf
+	// More thoughts at the end of this file
 
 	// A plane and a line dot to make another plane
 	// This new plane is orthogonal to the original plane and through the line!

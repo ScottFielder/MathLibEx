@@ -9,6 +9,7 @@ namespace MATHEX {
 
 	// The join represents when you "join" two things together. Get it?
 	// For example if you "join" two point, it gives you the line that goes through them
+	// WHY?     https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Why_combine_things.pdf
 	// More thoughts at the end of this file
 	
 	// Two points join to make a line
