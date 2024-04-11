@@ -151,7 +151,8 @@ namespace MATHEX {
 
 		// Slerp from one translation and orientation to another translation and orientation
 		// Just like the regular quaternion slerp, but now we can include position too!
-		// EXAMPLE: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Dual_quat_slerp.pdf
+		// EXAMPLE:   https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Dual_quat_slerp.pdf
+		// IN ACTION: https://youtu.be/deX-1AAbifA
 		static const DualQuat slerp(const DualQuat& start, const DualQuat& end, float t) {
 			// The slerp is written as 
 			// exp(t * log(end/start)) * start
