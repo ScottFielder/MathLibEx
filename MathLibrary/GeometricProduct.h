@@ -27,6 +27,7 @@ namespace MATHEX {
 			+ (a.e01 * b.e23) + (a.e02 * b.e31) + (a.e03 * b.e12) + (a.e0123 * b.real);
 		return result;
 	}
+	
 
 	// It's amazing that a plane and a point pops out when you multiply a dual quat with a Vec4 
 	// That's why we need the Flectors
@@ -120,8 +121,7 @@ namespace MATHEX {
 	// This one wasn't too bad to figure out on paper either, just end up with the infinite line 
 	// and a term for w
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_points.pdf
-	inline const DualQuat operator * (const MATH::Vec4& p1, const MATH::Vec4& p2)
-	{
+	inline const DualQuat operator * (const MATH::Vec4& p1, const MATH::Vec4& p2) {
 		DualQuat result;
 		result.real = -p1.e123 * p2.e123;
 		result.e23 = 0.0f;

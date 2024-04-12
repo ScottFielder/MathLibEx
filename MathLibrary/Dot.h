@@ -11,34 +11,55 @@ namespace MATHEX {
 	// More thoughts at the end of this file
 
 	// A plane and a line dot to make another plane
-	// This new plane is orthogonal to the original plane and through the line!
-	inline const MATH::Plane operator | (const MATH::Plane& p, const DualQuat& line) {
+	// This new plane is orthogonal to the original plane and through the line
+	inline const MATH::Plane dot(const MATH::Plane& p, const DualQuat& line) {
 		return (p * line).plane;
+	}
+	inline const MATH::Plane operator | (const MATH::Plane& p, const DualQuat& line) {
+		return dot(p, line);
 	}
 
 	// A plane and a point dot to make a line
 	// This new line is orthogonal to the original plane and through the point!
-	inline const DualQuat operator | (const MATH::Plane& p, const MATH::Vec4& v) {
+	inline const DualQuat dot(const MATH::Plane& p, const MATH::Vec4& v) {
 		return p * MATH::VMath::inverse(v);	
+	}
+	inline const DualQuat operator | (const MATH::Plane& p, const MATH::Vec4& v) {
+		return dot(p, v);
 	}
 
 	// A line and a point dot to make a plane
 	// This new plane is orthogonal to the original line and through the point!
-	inline const MATH::Plane operator | (const DualQuat& line, const MATH::Vec4& v) {
+	inline const MATH::Plane dot (const DualQuat& line, const MATH::Vec4& v) {
 		return (line * v).plane;
 	}
+	inline const MATH::Plane operator | (const DualQuat& line, const MATH::Vec4& v){
+		return dot (line, v);
+	}
+
 
 	// Now we are dotting the same type of things together, it returns just a float
-	inline float operator | (const MATH::Plane& p1, const MATH::Plane& p2) {
+	inline float dot(const MATH::Plane& p1, const MATH::Plane& p2) {
 		return (p1 * p2).real;
 	}
-
-	inline float operator | (const DualQuat& line1, const DualQuat& line2) {
-		return (line1 * line2).real;
+	inline float operator | (const MATH::Plane& p1, const MATH::Plane& p2){
+		return dot(p1, p2);
 	}
 
-	inline float operator | (const MATH::Vec4& v1, const MATH::Vec4& v2) {
+
+	inline float dot(const DualQuat& line1, const DualQuat& line2) {
+		return (line1 * line2).real;
+	}
+	inline float operator | (const DualQuat& line1, const DualQuat& line2){
+		return dot(line1, line2);
+	}
+
+
+	inline float dot(const MATH::Vec4& v1, const MATH::Vec4& v2) {
 		return (v1 * v2).real;
+	}
+	inline float operator | (const MATH::Vec4& v1, const MATH::Vec4& v2) {
+		return dot(v1, v2);
 	}
 }
 #endif

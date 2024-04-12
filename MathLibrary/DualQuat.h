@@ -12,7 +12,7 @@ namespace MATHEX {
 	public:
 		struct {
 			Quaternion rotation;
-			Quaternion translation;
+			float dx,dy,dz,dw;
 		};
 
 		struct {

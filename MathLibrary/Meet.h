@@ -12,7 +12,7 @@ namespace MATHEX {
 	// More thoughts at the end of this file
 
 	// A plane and a line meet at a point
-	inline const MATH::Vec4 operator ^ (const MATH::Plane& p, const DualQuat& q) {
+	inline const MATH::Vec4 meet (const MATH::Plane& p, const DualQuat& q) {
 		MATH::Vec4 result;
 		result.e032 = -p.e0 * q.e23 + p.e2 * q.e03 - p.e3 * q.e02;
 		result.e013 = -p.e0 * q.e31 - p.e1 * q.e03 + p.e3 * q.e01;
@@ -20,15 +20,20 @@ namespace MATHEX {
 		result.e123 = p.e1 * q.e23 + p.e2 * q.e31 + p.e3 * q.e12;
 		return result;
 	}
+	inline const MATH::Vec4 operator ^ (const MATH::Plane& p, const DualQuat& q) {
+		return meet(p, q);
+	}
 
 	// TODO: Check I can flip the operands this easily. I got this idea from the Klein library
-	inline const MATH::Vec4 operator ^ (const DualQuat& q, const MATH::Plane& p) {
+	inline const MATH::Vec4 meet(const DualQuat& q, const MATH::Plane& p) {
 		return p ^ q;
+	}
+	inline const MATH::Vec4 operator ^ (const DualQuat& q, const MATH::Plane& p) {
+		return meet(q, p);
 	}
 
 	// A plane and a plane meet at a line
-	inline const DualQuat operator ^ (const MATH::Plane& p1, const MATH::Plane& p2)
-	{
+	inline const DualQuat meet (const MATH::Plane& p1, const MATH::Plane& p2) {
 		DualQuat result;
 		result.real = 0.0f;
 		result.e23 = p1.e2 * p2.e3 - p1.e3 * p2.e2;
@@ -40,11 +45,13 @@ namespace MATHEX {
 		result.e0123 = 0.0f;
 		return result;
 	}
+	inline const DualQuat operator ^ (const MATH::Plane& p1, const MATH::Plane& p2) {
+		return meet (p1, p2);
+	}
 
 	// A point and a plane meet at a dual quaternion (only the e0123 part survives)
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Meet_point_with_plane.pdf
-	inline const DualQuat operator ^ (const MATH::Vec4& v, const MATH::Plane& p)
-	{
+	inline const DualQuat meet(const MATH::Vec4& v, const MATH::Plane& p) {
 		DualQuat result;
 		result.real = 0.0f;
 		result.e23 = 0.0f;
@@ -55,6 +62,9 @@ namespace MATHEX {
 		result.e03 = 0.0f;
 		result.e0123 = -v.e032 * p.e1 - v.e013 * p.e2 - v.e021 * p.e3 - v.e123 * p.e0;
 		return result;
+	}
+	inline const DualQuat operator ^ (const MATH::Vec4& v, const MATH::Plane& p){
+		return meet(v,p);
 	}
 
 }

@@ -7,7 +7,7 @@ namespace MATHEX {
 
 	// The Poincare duality returns whatever e basis vectors are missing
 	// So basically whatever it is not. The not operator ! seems like a good option here
-	inline const DualQuat operator ! (DualQuat dq) {
+	inline const DualQuat PoincareDuality(const DualQuat dq) {
 		DualQuat result;
 		result.real = dq.e0123;
 		result.e23 = dq.e01;
@@ -19,9 +19,13 @@ namespace MATHEX {
 		result.e0123 = dq.real;
 		return result;
 	}
+	inline const DualQuat operator ! (DualQuat dq) {
+		return  PoincareDuality(dq);
+	}
+
 
 	// Its crazy, the dual of a point returns a plane
-	inline const MATH::Plane operator ! (const MATH::Vec4& point){
+	inline const MATH::Plane PoincareDuality(const MATH::Vec4& point){
 		MATH::Plane result;
 		result.e0 = point.e123;
 		result.e1 = point.e032;
@@ -29,15 +33,21 @@ namespace MATHEX {
 		result.e3 = point.e021;
 		return result;
 	}
+	inline const MATH::Plane operator ! (const MATH::Vec4& point){
+		return PoincareDuality(point);
+	}
 
 	// The dual of a plane is a point. The world makes sense
-	inline const MATH::Vec4 operator ! (const MATH::Plane& plane) {
+	inline const MATH::Vec4 PoincareDuality (const MATH::Plane& plane) {
 		MATH::Vec4 result;
 		result.e032 = plane.e1;
 		result.e013 = plane.e2;
 		result.e021 = plane.e3;
 		result.e123 = plane.e0;
 		return result;
+	}
+	inline const MATH::Vec4 operator ! (const MATH::Plane& plane) {
+		return  PoincareDuality (plane);
 	}
 }
 #endif
