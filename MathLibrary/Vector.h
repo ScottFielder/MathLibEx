@@ -193,7 +193,7 @@ namespace  MATH {
 	/// Vec4 definitions		
 	union Vec4 {
 		struct {
-			float     x,    y,    z,    w;
+			float x, y, z, w;
 		};
 		struct {
 			float  e032, e013, e021, e123;
@@ -204,8 +204,8 @@ namespace  MATH {
 		}
 
 		/// Here's a set of constructors
-		Vec4():x(0.0f), y(0.0f), z(0.0f), w(0.0f){}
-		Vec4( float x_, float y_, float z_, float w_):x(x_),y(y_),z(z_),w(w_){} 
+		Vec4(): x(0.0f), y(0.0f), z(0.0f), w(0.0f){}
+		Vec4( float x_, float y_, float z_, float w_): x(x_),y(y_),z(z_),w(w_){} 
 		Vec4( const Vec4& v ): x(v.x), y(v.y), z(v.z), w(v.w) {}
 		Vec4(const Vec3& v, const float w_): x(v.x), y(v.y), z(v.z), w(w_){}
 		Vec4( const Vec3& v ) :x(v.x), y(v.y), z(v.z), w(1.0f){}
