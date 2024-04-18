@@ -69,8 +69,6 @@ namespace MATH {
 			return(mag(r));
 		}
 
-		
-
 		/// This is a basic Linear Interpolation function.  It takes v1 and moves it 
 		/// to v2 in a linear fashion based on the value of t which goes from 
 		/// 0.0 - 1.0.  This is a simple example of a parametric equation. The parameter
@@ -83,6 +81,17 @@ namespace MATH {
 		static Vec4 inverse(const Vec4& v) {
 			// Flip all the signs, except for w
 			return Vec4(-v.x, -v.y, -v.z, v.w);
+		}
+
+		/// Return a Vec4 with the w component divided out
+		static Vec4 perspectiveDivide(const Vec4& v) {
+#ifdef _DEBUG  /// If in debug mode let's worry about divide by zero or nearly zero!!! 	
+			if (fabs(v.w) < VERY_SMALL) {
+				std::string errorMsg = __FILE__ + __LINE__;
+				throw errorMsg.append(": Divide by nearly zero! ");
+			}
+#endif
+			return Vec4(v.x / v.w, v.y / v.w, v.z / v.w, 1.0f);
 		}
 	};
 
