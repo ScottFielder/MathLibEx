@@ -23,7 +23,6 @@ namespace MATHEX {
 		return  PoincareDuality(dq);
 	}
 
-
 	// Its crazy, the dual of a point returns a plane
 	inline const MATH::Plane PoincareDuality(const MATH::Vec4& point){
 		MATH::Plane result;

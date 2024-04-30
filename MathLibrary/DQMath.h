@@ -249,6 +249,7 @@ namespace MATHEX {
 
 		// Oriented distance between a point and a line (sign tells you which side of the line)
 		// TODO: Which file does this belong inside?
+		// EXAMPLE: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Oriented_distance_point_and_line.pdf
 		static const float orientedDist(const MATH::Vec4& v, const DualQuat& q) {
 			// First normalize the point and plane 
 			MATH::Vec4  vNormalized = VMath::perspectiveDivide(v);
