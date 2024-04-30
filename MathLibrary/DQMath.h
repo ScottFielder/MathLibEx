@@ -256,8 +256,19 @@ namespace MATHEX {
 			DualQuat    qNormalized = normalize(q);
 			// Then use the formula for the oriented distance from https://bivector.net/3DPGA.pdf
 			// TODO (UN): Is the magnitude in the formula page just one of the e1, e2, or e3 parts??
-			Plane whatIsThis = join(qNormalized, vNormalized); // just debugging my thinking here
-			return (vNormalized & qNormalized).e3;
+			Plane plane = join(vNormalized, qNormalized); 
+			// TODO (UN): This would be nice to have in PMath. 
+			float dist = sqrt(plane.e1 * plane.e1 + plane.e2 * plane.e2 + plane.e3 * plane.e3);
+			// This is oriented distance, so choose the sign on e1, e2 or e3
+			if(fabs(plane.e1) > VERY_SMALL) {
+				return plane.e1 > 0.0f ? dist : -dist;
+			}
+			else if(fabs(plane.e2) > VERY_SMALL) {
+				return plane.e2 > 0.0f ? dist : -dist;
+			}
+			else {
+				return plane.e3 > 0.0f ? dist : -dist;
+			}
 		}
 
 	};
