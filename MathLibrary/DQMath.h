@@ -4,8 +4,8 @@
 #include "Vector.h"
 #include "QMath.h"
 #include "GeometricProduct.h"
-#include "Dot.h"
 #include "Meet.h"
+#include "PMath.h"
 
 namespace MATHEX {
 
@@ -237,12 +237,11 @@ namespace MATHEX {
 		}
 
 		// Oriented distance between a point and a plane (sign tells you which side of the plane)
+		// TODO: Which file does this belong inside?
 		static const float orientedDist(const MATH::Vec4& v, const MATH::Plane& p) {
 			// First normalize the point and plane 
-			// TODO (UN) 
-			// Think whether we should make a method for the Vec4 class to do this, as it's dividing by w rather than what we usually think of normalizing a vector
-			MATH::Vec4  vNormalized = v / sqrt(fabs(v | v));
-			MATH::Plane pNormalized = p / sqrt(fabs(p | p));
+			MATH::Vec4  vNormalized = VMath::perspectiveDivide(v);
+			MATH::Plane pNormalized = PMath::normalize(p);
 			// Then use the formula for the oriented distance from https://bivector.net/3DPGA.pdf
 			return (vNormalized ^ pNormalized).e0123;
 		}

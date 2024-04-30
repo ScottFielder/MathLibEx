@@ -25,8 +25,8 @@ namespace MATHEX {
 	// A plane and a point dot to make a line
 	// This new line is orthogonal to the original plane and through the point!
 	inline const DualQuat dot(const MATH::Plane& p, const MATH::Vec4& v) {
-		// Extract grade 2 part of the geometric product
-		return DQMath::extractLine(p * v);	
+		// The geometric product returns a dual quaternion, but we only want the grade 2 part
+		return DQMath::extractLine(p * v);
 	}
 	inline const DualQuat operator | (const MATH::Plane& p, const MATH::Vec4& v) {
 		return dot(p, v);
