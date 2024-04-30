@@ -254,7 +254,9 @@ namespace MATHEX {
 			MATH::Vec4  vNormalized = VMath::perspectiveDivide(v);
 			DualQuat    qNormalized = normalize(q);
 			// Then use the formula for the oriented distance from https://bivector.net/3DPGA.pdf
-			return (vNormalized & qNormalized).magGrade1();
+			// TODO (UN): Is the magnitude in the formula page just one of the e1, e2, or e3 parts??
+			Plane whatIsThis = join(qNormalized, vNormalized); // just debugging my thinking here
+			return (vNormalized & qNormalized).e3;
 		}
 
 	};
