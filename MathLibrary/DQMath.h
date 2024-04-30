@@ -6,6 +6,7 @@
 #include "GeometricProduct.h"
 #include "Meet.h"
 #include "PMath.h"
+#include "Join.h"
 
 namespace MATHEX {
 
@@ -245,6 +246,17 @@ namespace MATHEX {
 			// Then use the formula for the oriented distance from https://bivector.net/3DPGA.pdf
 			return (vNormalized ^ pNormalized).e0123;
 		}
+
+		// Oriented distance between a point and a line (sign tells you which side of the line)
+		// TODO: Which file does this belong inside?
+		static const float orientedDist(const MATH::Vec4& v, const DualQuat& q) {
+			// First normalize the point and plane 
+			MATH::Vec4  vNormalized = VMath::perspectiveDivide(v);
+			DualQuat    qNormalized = normalize(q);
+			// Then use the formula for the oriented distance from https://bivector.net/3DPGA.pdf
+			return (vNormalized & qNormalized).magGrade1();
+		}
+
 	};
 }
 #endif
