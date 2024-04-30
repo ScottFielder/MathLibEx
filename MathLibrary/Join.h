@@ -16,6 +16,7 @@ namespace MATHEX {
 	// Look how easy that is now that we have the Poincare Duality (!) and the Meet (^)
 	// EXAMPLE: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Example_joining_points.pdf
 	inline const DualQuat join(const MATH::Vec4& p1, const MATH::Vec4& p2) {
+		// The mess below means: PoincareDuality(meet(PoincareDuality(p1), PoincareDuality(p2)))
 		return !(!p1 ^ !p2);
 	}
 	inline const DualQuat operator & (const MATH::Vec4& p1, const MATH::Vec4& p2) {
