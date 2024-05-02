@@ -40,7 +40,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:/GameDev/OpenGL/include;$(IncludePath)</IncludePath>
+    <IncludePath>C:/GameDev/OpenGL/include;C:\GameDev\MathLibrary\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\GameDev\OpenGL\include;$(IncludePath)</IncludePath>
@@ -74,38 +74,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Fourier.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Randomizer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AAMath.h" />
-    <ClInclude Include="AxisAngle.h" />
     <ClInclude Include="Dot.h" />
     <ClInclude Include="DQMath.h" />
     <ClInclude Include="DualQuat.h" />
-    <ClInclude Include="EMath.h" />
-    <ClInclude Include="Euler.h" />
     <ClInclude Include="Flector.h" />
-    <ClInclude Include="Fourier.h" />
     <ClInclude Include="GeometricProduct.h" />
-    <ClInclude Include="Hash.h" />
     <ClInclude Include="Join.h" />
-    <ClInclude Include="Matrix.h" />
     <ClInclude Include="Meet.h" />
-    <ClInclude Include="MMath.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PMath.h" />
     <ClInclude Include="PoincareDuality.h" />
-    <ClInclude Include="QMath.h" />
     <ClInclude Include="Quadratic.h" />
-    <ClInclude Include="Quaternion.h" />
-    <ClInclude Include="Randomizer.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RMath.h" />
-    <ClInclude Include="Sphere.h" />
-    <ClInclude Include="Vector.h" />
-    <ClInclude Include="VMath.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

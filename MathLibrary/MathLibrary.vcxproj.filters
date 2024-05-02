@@ -13,102 +13,51 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\MathEx Headers">
-      <UniqueIdentifier>{5b29e94a-01ae-498b-9f79-1fb54b83d0d4}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Fourier.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Randomizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Fourier.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Matrix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="QMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Quaternion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Randomizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Euler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Plane.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AxisAngle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AAMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Hash.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ray.h">
-      <Filter>Header Files\MathEx Headers</Filter>
-    </ClInclude>
     <ClInclude Include="RMath.h">
-      <Filter>Header Files\MathEx Headers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Quadratic.h">
-      <Filter>Header Files\MathEx Headers</Filter>
+    <ClInclude Include="Dot.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector.h">
+    <ClInclude Include="DQMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DualQuat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Flector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GeometricProduct.h">
-      <Filter>Header Files\MathEx Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Flector.h">
-      <Filter>Header Files\MathEx Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="DualQuat.h">
-      <Filter>Header Files\MathEx Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="DQMath.h">
-      <Filter>Header Files\MathEx Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Meet.h">
-      <Filter>Header Files\MathEx Headers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Join.h">
-      <Filter>Header Files\MathEx Headers</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Meet.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PoincareDuality.h">
-      <Filter>Header Files\MathEx Headers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Dot.h">
-      <Filter>Header Files\MathEx Headers</Filter>
+    <ClInclude Include="Quadratic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

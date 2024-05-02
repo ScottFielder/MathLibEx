@@ -5,15 +5,14 @@
 #include <fstream>
 #include <algorithm> 
 
-#include "MMath.h"
-#include "QMath.h"
-#include "EMath.h"
+#include <MMath.h>
+#include <QMath.h>
+#include <EMath.h>
+#include <AAMath.h>
+#include <Sphere.h>
+#include <Hash.h>
+
 #include "PMath.h"
-#include "AAMath.h"
-#include "Sphere.h"
-#include "Fourier.h"
-#include "Randomizer.h"
-#include "Hash.h"
 #include "Quadratic.h"
 #include "RMath.h"
 #include "DualQuat.h"
@@ -41,7 +40,7 @@
 
 
 
-void FFT_Test();
+/// MathLib tests
 void LookAtTest();
 void inverseTest();
 void UnOrthoTest();
@@ -51,11 +50,13 @@ void multiplyMatrixTest();
 void viewportNDCTest();
 void moveCopyConstructors();
 void rotationIsOrthogonal();
-void planeTest();
 void quaternionTest();
 void hashTest();
 void determinantTest();
 void slerpTest();
+
+/// MathLibEx tests
+void planeTest();
 void QuadraticTest();
 void RaySphereTest();
 void RayTest();
@@ -74,7 +75,7 @@ void rayPlaneTest();
 void dotTest();
 void dualQuatSlerpVectorTest();
 void dualQuatMatrixTest();
-/// Utility print() calls for glm to Scott's math library format 
+/// Utility print() calls for glm to math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
 void glmPrintM3(glm::mat3  mat, const char* comment = nullptr);
 
@@ -90,7 +91,25 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
+	planeTest();
+	QuadraticTest();
+	RaySphereTest();
+	RayTest();
 	dualQuatTest();
+	flectorTest();
+	intersectionTest();
+	poincareDualityTest();
+	meetTest();
+	joinTest();
+	dualQuatSlerpTest();
+	rotateTest();
+	gradeTest();
+	normalizeLineTest();
+	translateAlongLineTest();
+	rayPlaneTest();
+	dotTest();
+	dualQuatSlerpVectorTest();
+	dualQuatMatrixTest();
 }
 
 void dualQuatMatrixTest(){
@@ -675,17 +694,6 @@ void rotationIsOrthogonal() {
 	printf("%f\n", VMath::dot(v3, v3));
 	printf("If all the values are zero, the matrix is orthogonal\n");
 }
-void randomizerTest() {
-	Randomizer r;
-	ofstream myfile;
-	myfile.open("data.csv");
-	for (double i = 0.0; i < 512.0; i++) {
-		double val = r.box_muller(0.0, 2.0);
-		myfile << i << "," << val << "\n";
-	}
-	myfile.close();
-}
-
 
 void moveCopyConstructors() {
 	
@@ -796,90 +804,7 @@ void LookAtTest(){
 }
 
 
-void FFT_Test(){
-#define SAMPLE_SIZE 512
-	FILE *fp;
 
-	float data[2 * SAMPLE_SIZE];
-	float orig_data[2 * SAMPLE_SIZE];
-	float transformed[2 * SAMPLE_SIZE];
-
-	/// Change this as you will, keep it under the Nyquist frequency (1/2*step)
-	float freq = 2.0f;
-	float theta = 0.0f;
-	float step = 2.0f * M_PI / SAMPLE_SIZE;
-
-	Randomizer r; /// I'll use this to create some noise
-
-	//////////////////////////////////////////////////////////////////
-	/// Create a data sample SAMPLE_SIZE long times 2 (real and imaginary components)
-	for (int i = 0; i < 2 * SAMPLE_SIZE; i += 2){
-		data[i] = cos(theta * freq) + 0.7f*cos(theta * freq * 3) + (float) r.box_muller(0.0, 0.5); /// real
-		data[i + 1] = 0.0f;									  ///img
-		theta += step;
-	}
-	//////////////////////////////////////////////////////////////////
-
-	/// Just make a copy of the original data
-	memcpy(orig_data, data, 2 * SAMPLE_SIZE * sizeof(float));
-
-
-	/// Now do the FFT on the noisy data
-	Fourier::fft(data, 2 * SAMPLE_SIZE, Fourier::DIRECTION::FORWARD);
-
-	/// Keep a copy of the tranformed data
-	memcpy(transformed, data, 2 * SAMPLE_SIZE * sizeof(float));
-
-	//////////////////////////////////////////////////////////////////
-	/// A cheezy version of a filter
-	//for (int i = 0; i < 2 * SAMPLE_SIZE; i++){
-	//if (abs(data[i] < 100.0f)) data[i] = 0.0f;
-	//}
-
-	//////////////////////////////////////////////////////////////////
-	/// Now do the reverse transform then renormalize
-	Fourier::fft(data, 2 * SAMPLE_SIZE, Fourier::DIRECTION::REVERSE);
-
-	/// Re-normalize the data
-	for (int i = 0; i < 2 * SAMPLE_SIZE; i++){
-		data[i] *= 1.0f / float(SAMPLE_SIZE);
-	}
-
-	//////////////////////////////////////////////////////////////////
-	/// Write it all out in files
-	//////////////////////////////////////////////////////////////////
-	if (fopen_s(&fp, "0.orig_data.csv", "w") != 0){
-		printf("Can't open file\n");
-		return;
-	}
-	for (int i = 0; i < 2 * SAMPLE_SIZE; i += 2){
-		fprintf(fp, "%f, %f\n", orig_data[i], orig_data[i + 1]);
-	}
-	fclose(fp);
-
-
-
-	if (fopen_s(&fp, "1.transformed.csv", "w") != 0){
-		printf("Can't open file\n");
-		return;
-	}
-	for (int i = 0; i < 2 * SAMPLE_SIZE; i += 2){
-		fprintf(fp, "%f, %f\n", transformed[i], transformed[i + 1]);
-	}
-	fclose(fp);
-
-
-	if (fopen_s(&fp, "2.orig&reverse.csv", "w") != 0){
-		printf("Can't open file\n");
-		return;
-	}
-	for (int i = 0; i < 2 * SAMPLE_SIZE; i += 2){
-		fprintf(fp, "%f, %f, %f, %f\n", orig_data[i], orig_data[i + 1], data[i], data[i + 1]);
-	}
-	fclose(fp);
-
-
-}
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// These are print statements for glm - they don't have them  
 ///////////////////////////////////////////////////////////////////////////////////////////////
