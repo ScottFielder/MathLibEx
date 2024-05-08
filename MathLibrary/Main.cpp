@@ -1,5 +1,5 @@
 /// This is the test bed for my math library - SSF
-/// This is currently version 1.30 - SSF Jan 2023
+/// This is currently version 1.40 - SSF May 2024
 
 #include <iostream>
 #include <fstream>
