@@ -23,6 +23,7 @@
 #include "Meet.h"
 #include "Join.h"
 #include "Dot.h"
+#include "MMathEx.h"
 
 
 #include <glm/vec3.hpp> /// glm::vec3
@@ -91,7 +92,9 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	planeTest();
+	DualQuat dq;
+	Matrix4 m = MMath::toMatrix4(dq);
+	/*planeTest();
 	QuadraticTest();
 	RaySphereTest();
 	RayTest();
@@ -109,7 +112,7 @@ int main(int argc, char* argv[]) {
 	rayPlaneTest();
 	dotTest();
 	dualQuatSlerpVectorTest();
-	dualQuatMatrixTest();
+	dualQuatMatrixTest();*/
 }
 
 void dualQuatMatrixTest(){
