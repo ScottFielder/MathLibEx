@@ -23,6 +23,7 @@
 #include "Meet.h"
 #include "Join.h"
 #include "Dot.h"
+#include "Point2d.h"
 
 #include <glm/vec3.hpp> /// glm::vec3
 #include <glm/vec4.hpp> /// glm::vec4, glm::ivec4
@@ -71,6 +72,9 @@ void rayPlaneTest();
 void dotTest();
 void dualQuatSlerpVectorTest();
 void dualQuatMatrixTest();
+void point2dTest();
+
+
 /// Utility print() calls for glm to math library format 
 void glmPrintM4(glm::mat4  mat, const char* comment = nullptr);
 void glmPrintM3(glm::mat3  mat, const char* comment = nullptr);
@@ -87,25 +91,48 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	planeTest();
-	QuadraticTest();
-	RaySphereTest();
-	RayTest();
-	dualQuatTest();
-	flectorTest();
-	intersectionTest();
-	poincareDualityTest();
-	meetTest();
-	joinTest();
-	dualQuatSlerpTest();
-	rotateTest();
-	gradeTest();
-	normalizeLineTest();
-	translateAlongLineTest();
-	rayPlaneTest();
-	dotTest();
-	dualQuatSlerpVectorTest();
-	dualQuatMatrixTest();
+	point2dTest();
+	//planeTest();
+	//QuadraticTest();
+	//RaySphereTest();
+	//RayTest();
+	//dualQuatTest();
+	//flectorTest();
+	//intersectionTest();
+	//poincareDualityTest();
+	//meetTest();
+	//joinTest();
+	//dualQuatSlerpTest();
+	//rotateTest();
+	//gradeTest();
+	//normalizeLineTest();
+	//translateAlongLineTest();
+	//rayPlaneTest();
+	//dotTest();
+	//dualQuatSlerpVectorTest();
+	//dualQuatMatrixTest();
+}
+
+void point2dTest() {
+	Point2d p1;
+	p1.print("Point2d p1");
+	Point2d p2(1.0f, 2.0f, 1.0f);
+	p2.print("Point2d p2(1.0f, 2.0f, 1.0f)");
+	p1 = p2;
+	p1.print("p1 = p2");
+	Point2d p3 = p1 + p2;
+	p3.print("p3 = p1 + p2");
+	p3 /= 2.0f;
+	p3.print("p3 /= 2.0f");
+	Point2d p4(p3);
+	p4.print("Point2d p4(p3)");
+	p4 *= 2.0f;
+	p4.print("p4 *= 2.0f");
+	Point2d p5 = -p4;
+	p5.print("Point2d p5 = -p4");
+	p5.e20 = 7.0f;
+	p5.print("p5.e20 = 7.0f");
+
 }
 
 void dualQuatMatrixTest(){
