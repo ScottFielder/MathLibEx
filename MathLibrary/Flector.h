@@ -5,8 +5,8 @@
 // And that is jargon for a combination of rotation & reflection and/or translation & reflection
 // Think handclap and footprints
 
+#include <Vector.h>
 #include "Plane.h"
-#include "Vector.h"
 
 namespace MATHEX {
 	struct Flector {

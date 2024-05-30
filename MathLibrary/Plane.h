@@ -1,8 +1,6 @@
 #ifndef PLANE_H
 #define PLANE_H
-#include <iostream>
-#include "VMath.h"
-
+#include <VMath.h>
 
 namespace  MATH {
 	union Plane {

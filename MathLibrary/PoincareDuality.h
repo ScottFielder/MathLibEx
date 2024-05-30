@@ -1,8 +1,8 @@
 #ifndef POINCAREDUALITY_H
 #define POINCAREDUALITY_H
+#include <Vector.h>
 #include "DualQuat.h"
 #include "Plane.h"
-#include "Vector.h"
 namespace MATHEX {
 
 	// The Poincare duality returns whatever e basis vectors are missing

@@ -1,9 +1,9 @@
 #ifndef PMATH_H
 #define PMATH_H
+#include <cmath>
 #include "Plane.h"
 #include "DualQuat.h"
 #include "Meet.h"
-#include <cmath>
 namespace MATH {
 	class PMath {
 	public:

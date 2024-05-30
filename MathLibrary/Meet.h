@@ -1,8 +1,8 @@
 #ifndef MEET_H
 #define MEET_H
+#include <Vector.h>
 #include "DualQuat.h"
 #include "Plane.h"
-#include "Vector.h"
 namespace MATHEX {
 
 	// The meet represents where two things "meet". Get it?

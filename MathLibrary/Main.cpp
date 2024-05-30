@@ -24,7 +24,6 @@
 #include "Join.h"
 #include "Dot.h"
 
-
 #include <glm/vec3.hpp> /// glm::vec3
 #include <glm/vec4.hpp> /// glm::vec4, glm::ivec4
 #include <glm/mat4x4.hpp> /// glm::mat4
@@ -36,9 +35,6 @@
 #include <glm/gtx/dual_quaternion.hpp> 
 
 #include <glm/gtx/hash.hpp>
-
-
-
 
 /// MathLib tests
 void LookAtTest();

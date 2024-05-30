@@ -1,8 +1,8 @@
 #ifndef JOIN_H
 #define JOIN_H
+#include <Vector.h>
 #include "DualQuat.h"
 #include "Plane.h"
-#include "Vector.h"
 #include "PoincareDuality.h"
 #include "Meet.h"
 namespace MATHEX {

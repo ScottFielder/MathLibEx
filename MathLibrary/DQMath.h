@@ -1,13 +1,13 @@
 #ifndef DQMATH_H
 #define DQMATH_H
+#include <Vector.h>
+#include <QMath.h>
+#include <MMath.h>
 #include "DualQuat.h"
-#include "Vector.h"
-#include "QMath.h"
 #include "GeometricProduct.h"
 #include "Meet.h"
 #include "PMath.h"
 #include "Join.h"
-#include <MMath.h>
 
 namespace MATHEX {
 

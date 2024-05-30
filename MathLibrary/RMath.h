@@ -1,10 +1,10 @@
 #ifndef RMATH_H
 #define RMATH_H
-#include "VMath.h"
+#include <VMath.h>
+#include <Sphere.h>
 #include "Ray.h"
 #include "Plane.h"
 #include "Quadratic.h"
-#include "Sphere.h"
 namespace MATHEX {
     using namespace MATH;
     class RMath {

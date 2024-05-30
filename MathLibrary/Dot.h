@@ -1,7 +1,7 @@
 #ifndef DOT_H
 #define DOT_H
+#include <VMath.h>
 #include "DQMath.h"
-#include "VMath.h"
 namespace MATHEX {
 
 	// Ahh, our old friend the dot product. It still means the same thing in geometric algebra plus some extra superpowers

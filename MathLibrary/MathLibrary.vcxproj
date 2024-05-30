@@ -84,7 +84,6 @@
     <ClInclude Include="GeometricProduct.h" />
     <ClInclude Include="Join.h" />
     <ClInclude Include="Meet.h" />
-    <ClInclude Include="MMathEx.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PMath.h" />
     <ClInclude Include="PoincareDuality.h" />

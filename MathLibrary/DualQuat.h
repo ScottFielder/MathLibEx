@@ -1,6 +1,6 @@
 #ifndef DUALQUAT_H
 #define DUALQUAT_H
-#include "Quaternion.h"
+#include <Quaternion.h>
 using namespace MATH;
 
 /// A dual quaternion can handle rotations and translations. Contains 8 floats
