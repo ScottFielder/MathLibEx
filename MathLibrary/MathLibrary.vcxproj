@@ -87,6 +87,7 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PMath.h" />
     <ClInclude Include="PoincareDuality.h" />
+    <ClInclude Include="Point2d.h" />
     <ClInclude Include="Quadratic.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RMath.h" />
