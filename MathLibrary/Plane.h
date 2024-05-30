@@ -6,7 +6,7 @@
 
 namespace  MATH {
 	union Plane {
-		struct { /// Standard Euclidean definition  
+		struct { /// Standard Euclidean definition ax + by + cz - d = 0 
 			float x,y,z,d;
 		};
 
@@ -17,7 +17,7 @@ namespace  MATH {
 
 		struct {
 			Vec3 n;
-			float distance;  /// Distance from the orgin along the normal;
+			float negativeDist;  /// Negative signed distance from the orgin along the normal;
 		};
 
 
@@ -29,8 +29,8 @@ namespace  MATH {
 		/// Here's a set of constructors:
 		/// If the plane is defined by a normal, 
 		/// the equation of a Plane is ax + by + cz - d = 0; where 
-		/// a,b,c are the values of the normal n <a,b,c> and d is the 
-		/// distance from the origin to the plane
+		/// a,b,c are the values of the normal n <a,b,c> and the -d part is the 
+		/// negative signed distance from the origin to the plane
 		Plane(Vec3 n, float d) {
 			set(n.x, n.y, n.z, d);
 
@@ -47,12 +47,13 @@ namespace  MATH {
 		}
 
 		/// If the plane is defined by three points v0, v1, v2 
-		/// then the equation of a Plane is Ax + By + Cz + D = 0.
+		/// then the equation of a Plane is ax + by + cz - d = 0.
 		Plane(const Vec3& v0, const Vec3& v1, const Vec3& v2) {
 			Vec3 a = v1 - v0;
 			Vec3 b = v2 - v0;
 			Vec3 n = VMath::normalize(VMath::cross(a, b));
-			set(n.x, n.y, n.z, VMath::dot(n, v0));
+			float signedDistance = VMath::dot(n, v0);
+			set(n.x, n.y, n.z, -signedDistance);
 		}
 
 		/// A copy constructor
