@@ -14,39 +14,39 @@ namespace MATHEX {
 	// A plane and a line dot to make another plane
 	// This new plane is orthogonal to the original plane and through the line
 	// TODO (UN): Do I need to code up the opposite order for the dot product? Does it matter?
-	inline const MATH::Plane dot(const MATH::Plane& p, const DualQuat& line) {
+	inline const Plane dot(const Plane& p, const DualQuat& line) {
 		// Extract grade 1 part of the geometric product
 		return (p * line).plane;
 	}
-	inline const MATH::Plane operator | (const MATH::Plane& p, const DualQuat& line) {
+	inline const Plane operator | (const Plane& p, const DualQuat& line) {
 		return dot(p, line);
 	}
 
 	// A plane and a point dot to make a line
 	// This new line is orthogonal to the original plane and through the point!
-	inline const DualQuat dot(const MATH::Plane& p, const MATH::Vec4& v) {
+	inline const DualQuat dot(const Plane& p, const MATH::Vec4& v) {
 		// The geometric product returns a dual quaternion, but we only want the grade 2 part
 		return DQMath::extractLine(p * v);
 	}
-	inline const DualQuat operator | (const MATH::Plane& p, const MATH::Vec4& v) {
+	inline const DualQuat operator | (const Plane& p, const MATH::Vec4& v) {
 		return dot(p, v);
 	}
 
 	// A line and a point dot to make a plane
 	// This new plane is orthogonal to the original line and through the point!
-	inline const MATH::Plane dot (const DualQuat& line, const MATH::Vec4& v) {
+	inline const Plane dot (const DualQuat& line, const MATH::Vec4& v) {
 		// Extract grade 1 part of the geometric product
 		return (line * v).plane;
 	}
-	inline const MATH::Plane operator | (const DualQuat& line, const MATH::Vec4& v){
+	inline const Plane operator | (const DualQuat& line, const MATH::Vec4& v){
 		return dot (line, v);
 	}
 
 	// Now we are dotting the same type of things together, it returns just a float
-	inline float dot(const MATH::Plane& p1, const MATH::Plane& p2) {
+	inline float dot(const Plane& p1, const Plane& p2) {
 		return (p1 * p2).real;
 	}
-	inline float operator | (const MATH::Plane& p1, const MATH::Plane& p2){
+	inline float operator | (const Plane& p1, const Plane& p2){
 		return dot(p1, p2);
 	}
 
@@ -66,7 +66,7 @@ namespace MATHEX {
 
 	// Now that we have the dots, we can project one geometric object onto another
 	// Using the equations from the 58:51 min mark: https://www.gdcvault.com/play/1029237/
-	inline const MATH::Vec4 project(const MATH::Vec4& v, const MATH::Plane& p) {
+	inline const MATH::Vec4 project(const MATH::Vec4& v, const Plane& p) {
 		// I adapted the formula a little for two reasons:
 		// 1. I have a plane dot Vec4 function, but not the other way around
 		// 2. I have a DualQuat meet plane function, but not a geometric product function

@@ -24,20 +24,20 @@ namespace MATHEX {
 	}
 
 	// Its crazy, the dual of a point returns a plane
-	inline const MATH::Plane PoincareDuality(const MATH::Vec4& point){
-		MATH::Plane result;
+	inline const Plane PoincareDuality(const MATH::Vec4& point){
+		Plane result;
 		result.e0 = point.e123;
 		result.e1 = point.e032;
 		result.e2 = point.e013;
 		result.e3 = point.e021;
 		return result;
 	}
-	inline const MATH::Plane operator ! (const MATH::Vec4& point){
+	inline const Plane operator ! (const MATH::Vec4& point){
 		return PoincareDuality(point);
 	}
 
 	// The dual of a plane is a point. The world makes sense
-	inline const MATH::Vec4 PoincareDuality (const MATH::Plane& plane) {
+	inline const MATH::Vec4 PoincareDuality (const Plane& plane) {
 		MATH::Vec4 result;
 		result.e032 = plane.e1;
 		result.e013 = plane.e2;
@@ -45,7 +45,7 @@ namespace MATHEX {
 		result.e123 = plane.e0;
 		return result;
 	}
-	inline const MATH::Vec4 operator ! (const MATH::Plane& plane) {
+	inline const MATH::Vec4 operator ! (const Plane& plane) {
 		return  PoincareDuality (plane);
 	}
 }

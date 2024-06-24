@@ -25,19 +25,19 @@ namespace MATHEX {
 
 
 	// A line and a point join to make a plane
-	inline const MATH::Plane join(const DualQuat& q, const MATH::Vec4& p) {
+	inline const Plane join(const DualQuat& q, const MATH::Vec4& p) {
 		return !(!q ^ !p);
 	}
 
-	inline const MATH::Plane operator & (const DualQuat& q, const MATH::Vec4& p) {
+	inline const Plane operator & (const DualQuat& q, const MATH::Vec4& p) {
 		return join(q, p);
 	}
 
 	// Joining a line and a point the other way around
-	inline const MATH::Plane join(const MATH::Vec4& p, const DualQuat& q) {
+	inline const Plane join(const MATH::Vec4& p, const DualQuat& q) {
 		return !(!p ^ !q);
 	}
-	inline const MATH::Plane operator & (const MATH::Vec4& p, const DualQuat& q) {
+	inline const Plane operator & (const MATH::Vec4& p, const DualQuat& q) {
 		return join(p, q);
 	}
 }

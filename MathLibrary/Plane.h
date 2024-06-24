@@ -2,7 +2,7 @@
 #define PLANE_H
 #include <VMath.h>
 
-namespace  MATH {
+namespace  MATHEX {
 	union Plane {
 		struct { /// Standard Euclidean definition ax + by + cz - d = 0 
 			float x,y,z,d;
@@ -14,7 +14,7 @@ namespace  MATH {
 		};
 
 		struct {
-			Vec3 n;
+			MATH::Vec3 n;
 			float negativeDist;  /// Negative signed distance from the orgin along the normal;
 		};
 
@@ -29,11 +29,11 @@ namespace  MATH {
 		/// the equation of a Plane is ax + by + cz - d = 0; where 
 		/// a,b,c are the values of the normal n <a,b,c> and the -d part is the 
 		/// negative signed distance from the origin to the plane
-		Plane(Vec3 n, float d) {
+		Plane(MATH::Vec3 n, float d) {
 			set(n.x, n.y, n.z, d);
 
 #ifdef _DEBUG  /// If in debug mode let's worry the normal being normalized
-			float mag = VMath::mag(n);
+			float mag = MATH::VMath::mag(n);
 			if (std::fabs(mag) - 1.0f > VERY_SMALL) {
 				std::string errorMsg = __FILE__ + __LINE__;
 				throw errorMsg.append(": The normal in the Plane constructor was not normalized");
@@ -46,11 +46,11 @@ namespace  MATH {
 
 		/// If the plane is defined by three points v0, v1, v2 
 		/// then the equation of a Plane is ax + by + cz - d = 0.
-		Plane(const Vec3& v0, const Vec3& v1, const Vec3& v2) {
-			Vec3 a = v1 - v0;
-			Vec3 b = v2 - v0;
-			Vec3 n = VMath::normalize(VMath::cross(a, b));
-			float signedDistance = VMath::dot(n, v0);
+		Plane(const MATH::Vec3& v0, const MATH::Vec3& v1, const MATH::Vec3& v2) {
+			MATH::Vec3 a = v1 - v0;
+			MATH::Vec3 b = v2 - v0;
+			MATH::Vec3 n = MATH::VMath::normalize(MATH::VMath::cross(a, b));
+			float signedDistance = MATH::VMath::dot(n, v0);
 			set(n.x, n.y, n.z, -signedDistance);
 		}
 

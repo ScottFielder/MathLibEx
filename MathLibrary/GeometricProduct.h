@@ -63,7 +63,7 @@ namespace MATHEX {
 	}
 
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_plane_with_dq.pdf
-	inline const Flector operator * (const MATH::Plane& p, const DualQuat& q) {
+	inline const Flector operator * (const Plane& p, const DualQuat& q) {
 		Flector result;
 		result.plane.e0 = p.e0 * q.real - p.e2 * q.e02 - p.e1 * q.e01 - p.e3 * q.e03;
 		result.plane.e1 = p.e1 * q.real - p.e2 * q.e12 + p.e3 * q.e31;
@@ -85,7 +85,7 @@ namespace MATHEX {
 	}
 
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_plane_with_point.pdf
-	inline const DualQuat operator * (const MATH::Plane& plane, const MATH::Vec4& point){
+	inline const DualQuat operator * (const Plane& plane, const MATH::Vec4& point){
 		DualQuat result;
 		result.real = 0.0f;
 		result.e23 = plane.e1 * point.e123;
@@ -103,7 +103,7 @@ namespace MATHEX {
 	// This one wasn't too bad to figure out on paper, as a plane only has e0, e1, e2, and e3 inside
 	// After multiplying and keeping track of the e combos you end up with a dual quaternion
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_planes.pdf
-	inline const DualQuat operator * (const MATH::Plane& p1, const MATH::Plane& p2)
+	inline const DualQuat operator * (const Plane& p1, const Plane& p2)
 	{
 		DualQuat result;
 		result.real = p1.e1 * p2.e1 + p1.e2 * p2.e2 + p1.e3 * p2.e3;

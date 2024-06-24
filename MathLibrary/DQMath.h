@@ -70,7 +70,7 @@ namespace MATHEX {
 		//	Reference: https://www.youtube.com/watch?v=2DgxeizE3E8	New Hope I
 		/// Return a pure translation dual quaternion using a distance and a Dual Quat line
 		static const DualQuat translateAlongLine(float dist, const DualQuat& line) {
-			MATH::Plane eZero(0.0f, 0.0f, 0.0f, 1.0f);
+			Plane eZero(0.0f, 0.0f, 0.0f, 1.0f);
 			MATH::Vec4 eOneTwoThree(0.0f, 0.0f, 0.0f, 1.0f);
 			return DualQuat() - eZero * (normalize(line) * dist / 2.0f) * eOneTwoThree;
 		}
@@ -248,10 +248,10 @@ namespace MATHEX {
 
 		// Oriented distance between a point and a plane (sign tells you which side of the plane)
 		// TODO: Which file does this belong inside?
-		static const float orientedDist(const MATH::Vec4& v, const MATH::Plane& p) {
+		static const float orientedDist(const MATH::Vec4& v, const Plane& p) {
 			// First normalize the point and plane 
 			MATH::Vec4  vNormalized = VMath::perspectiveDivide(v);
-			MATH::Plane pNormalized = PMath::normalize(p);
+			Plane pNormalized = PMath::normalize(p);
 			// Then use the formula for the oriented distance from https://bivector.net/3DPGA.pdf
 			return (vNormalized ^ pNormalized).e0123;
 		}

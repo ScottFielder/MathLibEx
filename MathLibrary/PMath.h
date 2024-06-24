@@ -4,7 +4,8 @@
 #include "Plane.h"
 #include "DualQuat.h"
 #include "Meet.h"
-namespace MATH {
+
+namespace MATHEX {
 	class PMath {
 	public:
 		static Plane normalize(const Plane &p){
@@ -12,12 +13,12 @@ namespace MATH {
 			return Plane(p.x / mag, p.y / mag, p.z / mag, p.d / mag);
 		}
 
-		/// Get the distance form a point (Vec3) to a plane
-		static float distance(const Vec3 &v, const Plane &p){
+		/// Get the distance form a point (MATH::Vec3) to a plane
+		static float distance(const MATH::Vec3 &v, const Plane &p){
 			return (p.x*v.x + p.y*v.y + p.z*v.z + p.d);
 		}
 
-		static Vec3 reflect(const Vec3 &v, const Plane &p){
+		static MATH::Vec3 reflect(const MATH::Vec3 &v, const Plane &p){
 			return v - (2.0f * VMath::dot(p.n, v)) * p.n;
 		}
 
@@ -35,8 +36,7 @@ namespace MATH {
 		}
 
 		// The meet operator in namespace MATHEX gives us the intersection point
-		static const Vec4 intersection(const Plane& p1, const MATHEX::DualQuat& line) {
-			using namespace MATHEX;
+		static const MATH::Vec4 intersection(const Plane& p1, const MATHEX::DualQuat& line) {
 			return p1 ^ line;
 		}
 	};

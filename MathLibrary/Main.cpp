@@ -24,6 +24,8 @@
 #include "Join.h"
 #include "Dot.h"
 #include "Point2d.h"
+#include "Triangle.h"
+#include "TMath.h"
 
 #include <glm/vec3.hpp> /// glm::vec3
 #include <glm/vec4.hpp> /// glm::vec4, glm::ivec4
@@ -73,6 +75,7 @@ void dotTest();
 void dualQuatSlerpVectorTest();
 void dualQuatMatrixTest();
 void point2dTest();
+void triangleTest();
 
 
 /// Utility print() calls for glm to math library format 
@@ -91,7 +94,8 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	point2dTest();
+	triangleTest();
+	//point2dTest();
 	//planeTest();
 	//QuadraticTest();
 	//RaySphereTest();
@@ -111,6 +115,36 @@ int main(int argc, char* argv[]) {
 	//dotTest();
 	//dualQuatSlerpVectorTest();
 	//dualQuatMatrixTest();
+}
+
+void triangleTest() {
+	// Line below shld throw if you uncomment it
+	// Triangle t(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(2, 0, 0));
+
+	Triangle tri1(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(0, 0, 1));
+	tri1.print("Triangle 1");
+	TMath::getNormal(tri1).print("Normal of Triangle 1");
+	TMath::getPlane(tri1).print("Plane of Triangle 1");
+
+	Vec3 p1(0, 0, 0);
+	p1.print("Point 1");
+	Vec3 p2(2, 0, 0);
+	p2.print("Point 2");
+
+	if(TMath::isPointInsideTriangle(p1, tri1)){
+		printf("Point 1 is in Triangle 1\n");
+	}
+	else{
+		printf("Point 1 is not in Triangle 1\n");
+	}
+
+if (TMath::isPointInsideTriangle(p2, tri1)) {
+		printf("Point 2 is in Triangle 1\n");
+	}
+	else {
+		printf("Point 2 is not in Triangle 1\n");
+	}
+
 }
 
 void point2dTest() {
