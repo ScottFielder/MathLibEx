@@ -12,6 +12,9 @@ namespace MATHEX {
 		static const Plane getPlane(const Triangle& t) {
 			// Join three points to get a plane
 			return t.getV0() & t.getV1() & t.getV2();
+
+			/// Would not this be more intuitive? SSF
+			//return Plane(t.getV0(), t.getV1(), t.getV2());
 		}
 
 		static const MATH::Vec3 getNormal(const Triangle& t) {

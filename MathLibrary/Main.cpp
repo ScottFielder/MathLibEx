@@ -124,7 +124,11 @@ void triangleTest() {
 	Triangle tri1(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(0, 0, 1));
 	tri1.print("Triangle 1");
 	TMath::getNormal(tri1).print("Normal of Triangle 1");
+
+
 	TMath::getPlane(tri1).print("Plane of Triangle 1");
+	Plane p(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(0, 0, 1));
+	p.print("Plane of Triangle 1 SSF");
 
 	Vec3 p1(0, 0, 0);
 	p1.print("Point 1");
