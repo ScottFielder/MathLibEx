@@ -44,13 +44,15 @@ namespace  MATHEX {
 			set(0.0f, 0.0f, 0.0f, 0.0f);
 		}
 
-		/// If the plane is defined by three points v0, v1, v2 
-		/// then the equation of a Plane is ax + by + cz - d = 0.
-		Plane(const MATH::Vec3& v0, const MATH::Vec3& v1, const MATH::Vec3& v2) {
-			MATH::Vec3 a = v1 - v0;
-			MATH::Vec3 b = v2 - v0;
-			MATH::Vec3 n = MATH::VMath::normalize(MATH::VMath::cross(a, b));
-			float signedDistance = MATH::VMath::dot(n, v0);
+		// If the plane is defined by three points a, b, c, with normalized normal n 
+		// then the equation of a Plane is n_x * x + n_y * y + n_z * z - d = 0.
+		// Assume the vertices are provided in counter clockwise order (OpenGL default winding order) 
+		// https://www.khronos.org/opengl/wiki/Face_Culling#Winding_order
+		Plane(const MATH::Vec3& a, const MATH::Vec3& b, const MATH::Vec3& c) {
+			MATH::Vec3 ac = c - a;
+			MATH::Vec3 cb = b - c;
+			MATH::Vec3 n = MATH::VMath::normalize(MATH::VMath::cross(ac, cb));
+			float signedDistance = MATH::VMath::dot(n, a);
 			set(n.x, n.y, n.z, -signedDistance);
 		}
 

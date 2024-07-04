@@ -121,13 +121,13 @@ void triangleTest() {
 	// Line below shld throw if you uncomment it
 	// Triangle t(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(2, 0, 0));
 
-	Triangle tri1(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(0, 0, 1));
+	Triangle tri1(Vec3(0, 0, 0), Vec3(0, 1, 0), Vec3(1, 0, 0));
 	tri1.print("Triangle 1");
 	TMath::getNormal(tri1).print("Normal of Triangle 1");
 
 
 	TMath::getPlane(tri1).print("Plane of Triangle 1");
-	Plane p(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(0, 0, 1));
+	Plane p(Vec3(0, 0, 0), Vec3(0, 1, 0), Vec3(1, 0, 0));
 	p.print("Plane of Triangle 1 SSF");
 
 	Vec3 p1(0, 0, 0);
