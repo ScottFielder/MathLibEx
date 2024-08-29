@@ -91,6 +91,7 @@
     <ClInclude Include="Quadratic.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RMath.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="TMath.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
