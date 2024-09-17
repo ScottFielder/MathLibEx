@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm> 
+#include <chrono> // for timing code
 
 #include <MMath.h>
 #include <QMath.h>
@@ -76,6 +77,7 @@ void dualQuatSlerpVectorTest();
 void dualQuatMatrixTest();
 void point2dTest();
 void triangleTest();
+void sphereTest();
 
 
 /// Utility print() calls for glm to math library format 
@@ -94,7 +96,8 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	triangleTest();
+	sphereTest();
+	//triangleTest();
 	//point2dTest();
 	//planeTest();
 	//QuadraticTest();
@@ -115,6 +118,64 @@ int main(int argc, char* argv[]) {
 	//dotTest();
 	//dualQuatSlerpVectorTest();
 	//dualQuatMatrixTest();
+}
+
+
+void sphereTest() {
+	// Imagine you are filling up the vertices to make a sphere shape to render to screen
+	// That's one of Umer's assignments in Game Physics 3
+	// What's the performance difference between doing this problem with or without PGA?
+
+	auto start = chrono::high_resolution_clock::now();
+	std::vector<Vec3> verticesWithoutPGA;
+	// We need to fill the vertices and normals arrays with the correct data for a sphere
+	// deltaTheta governs how many points per ring. Try messing with it
+	const float deltaTheta = 3.6f;
+	// deltaPhi governs how many rings there are in total. Try messing with it
+	const float deltaPhi = 3.6f;
+	const float r = 1.0f;
+	for (float thetaDeg = 0.0f; thetaDeg <= 360.0f; thetaDeg += deltaTheta)
+	{
+		// Build a ring
+		Vec3 circle(r * sin(thetaDeg * DEGREES_TO_RADIANS), r * cos(thetaDeg * DEGREES_TO_RADIANS), 0.0f);
+		for (float phiDeg = 0.0f; phiDeg <= 360.0f; phiDeg += deltaPhi) {
+			// Rotate a point in the ring around the y-axis to build a sphere!
+			Matrix3 rotationMatrix = MMath::rotate(deltaPhi, Vec3(0.0f, 1.0f, 0.0f));
+			circle = rotationMatrix * circle;
+			// Push the circle point to our vertices array
+			verticesWithoutPGA.push_back(circle);
+		}
+	}
+	auto stop = chrono::high_resolution_clock::now();
+	auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+	cout << duration.count() <<" microseconds for a sphere built the usual way with " << verticesWithoutPGA.size() << " points" << endl;
+
+
+	start = chrono::high_resolution_clock::now();
+	std::vector<Vec3> verticesWithPGA;
+	float dist = 1.0f;
+	float angle = 360.0f;
+	DualQuat T(1.0f, 0.0f, 0.0f, 0.0f, dist / 2.0f, 0.0f, 0.0f, 0.0f); // built the translate by hand to see if that speeds anything up
+
+	for (float t1 = 0.0f; t1 < 1.0f; t1 += 0.0101f) {
+		DualQuat R1 = DQMath::rotate(angle * t1 / 2.0f, Vec3(0.0f, 0.0f, 1.0f));
+		DualQuat R1_times_T; // build out the geometric product by hand just to see if that speeds anything up
+		R1_times_T.real = R1.real;
+		R1_times_T.e12 = R1.e12;
+		R1_times_T.e01 = R1.real * T.e01;
+		R1_times_T.e02 = -R1.e12 * T.e01;
+		for (float t2 = 0.0f; t2 < 1.0f; t2 += 0.0101f) {
+
+			DualQuat R2 = DQMath::rotate(angle * t2, Vec3(1.0f, 0.0f, 0.0f));
+			DualQuat sphereMotor = R2 * R1_times_T;
+
+			Vec4 vertex = DQMath::rigidTransformation(sphereMotor, Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+			verticesWithPGA.push_back(vertex);
+		}
+	}
+	stop = chrono::high_resolution_clock::now();
+	duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+	cout << duration.count() << " microseconds for a sphere built the PGA way with " << verticesWithPGA.size() << " points" << endl;
 }
 
 void triangleTest() {
