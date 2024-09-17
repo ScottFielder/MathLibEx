@@ -145,9 +145,16 @@ namespace MATHEX {
 
 #endif
 
-/*** Note 1. Umer Noor June 2023
-REFERENCE: 2023 GDC Talks by Hamish Todd and information at bivector.net
-           Find the talks at https://library.humber.ca/atoz_landing/G
+/*** Note 1. Umer Noor Sept 2024
+REFERENCE: 2023 GDC Talks by Hamish Todd:
+		   Math in Game Development Summit: A Visual Guide to Quaternions and Dual Quaternions
+		   https://www.gdcvault.com/play/1029233/Math-in-Game-Development-Summit
+           Math in Game Development Summit: Quaternions to Homogeneous Points, Lines, and Planes
+		   https://www.gdcvault.com/play/1029237
+		   
+		   and great stuff at bivector.net like this:
+		   Dual Quaternions Demystified: https://www.youtube.com/watch?v=ichOiuBoBoQ&t=1s
+
 ***/
 
 /*** Note 2. Umer Noor June 2023
