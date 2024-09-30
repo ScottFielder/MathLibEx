@@ -10,7 +10,7 @@
 #include <QMath.h>
 #include <EMath.h>
 #include <AAMath.h>
-#include <Sphere.h>
+#include "Sphere.h"
 #include <Hash.h>
 
 #include "PMath.h"

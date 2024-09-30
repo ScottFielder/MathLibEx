@@ -7,7 +7,7 @@ namespace MATHEX {
 
 	// The Poincare duality returns whatever e basis vectors are missing
 	// So basically whatever it is not. The not operator ! seems like a good option here
-	inline const DualQuat PoincareDuality(const DualQuat dq) {
+	inline const DualQuat PoincareDuality(const DualQuat& dq) {
 		DualQuat result;
 		result.real = dq.e0123;
 		result.e23 = dq.e01;
@@ -19,7 +19,7 @@ namespace MATHEX {
 		result.e0123 = dq.real;
 		return result;
 	}
-	inline const DualQuat operator ! (DualQuat dq) {
+	inline const DualQuat operator ! (const DualQuat& dq) {
 		return  PoincareDuality(dq);
 	}
 
