@@ -89,7 +89,7 @@ namespace MATHEX {
 			return *this;
 		}
 
-		// Divide a point by a scalar
+		// Divide a line by a scalar
 		inline const Line2d operator / (const float scalar) const {
 #ifdef _DEBUG 
 			if (std::fabs(scalar) < VERY_SMALL) {
