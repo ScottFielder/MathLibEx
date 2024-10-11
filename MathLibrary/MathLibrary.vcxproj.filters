@@ -71,5 +71,8 @@
     <ClInclude Include="Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Line2d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

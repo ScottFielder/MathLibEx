@@ -17,7 +17,7 @@ namespace MATHEX {
 			float w; // w is the projection into the third dimension for our flatlanders
 		};
 		// Points are also the intersection of two 2D lines written as 
-		// ay  + bx  + c   = 0
+		// ax  + by  + c   = 0
 		// ae1 + be2 + ce0 = 0
 		// where e1 and e2 square to one. And e0 squares to zero
 		// REFERENCE: https://bivector.net/PROJECTIVE_GEOMETRIC_ALGEBRA.pdf

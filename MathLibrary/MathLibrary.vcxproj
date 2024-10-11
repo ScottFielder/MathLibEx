@@ -83,6 +83,7 @@
     <ClInclude Include="Flector.h" />
     <ClInclude Include="GeometricProduct.h" />
     <ClInclude Include="Join.h" />
+    <ClInclude Include="Line2d.h" />
     <ClInclude Include="Meet.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PMath.h" />
