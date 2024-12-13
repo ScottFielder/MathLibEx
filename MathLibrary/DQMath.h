@@ -230,20 +230,17 @@ namespace MATHEX {
 		// Divide by the magnitude of the rotational part or the infinite part
 		static const DualQuat normalize(const DualQuat& dq)
 		{
-			// Just care about the line part of the dual quat
-			DualQuat line = extractLine(dq);
-			// Figure out whether this is a Euclidean line or one in the horizon at infinity
-			float mag = magGrade2(line);
-			if (mag < VERY_SMALL) {
+			// Figure out whether this is a pure rotation or not
+			float quatMag = MATH::QMath::magnitude(DQMath::getRotation(dq));
+			if (quatMag < VERY_SMALL) {
 				// Divide by the infinite mag instead here
 				float infiniteMag = sqrt(dq.e01 * dq.e01 + dq.e02 * dq.e02 + dq.e03 * dq.e03
 					+ dq.e0123 * dq.e0123
 				);
 				return dq / infiniteMag;
 			}
-			// Just use the regular quaternion mag
-			MATH::Quaternion q = DQMath::getRotation(dq);
-			return dq / MATH::QMath::magnitude(q);
+			// Otherwise just use the quaternion magnitude
+			return dq / quatMag;
 		}
 
 		// Oriented distance between a point and a plane (sign tells you which side of the plane)
