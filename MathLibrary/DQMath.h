@@ -277,6 +277,41 @@ namespace MATHEX {
 			}
 		}
 
+		// Building a lookAt DualQuat that you can convert into the view matrix
+		// Eye position has to be a point, but at and up can be points or directions
+		// That's why I bring in the eye as a Vec3 (w is set to 1), but others as Vec4 (w can be 1 or 0)
+		// REFERENCE: https://observablehq.com/@enkimute/glu-lookat-in-3d-pga
+		// Tested Dec 13 2024 UN
+		static const DualQuat lookAt(const Vec3& eye, const Vec4& at, const Vec4& up) {
+			Vec3 origPos;                                    // Camera starts at the origin
+			Vec4 origTarget = Vec4(0.0f, 0.0f, -1.0f, 0.0f); // Looking down the -z axis
+			Vec4 origPole   = Vec4(0.0f, 1.0f,  0.0f, 0.0f); // With up along the y axis
+
+			// Funny I had to swap the meaning of q and p compared to article
+			Vec4 q[] = { origPos, origTarget, origPole };
+			Vec4 p[] = { eye, at, up };
+
+			DualQuat result;
+			// First iteration where P and Q are points to align the positions
+			Vec4 inverseP = Vec4(-p[0].x, -p[0].y, -p[0].z, -1.0f);
+			DualQuat qDividedByP = (q[0] * inverseP);
+			result = DQMath::normalize(1.0f + qDividedByP) * result;
+			// Funny I had to inverse the translation here, but not the rotation later on
+			result = DQMath::inverse(result);
+
+			// Second iteration where P and Q are lines to align the targets
+			DualQuat P = q[0] & DQMath::rigidTransformation(result, p[1]);
+			DualQuat Q = q[0] & q[1];
+			result = DQMath::normalize(1.0f + (DQMath::normalize(Q) * DQMath::inverse(DQMath::normalize(P)))) * result;
+
+			// Third and final iteration where P and Q are planes to align the poles
+			Plane Pplane = Q & DQMath::rigidTransformation(result, p[2]);
+			Plane Qplane = Q & q[2];
+			result = DQMath::normalize(1.0f + (PMath::normalize(Qplane) * PMath::normalize(Pplane))) * result;
+			
+			return result;
+		}
+
 	};
 }
 #endif
