@@ -295,7 +295,7 @@ namespace MATHEX {
 			// First iteration where P and Q are points to align the positions
 			Vec4 inverseP = Vec4(-p[0].x, -p[0].y, -p[0].z, -1.0f);
 			DualQuat qDividedByP = (q[0] * inverseP);
-			result = DQMath::normalize(1.0f + qDividedByP) * result;
+			result = DQMath::normalize(1.0f + qDividedByP);
 			// Funny I had to inverse the translation here, but not the rotation later on
 			result = DQMath::inverse(result);
 
