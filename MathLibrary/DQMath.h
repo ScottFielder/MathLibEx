@@ -295,19 +295,20 @@ namespace MATHEX {
 			// First iteration where P and Q are points to align the positions
 			Vec4 inverseP = Vec4(-p[0].x, -p[0].y, -p[0].z, -1.0f);
 			DualQuat qDividedByP = (q[0] * inverseP);
-			result = normalize(1.0f + qDividedByP);
+			result = squareRoot(qDividedByP);
 			// Funny I had to inverse the translation here, but not the rotation later on
 			result = inverse(result);
 
 			// Second iteration where P and Q are lines to align the targets
 			DualQuat P = q[0] & rigidTransformation(result, p[1]);
 			DualQuat Q = q[0] & q[1];
-			result = normalize(1.0f + (normalize(Q) * inverse(normalize(P)))) * result;
+			result = squareRoot(normalize(Q) * inverse(normalize(P))) * result;
 
 			// Third and final iteration where P and Q are planes to align the poles
 			Plane Pplane = Q & rigidTransformation(result, p[2]);
 			Plane Qplane = Q & q[2];
-			result = normalize(1.0f + (PMath::normalize(Qplane) * PMath::normalize(Pplane))) * result;
+			// A plane is it's own inverse, so I don't need to inverse P in next line
+			result = squareRoot(PMath::normalize(Qplane) * PMath::normalize(Pplane)) * result;
 			
 			return result;
 		}
