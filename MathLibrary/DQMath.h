@@ -231,7 +231,7 @@ namespace MATHEX {
 		static const DualQuat normalize(const DualQuat& dq)
 		{
 			// Figure out whether this is a pure rotation or not
-			float quatMag = MATH::QMath::magnitude(DQMath::getRotation(dq));
+			float quatMag = MATH::QMath::magnitude(getRotation(dq));
 			if (quatMag < VERY_SMALL) {
 				// Divide by the infinite mag instead here
 				float infiniteMag = sqrt(dq.e01 * dq.e01 + dq.e02 * dq.e02 + dq.e03 * dq.e03
@@ -295,21 +295,28 @@ namespace MATHEX {
 			// First iteration where P and Q are points to align the positions
 			Vec4 inverseP = Vec4(-p[0].x, -p[0].y, -p[0].z, -1.0f);
 			DualQuat qDividedByP = (q[0] * inverseP);
-			result = DQMath::normalize(1.0f + qDividedByP);
+			result = normalize(1.0f + qDividedByP);
 			// Funny I had to inverse the translation here, but not the rotation later on
-			result = DQMath::inverse(result);
+			result = inverse(result);
 
 			// Second iteration where P and Q are lines to align the targets
-			DualQuat P = q[0] & DQMath::rigidTransformation(result, p[1]);
+			DualQuat P = q[0] & rigidTransformation(result, p[1]);
 			DualQuat Q = q[0] & q[1];
-			result = DQMath::normalize(1.0f + (DQMath::normalize(Q) * DQMath::inverse(DQMath::normalize(P)))) * result;
+			result = normalize(1.0f + (normalize(Q) * inverse(normalize(P)))) * result;
 
 			// Third and final iteration where P and Q are planes to align the poles
-			Plane Pplane = Q & DQMath::rigidTransformation(result, p[2]);
+			Plane Pplane = Q & rigidTransformation(result, p[2]);
 			Plane Qplane = Q & q[2];
-			result = DQMath::normalize(1.0f + (PMath::normalize(Qplane) * PMath::normalize(Pplane))) * result;
+			result = normalize(1.0f + (PMath::normalize(Qplane) * PMath::normalize(Pplane))) * result;
 			
 			return result;
+		}
+
+		// The squareRoot is defined as an even mixture with the number 1, then normalized
+		// That gives you a transform halfway from start to end
+		// I named it squareRoot to avoid any clashes with std::sqrt in user code
+		static const DualQuat squareRoot(const DualQuat& dq) {
+			return normalize(1.0f + dq);
 		}
 
 	};
