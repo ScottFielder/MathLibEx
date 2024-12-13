@@ -281,35 +281,29 @@ namespace MATHEX {
 		// Eye position has to be a point, but at and up can be points or directions
 		// That's why I bring in the eye as a Vec3 (w is set to 1), but others as Vec4 (w can be 1 or 0)
 		// REFERENCE: https://observablehq.com/@enkimute/glu-lookat-in-3d-pga
+		// For some reason I had to swap the meaning of q and p compared to article
 		// Tested Dec 13 2024 UN
 		static const DualQuat lookAt(const Vec3& eye, const Vec4& at, const Vec4& up) {
-			Vec3 origPos;                                    // Camera starts at the origin
-			Vec4 origTarget = Vec4(0.0f, 0.0f, -1.0f, 0.0f); // Looking down the -z axis
-			Vec4 origPole   = Vec4(0.0f, 1.0f,  0.0f, 0.0f); // With up along the y axis
-
-			// Funny I had to swap the meaning of q and p compared to article
-			Vec4 q[] = { origPos, origTarget, origPole };
-			Vec4 p[] = { eye, at, up };
+			Vec3 originalEye;                                // Camera starts at the origin
+			Vec4 originalAt = Vec4(0.0f, 0.0f, -1.0f, 0.0f); // Looking down the -z axis
+			Vec4 originalUp = Vec4(0.0f, 1.0f, 0.0f, 0.0f);  // With up along the y axis
 
 			DualQuat result;
 			// First iteration where P and Q are points to align the positions
-			Vec4 inverseP = Vec4(-p[0].x, -p[0].y, -p[0].z, -1.0f);
-			DualQuat qDividedByP = (q[0] * inverseP);
-			result = squareRoot(qDividedByP);
-			// Funny I had to inverse the translation here, but not the rotation later on
+			result = squareRoot(originalEye / eye);
+			// Funny I had to inverse the translation here to make this work, but not the rotation later on
 			result = inverse(result);
 
 			// Second iteration where P and Q are lines to align the targets
-			DualQuat P = q[0] & rigidTransformation(result, p[1]);
-			DualQuat Q = q[0] & q[1];
-			result = squareRoot(normalize(Q) * inverse(normalize(P))) * result;
+			DualQuat P = originalEye & rigidTransformation(result, at);
+			DualQuat Q = originalEye & originalAt;
+			result = squareRoot(normalize(Q) / (normalize(P))) * result;
 
-			// Third and final iteration where P and Q are planes to align the poles
-			Plane Pplane = Q & rigidTransformation(result, p[2]);
-			Plane Qplane = Q & q[2];
-			// A plane is it's own inverse, so I don't need to inverse P in next line
-			result = squareRoot(PMath::normalize(Qplane) * PMath::normalize(Pplane)) * result;
-			
+			// Third and final iteration where P and Q are planes to align the up directions
+			Plane Pplane = Q & rigidTransformation(result, up);
+			Plane Qplane = Q & originalUp;
+			result = squareRoot(PMath::normalize(Qplane) / PMath::normalize(Pplane)) * result;
+
 			return result;
 		}
 

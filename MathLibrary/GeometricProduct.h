@@ -28,6 +28,18 @@ namespace MATHEX {
 		return result;
 	}
 	
+	// I'll overload the division operator as well
+	// Such that A / B = A * inverse(B)		in that order
+	inline const DualQuat operator / (const DualQuat& a, const DualQuat& b) {
+		DualQuat inverseB = b;
+		inverseB.e23 *= -1.0f;
+		inverseB.e31 *= -1.0f;
+		inverseB.e12 *= -1.0f;
+		inverseB.e01 *= -1.0f;
+		inverseB.e02 *= -1.0f;
+		inverseB.e03 *= -1.0f;
+		return a * inverseB;
+	}
 
 	// It's amazing that a plane and a point pops out when you multiply a dual quat with a Vec4 
 	// That's why we need the Flectors
@@ -117,6 +129,11 @@ namespace MATHEX {
 		return result;
 	}
 
+	// Turns out the inverse of a plane is the exact same plane, so A / B = A * B
+	inline const DualQuat operator / (const Plane& a, const Plane& b) {
+		return a * b;
+	}
+
 	// Point 1 * Point 2 = a dual quaternion
 	// This one wasn't too bad to figure out on paper either, just end up with the infinite line 
 	// and a term for w
@@ -134,6 +151,11 @@ namespace MATHEX {
 		return result;
 	}
 
+	// The inverse of a point [x, y, z, w] is [-x, -y, -z, -w]
+	// So A / B = A * (-B)
+	inline const DualQuat operator / (const MATH::Vec4& a, const MATH::Vec4& b) {
+		return a * (-b);
+	}
 	// TODO (UN)
 	// I'm guessing this one... Not tested yet
 	inline const DualQuat operator * (const Flector& f, const MATH::Vec4& point) {

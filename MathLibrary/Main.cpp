@@ -56,6 +56,7 @@ void determinantTest();
 void slerpTest();
 
 /// MathLibEx tests
+void dqLookAtTest();
 void planeTest();
 void QuadraticTest();
 void RaySphereTest();
@@ -96,7 +97,8 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	sphereTest();
+	dqLookAtTest();
+	//sphereTest();
 	//triangleTest();
 	//point2dTest();
 	//planeTest();
@@ -120,6 +122,27 @@ int main(int argc, char* argv[]) {
 	//dualQuatMatrixTest();
 }
 
+void dqLookAtTest() {
+	// Let's see if building a view matrix using LookAt builds the same thing using R^-1 * T^-1
+	Vec4 eye = Vec4(20, 0, 0, 1); // Camera on the right of the origin
+	Vec4 at  = Vec4(-1, 0, 0, 0); // Looking down the negative x axis
+	Vec4 up  = Vec4(0, 1, 0, 0);  // And up is along y
+	DualQuat viewDq1 = DQMath::lookAt(eye, at, up);
+
+	// check against building the view matrix using R^(-1) * T^(-1)
+	float rotationAngleDeg = 90.0f;
+	Vec3 rotationAxis = Vec3(0.0f, 1.0f, 0.0f);
+	Quaternion cameraOrientation = QMath::angleAxisRotation(rotationAngleDeg, rotationAxis);
+	DualQuat viewDq2 = DQMath::rotate(QMath::inverse(cameraOrientation)) * DQMath::translate(-eye);
+
+	// And check against the original lookAt
+	Matrix4 view = MMath::lookAt(eye, at, up);
+
+	DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
+	DQMath::toMatrix4(viewDq2).print("view matrix using R^(-1) * T^(-1)");
+	view.print("view matrix using MMath::lookAt");
+
+}
 
 void sphereTest() {
 	// Imagine you are filling up the vertices to make a sphere shape to render to screen
