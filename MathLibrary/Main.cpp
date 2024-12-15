@@ -97,8 +97,8 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	LookAtTest();
-	//dqLookAtTest();
+	dqLookAtTest();
+	//LookAtTest();
 	//sphereTest();
 	//triangleTest();
 	//point2dTest();
@@ -125,25 +125,29 @@ int main(int argc, char* argv[]) {
 
 void dqLookAtTest() {
 	// Let's see if building a view matrix using LookAt builds the same thing using R^-1 * T^-1
-	Vec4 eye = Vec4( 0,  0,  0,  1); 
-	Vec4 at  = Vec4(-1,  0,  0,  1); 
-	Vec4 up  = Vec4( 0,  1,  0,  0);  
+	Vec4 eye = Vec4( 0,  0,  0,  1); // camera at origin
+	Vec4 at  = Vec4( 1,  0,  0,  1); // look to the right
+	Vec4 up  = Vec4( 0,  1,  0,  0); // up is along y 
 	DualQuat viewDq1 = DQMath::lookAt(eye, at, up);
 
 	// check against building the view matrix using R^(-1) * T^(-1)
-	float rotationAngleDeg = 90.0f;
+	float rotationAngleDeg = -90.0f;
 	Vec3 rotationAxis = Vec3(0.0f, 1.0f, 0.0f);
 	Quaternion cameraOrientation = QMath::angleAxisRotation(rotationAngleDeg, rotationAxis);
 	DualQuat viewDq2 = DQMath::rotate(QMath::inverse(cameraOrientation)) * DQMath::translate(-eye);
 
-	// And check against the original lookAt
+	// And check against the original lookAts
 	Matrix4 view = MMath::lookAt(eye, at, up);
+	glm::mat4 mt = glm::lookAt(
+		glm::vec3(eye.x, eye.y, eye.z),
+		glm::vec3(at.x, at.y, at.z),
+		glm::vec3(up.x, up.y, up.z));
 
 	DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
 	DQMath::toMatrix4(viewDq2).print("view matrix using R^(-1) * T^(-1)");
+	glmPrintM4(mt, "view matrix using glm::lookAt");
+	printf("\n");
 	view.print("view matrix using MMath::lookAt");
-	MMath::rotate(rotationAngleDeg, rotationAxis).print("The rotation matrix");
-	MMath::translate(eye).print("The Translation matrix");
 }
 
 void sphereTest() {
