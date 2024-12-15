@@ -97,7 +97,8 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	dqLookAtTest();
+	LookAtTest();
+	//dqLookAtTest();
 	//sphereTest();
 	//triangleTest();
 	//point2dTest();
@@ -124,9 +125,9 @@ int main(int argc, char* argv[]) {
 
 void dqLookAtTest() {
 	// Let's see if building a view matrix using LookAt builds the same thing using R^-1 * T^-1
-	Vec4 eye = Vec4(20, 0, 0, 1); // Camera on the right of the origin
-	Vec4 at  = Vec4(-1, 0, 0, 0); // Looking down the negative x axis
-	Vec4 up  = Vec4(0, 1, 0, 0);  // And up is along y
+	Vec4 eye = Vec4( 0,  0,  0,  1); 
+	Vec4 at  = Vec4(-1,  0,  0,  1); 
+	Vec4 up  = Vec4( 0,  1,  0,  0);  
 	DualQuat viewDq1 = DQMath::lookAt(eye, at, up);
 
 	// check against building the view matrix using R^(-1) * T^(-1)
@@ -141,7 +142,8 @@ void dqLookAtTest() {
 	DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
 	DQMath::toMatrix4(viewDq2).print("view matrix using R^(-1) * T^(-1)");
 	view.print("view matrix using MMath::lookAt");
-
+	MMath::rotate(rotationAngleDeg, rotationAxis).print("The rotation matrix");
+	MMath::translate(eye).print("The Translation matrix");
 }
 
 void sphereTest() {
