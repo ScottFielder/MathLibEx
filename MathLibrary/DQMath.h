@@ -290,20 +290,18 @@ namespace MATHEX {
 
 			DualQuat result;
 			// First iteration where P and Q are points to align the positions
-			result = squareRoot(originalEye / eye);
+			result = motorAtoB(eye, originalEye);
 			// Funny I had to inverse the translation here to make this work, but not the rotation later on
 			result = inverse(result);
 
 			// Second iteration where P and Q are lines to align the targets
 			DualQuat P = originalEye & rigidTransformation(result, at);
 			DualQuat Q = originalEye & originalAt;
-			result = squareRoot(normalize(Q) / (normalize(P))) * result;
-
+			result = motorAtoB(normalize(P), normalize(Q)) * result;
 			// Third and final iteration where P and Q are planes to align the up directions
 			Plane Pplane = Q & rigidTransformation(result, up);
 			Plane Qplane = Q & originalUp;
-			result = squareRoot(PMath::normalize(Qplane) / PMath::normalize(Pplane)) * result;
-
+			result = motorAtoB(PMath::normalize(Pplane), PMath::normalize(Qplane)) * result;
 			return result;
 		}
 
@@ -312,6 +310,21 @@ namespace MATHEX {
 		// I named it squareRoot to avoid any clashes with std::sqrt in user code
 		static const DualQuat squareRoot(const DualQuat& dq) {
 			return normalize(1.0f + dq);
+		}
+
+		// A motor that takes a point, line, plane a to a point, line, plane b is:
+		// motor = sqrt(b/a)
+		// REFERENCE: https://observablehq.com/@enkimute/glu-lookat-in-3d-pga
+		static const DualQuat motorAtoB(const Plane& a, const Plane& b) {
+			return squareRoot(b / a);
+		}
+
+		static const DualQuat motorAtoB(const DualQuat& a, const DualQuat& b) {
+			return squareRoot(b / a);
+		}
+
+		static const DualQuat motorAtoB(const Vec4& a, const Vec4& b) {
+			return squareRoot(b / a);
 		}
 
 	};
