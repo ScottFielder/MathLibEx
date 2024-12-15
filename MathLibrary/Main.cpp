@@ -124,10 +124,10 @@ int main(int argc, char* argv[]) {
 }
 
 void dqLookAtTest() {
-	// Let's see if building a view matrix using LookAt builds the same thing using R^-1 * T^-1
-	Vec4 eye = Vec4( 0,  0,  0,  1); // camera at origin
-	Vec4 at  = Vec4( 1,  0,  0,  1); // look to the right
-	Vec4 up  = Vec4( 0,  1,  0,  0); // up is along y 
+	Vec4 eye = Vec4(0, 0, 20, 1); // camera is 20 units along the z-axis
+	Vec4 at =  Vec4(1, 0, 20, 1); // Looking to the right 
+	Vec4 up =  Vec4(0, 1, 0, 0);  // Up is along positive y
+
 	DualQuat viewDq1 = DQMath::lookAt(eye, at, up);
 
 	// check against building the view matrix using R^(-1) * T^(-1)
@@ -143,11 +143,29 @@ void dqLookAtTest() {
 		glm::vec3(at.x, at.y, at.z),
 		glm::vec3(up.x, up.y, up.z));
 
+	printf("************************************************************\n\n");
+	printf("First check with eye (0, 0, 20), at (1, 0, 20), up (0, 1, 0)\n\n");
 	DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
 	DQMath::toMatrix4(viewDq2).print("view matrix using R^(-1) * T^(-1)");
 	glmPrintM4(mt, "view matrix using glm::lookAt");
 	printf("\n");
 	view.print("view matrix using MMath::lookAt");
+	printf("************************************************************\n");
+	printf("************************************************************\n\n");
+	printf("Now check again, but up is along positive z now\nI don't know how to build a R^(-1) * T^(-1) for that, but I'll check the lookAts\n\n");
+	up = Vec4(0, 0, 1, 0);
+	viewDq1 = DQMath::lookAt(eye, at, up);
+	view = MMath::lookAt(eye, at, up);
+	mt = glm::lookAt(
+		glm::vec3(eye.x, eye.y, eye.z),
+		glm::vec3(at.x, at.y, at.z),
+		glm::vec3(up.x, up.y, up.z));
+	DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
+	glmPrintM4(mt, "view matrix using glm::lookAt");
+	printf("\n");
+	view.print("view matrix using MMath::lookAt");
+	printf("************************************************************\n");
+
 }
 
 void sphereTest() {
