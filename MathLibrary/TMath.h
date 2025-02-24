@@ -9,6 +9,8 @@ namespace MATHEX {
 
 	class TMath {
 	public:
+
+		// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
 		static const Plane getPlane(const Triangle& t) {
 			// Join three points to get a plane
 			return t.getV0() & t.getV1() & t.getV2();
@@ -17,10 +19,10 @@ namespace MATHEX {
 			//return Plane(t.getV0(), t.getV1(), t.getV2());
 		}
 
+		// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
 		static const MATH::Vec3 getNormal(const Triangle& t) {
-			Plane plane = getPlane(t);
+			MATH::Vec3 normal = getPlane(t).n;
 #ifdef _DEBUG  /// If in debug mode let's worry about divide by zero or nearly zero!!! 	
-			Vec3 normal = Vec3(plane.e1, plane.e2, plane.e3);
 			if (VMath::mag(normal) < VERY_SMALL) {
 				std::string errorMsg = __FILE__ + __LINE__;
 				throw errorMsg.append(": Divide by nearly zero! ");
@@ -29,12 +31,18 @@ namespace MATHEX {
 			return VMath::normalize(normal);
 		}
 
+		// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
 		static const bool isPointOnTrianglePlane(const MATH::Vec3& v, const Triangle& t) {
 			float distFromPlane = DQMath::orientedDist(v, getPlane(t));
-			if (fabs(distFromPlane) > VERY_SMALL) return false;
-			return true;
+			if (fabs(distFromPlane) > VERY_SMALL) {
+				return false;
+			}
+			else {
+				return true;
+			}
 		}
 
+		// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
 		static const bool isPointInsideTriangle(const MATH::Vec3& v, const Triangle& t) {
 			// Are we in the plane of the triangle at least?	
 			if (!isPointOnTrianglePlane(v, t)) return false;
@@ -44,10 +52,13 @@ namespace MATHEX {
 			float orientedDist2 = DQMath::orientedDist(v, join(t.getV2(), t.getV0()));
 
 			// Is the point on the left side of all edges? Or the right side of all the edges?
-			if (orientedDist0 >= 0.0f && orientedDist1 >= 0.0f && orientedDist2 >= 0.0f) {
+			const float BIGGER_THAN_VERY_SMALL = 1.0e-6f;
+			// Are all distances basically positive give or take a tiny bit
+			if (orientedDist0 >= -BIGGER_THAN_VERY_SMALL && orientedDist1 >= -BIGGER_THAN_VERY_SMALL && orientedDist2 >= -BIGGER_THAN_VERY_SMALL) {
 				return true;
 			}
-			else if (orientedDist0 < 0.0f && orientedDist1 < 0.0f && orientedDist2 < 0.0f)
+			// Or are all the distances negative give or take a tiny bit
+			else if (orientedDist0 < BIGGER_THAN_VERY_SMALL && orientedDist1 < BIGGER_THAN_VERY_SMALL && orientedDist2 < BIGGER_THAN_VERY_SMALL)
 			{
 				return true;
 			}

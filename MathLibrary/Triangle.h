@@ -1,6 +1,9 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 #include <VMath.h>
+#include "Plane.h"
+#include "DQMath.h"
+#include "Join.h"
 
 namespace  MATHEX {
 	class Triangle {
@@ -59,6 +62,9 @@ namespace  MATHEX {
 		inline const MATH::Vec3 getV2() const {
 			return v2;
 		}
+
+
+
 
 		void print(const char* comment = nullptr) const {
 			if (comment) printf("%s\n", comment);

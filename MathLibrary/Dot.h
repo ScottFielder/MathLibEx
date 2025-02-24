@@ -66,13 +66,22 @@ namespace MATHEX {
 
 	// Now that we have the dots, we can project one geometric object onto another
 	// Using the equations from the 58:51 min mark: https://www.gdcvault.com/play/1029237/
-	inline const MATH::Vec4 project(const MATH::Vec4& v, const Plane& p) {
+	// Here we are projecting a point onto a plane
+	// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
+	inline const MATH::Vec4 project(const MATH::Vec4& point, const Plane& plane) {
 		// I adapted the formula a little for two reasons:
 		// 1. I have a plane dot Vec4 function, but not the other way around
 		// 2. I have a DualQuat meet plane function, but not a geometric product function
 		// TODO (UN): Does it matter I coded it up a different way? In my mind, it's the same thing as we are seeing where
 		// the line that goes through the point and is orthogonal to the plane intersects the plane
-		return (p | v) ^ p;
+		return (plane | point) ^ plane;
+	}
+
+	// Projecting a point onto a line
+	// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
+	inline const MATH::Vec4 project(const MATH::Vec4& point, const MATHEX::DualQuat& line) {
+		using namespace MATHEX;
+		return (line | point) ^ line;
 	}
 }
 #endif

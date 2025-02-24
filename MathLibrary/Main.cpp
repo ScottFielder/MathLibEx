@@ -97,10 +97,10 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	dqLookAtTest();
+	//dqLookAtTest();
 	//LookAtTest();
 	//sphereTest();
-	//triangleTest();
+	triangleTest();
 	//point2dTest();
 	//planeTest();
 	//QuadraticTest();
