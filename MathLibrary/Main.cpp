@@ -98,11 +98,11 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	projectTest();
+	//projectTest();
 	//dqLookAtTest();
 	//LookAtTest();
 	//sphereTest();
-	//triangleTest();
+	triangleTest();
 	//point2dTest();
 	//planeTest();
 	//QuadraticTest();
@@ -267,14 +267,14 @@ void triangleTest() {
 	Vec3 p2(2, 0, 0);
 	p2.print("Point 2");
 
-	if(TMath::isPointInsideTriangle(p1, tri1)){
+	if(TMath::isPointInside(p1, tri1)){
 		printf("Point 1 is in Triangle 1\n");
 	}
 	else{
 		printf("Point 1 is not in Triangle 1\n");
 	}
 
-if (TMath::isPointInsideTriangle(p2, tri1)) {
+if (TMath::isPointInside(p2, tri1)) {
 		printf("Point 2 is in Triangle 1\n");
 	}
 	else {

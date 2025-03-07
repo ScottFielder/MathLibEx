@@ -50,6 +50,15 @@ namespace MATHEX {
 			// 2. I have a DualQuat meet plane function, but not a geometric product function
 			return (plane | point) ^ plane;
 		}
+
+		// Oriented distance between a point and a plane (sign tells you which side of the plane)
+		static const float orientedDist(const MATH::Vec4& v, const Plane& p) {
+			// First normalize the point and plane 
+			MATH::Vec4  vNormalized = VMath::perspectiveDivide(v);
+			Plane pNormalized = normalize(p);
+			// Then use the formula for the oriented distance from https://bivector.net/3DPGA.pdf
+			return (vNormalized ^ pNormalized).e0123;
+		}
 	};
 }
 

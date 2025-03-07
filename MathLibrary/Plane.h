@@ -15,7 +15,7 @@ namespace  MATHEX {
 
 		struct {
 			MATH::Vec3 n;
-			float negativeDist;  /// if x = 2, then negativeDist = -2
+			float negativeDist;  /// if y = 2, then negativeDist = -2
 		};
 
 

@@ -4,6 +4,7 @@
 #include "Plane.h"
 #include "Join.h"
 #include "DQMath.h"
+#include "PMath.h"
 
 namespace MATHEX {
 
@@ -32,44 +33,39 @@ namespace MATHEX {
 		}
 
 		// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
-		static const bool isPointOnTrianglePlane(const MATH::Vec3& v, const Triangle& t) {
-			float distFromPlane = DQMath::orientedDist(v, getPlane(t));
-			if (fabs(distFromPlane) > VERY_SMALL) {
-				return false;
-			}
-			else {
-				return true;
-			}
+		static const bool isPointOnPlane(const MATH::Vec3& v, const Triangle& t) {
+			float distFromPlane = PMath::orientedDist(v, getPlane(t));
+			if (fabs(distFromPlane) > VERY_SMALL) return false;
+			return true;
 		}
 
 		// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
-		static const bool isPointInsideTriangle(const MATH::Vec3& v, const Triangle& t) {
+		static const bool isPointInside(const MATH::Vec3& v, const Triangle& t) {
 			// Are we in the plane of the triangle at least?	
-			if (!isPointOnTrianglePlane(v, t)) return false;
+			if (!isPointOnPlane(v, t)) return false;
 			// Ok we are in the plane at least, now let's check if we are inside the triangle
 			float orientedDist0 = DQMath::orientedDist(v, join(t.getV0(), t.getV1()));
 			float orientedDist1 = DQMath::orientedDist(v, join(t.getV1(), t.getV2()));
 			float orientedDist2 = DQMath::orientedDist(v, join(t.getV2(), t.getV0()));
 
 			// Is the point on the left side of all edges? Or the right side of all the edges?
-			const float BIGGER_THAN_VERY_SMALL = 1.0e-6f;
-			// Are all distances basically positive give or take a tiny bit
-			if (orientedDist0 >= -BIGGER_THAN_VERY_SMALL && orientedDist1 >= -BIGGER_THAN_VERY_SMALL && orientedDist2 >= -BIGGER_THAN_VERY_SMALL) {
+			// Leave a bit of wiggle room for numerical error
+			const float smallNumber = VERY_SMALL * 10.0f;
+			if (orientedDist0 >= -smallNumber && orientedDist1 >= -smallNumber && orientedDist2 >= -smallNumber) {
 				return true;
 			}
-			// Or are all the distances negative give or take a tiny bit
-			else if (orientedDist0 < BIGGER_THAN_VERY_SMALL && orientedDist1 < BIGGER_THAN_VERY_SMALL && orientedDist2 < BIGGER_THAN_VERY_SMALL)
-			{
+			else if (orientedDist0 <= smallNumber && orientedDist1 <= smallNumber && orientedDist2 <= smallNumber) {
 				return true;
 			}
 			// If not then we are outside the triangle
 			return false;
 		}
 
-		// This method is just like isPointInsideTriangle, but also takes into account the radius of the circle
+
+		// This method is just like isPointInside, but also takes into account the radius of the circle
 		static const bool isCircleTouchingTriangle(const MATH::Vec3& centre, const float radius, const Triangle& t) {
 			// Are we in the plane of the triangle at least?	
-			if (!isPointOnTrianglePlane(centre, t)) return false;
+			if (!isPointOnPlane(centre, t)) return false;
 			// Ok we are in the plane at least, now let's check if we are inside the triangle
 			float orientedDist0 = DQMath::orientedDist(centre, join(t.getV0(), t.getV1()));
 			float orientedDist1 = DQMath::orientedDist(centre, join(t.getV1(), t.getV2()));
