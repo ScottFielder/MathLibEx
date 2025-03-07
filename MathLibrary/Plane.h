@@ -15,7 +15,7 @@ namespace  MATHEX {
 
 		struct {
 			MATH::Vec3 n;
-			float negativeDist;  /// Negative signed distance from the orgin along the normal;
+			float dist;  /// signed distance from the origin along the normal;
 		};
 
 

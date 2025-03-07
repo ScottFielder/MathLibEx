@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
 	//sphereTest();
 	//triangleTest();
 	//point2dTest();
-	//planeTest();
+	planeTest();
 	//QuadraticTest();
 	//RaySphereTest();
 	//RayTest();
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
 	//poincareDualityTest();
 	//meetTest();
 	//joinTest();
-	dualQuatSlerpTest();
+	//dualQuatSlerpTest();
 	//rotateTest();
 	//gradeTest();
 	//normalizeLineTest();
