@@ -79,6 +79,7 @@ void dualQuatMatrixTest();
 void point2dTest();
 void triangleTest();
 void sphereTest();
+void projectTest();
 
 
 /// Utility print() calls for glm to math library format 
@@ -97,12 +98,13 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
+	projectTest();
 	//dqLookAtTest();
 	//LookAtTest();
 	//sphereTest();
 	//triangleTest();
 	//point2dTest();
-	planeTest();
+	//planeTest();
 	//QuadraticTest();
 	//RaySphereTest();
 	//RayTest();
@@ -121,6 +123,28 @@ int main(int argc, char* argv[]) {
 	//dotTest();
 	//dualQuatSlerpVectorTest();
 	//dualQuatMatrixTest();
+}
+
+void projectTest() {
+	// Project a point onto a plane
+	Vec4 point(0, 5, 0, 1);
+	// Flat plane at y = 2
+	//Plane plane(Vec3(0, 1, 0), 2);
+	Plane plane = Vec4(0, 2, 0, 1) & Vec4(1, 2, 0, 1) & Vec4(0, 2, 1, 1);
+	point.print("Point");
+	plane.print("Plane");
+	Vec4 projectedPoint = PMath::project(point, plane);
+	projectedPoint.print("Projected Point");
+	std::cout << std::endl;
+	// Now project point onto a straight line going up through x = 10
+	DualQuat line = Vec4(10, 0, 0, 1) & Vec4(10, 1, 0, 1);
+	point.print("Point");
+	line.print("Line going straight up through x = 10");
+	projectedPoint = DQMath::project(point, line);
+	projectedPoint.print("Projected Point");
+	projectedPoint = VMath::perspectiveDivide(projectedPoint);
+	projectedPoint.print("Projected Point after perspective divide");
+
 }
 
 void dqLookAtTest() {
@@ -317,13 +341,24 @@ void dualQuatSlerpVectorTest() {
 
 
 void dotTest() {
+	// line 1 is straight across 
 	DualQuat line1 = Vec4(0, 0, 0, 1) & Vec4(1, 0, 0, 1);
-	DualQuat line2 = Vec4(0, 0, 0, 1) & Vec4(-0.7071, 0.7071, 0, 1);
+	// line 2 is a diagonal line through the origin from top left to bottom right
+	DualQuat line2 = Vec4(0, 0, 0, 1) & Vec4(-1.0f/sqrt(2), 1.0f/sqrt(2), 0, 1);
 	line1.print("line 1");
 	line2.print("line 2");
 	float angleDegrees = acos(line1 | line2) * RADIANS_TO_DEGREES;
-	std::cout << "Angle between lines: " << angleDegrees << "\n";
+	std::cout << "Angle between lines: " << angleDegrees << " degrees\n\n";
 
+	// plane1 is a flat horizontal plane at y = 0
+	Plane plane1 = Plane(Vec3(0, 1, 0), 0);
+	// plane 2 is a flat vertical plane at x = 0
+	Plane plane2 = Vec4(0, 5, 0, 1) & Vec4(0, 0, 5, 1) & Vec4(0, -5, 0, 1);
+	plane2 = PMath::normalize(plane2);
+	plane1.print("plane 1");
+	plane2.print("plane 2");
+	angleDegrees = acos(plane1 | plane2) * RADIANS_TO_DEGREES;
+	std::cout << "Angle between planes: " << angleDegrees << " degrees\n";
 }
 
 void rayPlaneTest() {

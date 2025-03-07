@@ -4,6 +4,7 @@
 #include "Plane.h"
 #include "DualQuat.h"
 #include "Meet.h"
+#include "Dot.h"
 
 namespace MATHEX {
 	class PMath {
@@ -38,6 +39,16 @@ namespace MATHEX {
 		// The meet operator in namespace MATHEX gives us the intersection point
 		static const MATH::Vec4 intersection(const Plane& p1, const MATHEX::DualQuat& line) {
 			return p1 ^ line;
+		}
+
+		// Projecting a point onto a plane
+		// REFERENCE: Equations from the 58:51 min mark here https://www.gdcvault.com/play/1029237/
+		// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment in Game Physics 2
+		static const MATH::Vec4 project(const MATH::Vec4& point, const Plane& plane) {
+			// I adapted the formula a little for two reasons:
+			// 1. I have a plane dot Vec4 function, but not the other way around
+			// 2. I have a DualQuat meet plane function, but not a geometric product function
+			return (plane | point) ^ plane;
 		}
 	};
 }

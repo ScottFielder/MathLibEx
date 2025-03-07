@@ -8,6 +8,7 @@
 #include "Meet.h"
 #include "PMath.h"
 #include "Join.h"
+#include "Dot.h"
 
 namespace MATHEX {
 
@@ -327,6 +328,12 @@ namespace MATHEX {
 			return squareRoot(b / a);
 		}
 
+		// Projecting a point onto a line
+		// REFERENCE: Equations from the 58:51 min mark here https://www.gdcvault.com/play/1029237/
+		// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment in Game Physics 2
+		static const MATH::Vec4 project(const MATH::Vec4& point, const DualQuat& line) {
+			return (line | point) ^ line;
+		}
 	};
 }
 #endif

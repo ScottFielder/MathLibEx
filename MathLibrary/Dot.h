@@ -1,7 +1,7 @@
 #ifndef DOT_H
 #define DOT_H
 #include <VMath.h>
-#include "DQMath.h"
+#include "GeometricProduct.h"
 namespace MATHEX {
 
 	// Ahh, our old friend the dot product. It still means the same thing in geometric algebra plus some extra superpowers
@@ -24,9 +24,9 @@ namespace MATHEX {
 
 	// A plane and a point dot to make a line
 	// This new line is orthogonal to the original plane and through the point!
+	// User might want to extract just the line part of the dual quaternion using DQMath::extractLine
 	inline const DualQuat dot(const Plane& p, const MATH::Vec4& v) {
-		// The geometric product returns a dual quaternion, but we only want the grade 2 part
-		return DQMath::extractLine(p * v);
+		return p * v;
 	}
 	inline const DualQuat operator | (const Plane& p, const MATH::Vec4& v) {
 		return dot(p, v);
@@ -43,6 +43,7 @@ namespace MATHEX {
 	}
 
 	// Now we are dotting the same type of things together, it returns just a float
+	// If the two arguments are normalized, returns cos(theta)
 	inline float dot(const Plane& p1, const Plane& p2) {
 		return (p1 * p2).real;
 	}
@@ -62,26 +63,6 @@ namespace MATHEX {
 	}
 	inline float operator | (const MATH::Vec4& v1, const MATH::Vec4& v2) {
 		return dot(v1, v2);
-	}
-
-	// Now that we have the dots, we can project one geometric object onto another
-	// Using the equations from the 58:51 min mark: https://www.gdcvault.com/play/1029237/
-	// Here we are projecting a point onto a plane
-	// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
-	inline const MATH::Vec4 project(const MATH::Vec4& point, const Plane& plane) {
-		// I adapted the formula a little for two reasons:
-		// 1. I have a plane dot Vec4 function, but not the other way around
-		// 2. I have a DualQuat meet plane function, but not a geometric product function
-		// TODO (UN): Does it matter I coded it up a different way? In my mind, it's the same thing as we are seeing where
-		// the line that goes through the point and is orthogonal to the plane intersects the plane
-		return (plane | point) ^ plane;
-	}
-
-	// Projecting a point onto a line
-	// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
-	inline const MATH::Vec4 project(const MATH::Vec4& point, const MATHEX::DualQuat& line) {
-		using namespace MATHEX;
-		return (line | point) ^ line;
 	}
 }
 #endif
