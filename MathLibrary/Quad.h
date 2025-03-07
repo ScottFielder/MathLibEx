@@ -1,14 +1,14 @@
 #ifndef QUAD_H
 #define QUAD_H
-#include <DQMath.h>
-#include <Join.h>	
-#include <PMath.h>
-#include <Dot.h>
+#include "DQMath.h"
+#include "Join.h"	
+#include "PMath.h"
+#include "Dot.h"
 
 namespace  MATHEX {
 	class Quad {
 	private:
-		// A quad is made up of 4 vertices
+		// A quadrilateral is made up of 4 vertices
 		// I'm keeping them private as not all 4 vertices make a valid quad
 		MATH::Vec3 v0, v1, v2, v3;
 

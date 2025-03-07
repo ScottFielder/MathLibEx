@@ -27,6 +27,7 @@
 #include "Point2d.h"
 #include "Triangle.h"
 #include "TMath.h"
+#include "QuadMath.h"	
 
 #include <glm/vec3.hpp> /// glm::vec3
 #include <glm/vec4.hpp> /// glm::vec4, glm::ivec4
@@ -80,6 +81,8 @@ void point2dTest();
 void triangleTest();
 void sphereTest();
 void projectTest();
+void quadTest();
+void closestPointOnQuadTest();
 
 
 /// Utility print() calls for glm to math library format 
@@ -98,11 +101,13 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
+	closestPointOnQuadTest();
+	//quadTest();
 	//projectTest();
 	//dqLookAtTest();
 	//LookAtTest();
 	//sphereTest();
-	triangleTest();
+	//triangleTest();
 	//point2dTest();
 	//planeTest();
 	//QuadraticTest();
@@ -123,6 +128,103 @@ int main(int argc, char* argv[]) {
 	//dotTest();
 	//dualQuatSlerpVectorTest();
 	//dualQuatMatrixTest();
+}
+
+void closestPointOnQuadTest() {
+	Vec3 pos1(-1, 0.5,  0);
+	Vec3 pos2( 0, 0.5, 10);
+	Vec3 pos3( 2,   2,  0);
+	Vec3 pos4(1, 0.5, -3);
+	// This quad is a unit square
+	Quad quad = Quad(
+		Vec3(0, 0, 0),
+		Vec3(1, 0, 0),
+		Vec3(1, 1, 0),
+		Vec3(0, 1, 0)
+	);
+	quad.print("Quad");
+	std::cout << std::endl;
+
+	Vec3 closestPoint;
+
+	pos1.print("Pos1");
+	closestPoint = QuadMath::closestPointOnQuad(pos1, quad);
+	closestPoint.print("Closest Point on quad");
+	std::cout << std::endl;
+
+	pos2.print("Pos2");
+	closestPoint = QuadMath::closestPointOnQuad(pos2, quad);
+	closestPoint.print("Closest Point on quad");
+	std::cout << std::endl;
+
+	pos3.print("Pos3");
+	closestPoint = QuadMath::closestPointOnQuad(pos3, quad);
+	closestPoint.print("Closest Point on quad");
+	std::cout << std::endl;
+
+	pos4.print("Pos4");
+	closestPoint = QuadMath::closestPointOnQuad(pos4, quad);
+	closestPoint.print("Closest Point on quad");
+	std::cout << std::endl;
+}
+
+
+void quadTest() {
+	Vec4 point1(0, 0, 0, 1);
+	Vec4 point2(2, 0, 0, 1);
+	Vec4 point3(0, 0.5, 0, 1);
+	Vec4 point4(1, 1, 0, 1);
+	Vec4 point5(1.001, 1.001, 0, 1);
+
+	// This quad is a unit square
+	Quad quad = Quad(
+		Vec3(0, 0, 0),
+		Vec3(1, 0, 0),
+		Vec3(1, 1, 0),
+		Vec3(0, 1, 0)
+	);
+	quad.print("Quad");
+	std::cout << std::endl;
+
+	point1.print("Point1");
+	if (QuadMath::isPointInside(point1, quad)) {
+		printf("Point1 is inside the quad\n\n");
+	}
+	else {
+		printf("Point1 is outside the quad\n\n");
+	}
+
+	point2.print("Point2");
+	if (QuadMath::isPointInside(point2, quad)) {
+		printf("Point2 is inside the quad\n\n");
+	}
+	else {
+		printf("Point2 is outside the quad\n\n");
+	}
+
+	point3.print("Point3");
+	if (QuadMath::isPointInside(point3, quad)) {
+		printf("Point3 is inside the quad\n\n");
+	}
+	else {
+		printf("Point3 is outside the quad\n\n");
+	}
+
+	point4.print("Point4");
+	if (QuadMath::isPointInside(point4, quad)) {
+		printf("Point4 is inside the quad\n\n");
+	}
+	else {
+		printf("Point4 is outside the quad\n\n");
+	}
+
+	point5.print("Point5");
+	if (QuadMath::isPointInside(point5, quad)) {
+		printf("Point5 is inside the quad\n\n");
+	}
+	else {
+		printf("Point5 is outside the quad\n\n");
+	}
 }
 
 void projectTest() {

@@ -59,6 +59,34 @@ namespace MATHEX {
 			// Then use the formula for the oriented distance from https://bivector.net/3DPGA.pdf
 			return (vNormalized ^ pNormalized).e0123;
 		}
+
+		// Are these two planes basically the same thing?
+		static const bool similar(const Plane& p1, const Plane& p2) {
+			Plane p1_normalized = normalize(p1);
+			Plane p2_normalized = normalize(p2);
+			// Are the normals pointing in the same direction or exactly opposite?
+			// We can dot the two planes together to find out
+			float cosTheta = dot(p1_normalized, p2_normalized);
+			// We want theta to be 0 or 180 degrees
+			// That means cosTheta should be 1 or -1. Return false for anything else
+			if (cosTheta < VERY_CLOSE_TO_ONE && cosTheta > -VERY_CLOSE_TO_ONE) {
+				return false;
+			}
+			// Is the origin on the same side of both planes?
+			Vec3 origin = Vec3(0.0f, 0.0f, 0.0f);
+			float orientedDist1 = orientedDist(origin, p1);
+			float orientedDist2 = orientedDist(origin, p2);
+			if (orientedDist1 < -VERY_SMALL && orientedDist2 > VERY_SMALL) {
+				return false;
+			}
+			if (orientedDist1 > VERY_SMALL && orientedDist2 < -VERY_SMALL) {
+				return false;
+			}
+
+			// If we got this far, then the planes are basically describing the same thing
+			return true;
+		}
+
 	};
 }
 
