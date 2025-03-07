@@ -11,11 +11,6 @@ namespace MATHEX {
 		float  dq[8]; /// The DQ is the size of 2 Quaternions = 8 floats
 	public:
 		struct {
-			Quaternion rotation;
-			float dx,dy,dz,dw;
-		};
-
-		struct {
 			float real; 
 			float e23;  /// This is like -i for a regular quaternion. Squares to -1
 			float e31;  /// -j
@@ -24,6 +19,10 @@ namespace MATHEX {
 			float e02;
 			float e03;
 			float e0123;
+		};
+		struct {
+			Quaternion oppositeRotation; // real, e23, e31 and e12 are the same as w, -i, -j and -k in a regular quaternion. 
+			float dx, dy, dz, screw;     // Translations are encoded in dx, dy and dz. The last element combines rotation and translation just like a screw motion
 		};
 
 		inline void set(float real_, float e23_, float e31_, float e12_, float e01_, float e02_, float e03_, float e0123_){
@@ -136,7 +135,7 @@ namespace MATHEX {
 
 		void print(const char* comment = nullptr) const {
 			if (comment) printf("%s\n", comment);
-			printf("rotate: w = %1.4f yz = %1.4f zx = %1.4f xy = %1.4f\ntranslate: dx = %1.4f dy = %1.4f dz = %1.4f dxyz = %1.4f\n", 
+			printf("real = %1.4f e23 = %1.4f e31 = %1.4f e12 = %1.4f e01 = %1.4f e02 = %1.4f e03 = %1.4f e0123 = %1.4f\n", 
 				real, e23, e31, e12, e01, e02, e03, e0123);
 		}
 
