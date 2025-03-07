@@ -49,6 +49,8 @@ namespace  MATHEX {
 #endif // DEBUG
 		}
 
+		// Wind the vertices anti-clockwise please
+		// Otherwise my QuadMath::closestPointOnQuad function might not work...
 		inline Quad(MATH::Vec3 v0_, MATH::Vec3 v1_, MATH::Vec3 v2_, MATH::Vec3 v3_) {
 			set(v0_, v1_, v2_, v3_);
 		}

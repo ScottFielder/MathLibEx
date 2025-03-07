@@ -134,12 +134,12 @@ void closestPointOnQuadTest() {
 	Vec3 pos1(-1, 0.5,  0);
 	Vec3 pos2( 0, 0.5, 10);
 	Vec3 pos3( 2,   2,  0);
-	Vec3 pos4(1, 0.5, -3);
-	// This quad is a unit square
+	Vec3 pos4(2, 0.01, -3);
+	// Wind the quad anti-clockwise
 	Quad quad = Quad(
 		Vec3(0, 0, 0),
 		Vec3(1, 0, 0),
-		Vec3(1, 1, 0),
+		Vec3(0.5, 1, 0),
 		Vec3(0, 1, 0)
 	);
 	quad.print("Quad");

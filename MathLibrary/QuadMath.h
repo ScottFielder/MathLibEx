@@ -92,10 +92,10 @@ namespace MATHEX {
 				DualQuat line30 = quad.getV3() & quad.getV0();
 
 				// What are the two closest edges to the point on the plane?
-				float dist01 = fabs(DQMath::orientedDist(pointOnPlane, line01));
-				float dist12 = fabs(DQMath::orientedDist(pointOnPlane, line12));
-				float dist23 = fabs(DQMath::orientedDist(pointOnPlane, line23));
-				float dist30 = fabs(DQMath::orientedDist(pointOnPlane, line30));
+				float orientedDist01 = DQMath::orientedDist(pointOnPlane, line01);
+				float orientedDist12 = DQMath::orientedDist(pointOnPlane, line12);
+				float orientedDist23 = DQMath::orientedDist(pointOnPlane, line23);
+				float orientedDist30 = DQMath::orientedDist(pointOnPlane, line30);
 
 				// Project the point on the plane to all four edge lines
 				Vec4 pointOnLine01 = VMath::perspectiveDivide(DQMath::project(pointOnPlane, line01));
@@ -104,39 +104,75 @@ namespace MATHEX {
 				Vec4 pointOnLine30 = VMath::perspectiveDivide(DQMath::project(pointOnPlane, line30));
 
 				// Put all the distances and pointsOnLine in a std::map
-					// It will automatically sort them by distance from smallest to largest
-					// It will also delete any duplicate distances, so it's size might be smaller than 4. Be careful!
+				// It will automatically sort them by distance from smallest to largest
+				// It will also delete any duplicate distances, so it's size might be smaller than 4. Be careful!
 				std::map<float, Vec3> distanceToLines = {
-					{ dist01, pointOnLine01 },
-					{ dist12, pointOnLine12 },
-					{ dist23, pointOnLine23 },
-					{ dist30, pointOnLine30 }
+					{ fabs(orientedDist01), pointOnLine01 },
+					{ fabs(orientedDist12), pointOnLine12 },
+					{ fabs(orientedDist23), pointOnLine23 },
+					{ fabs(orientedDist30), pointOnLine30 }
 				};
 
 				// Loop through the map to find the closest line that has a projected point inside the quad
 				int counter = 0;
+				bool checkingThirdClosestLine = false;
+
 				for (const auto& pair : distanceToLines) {
-					// Check just the first and second closest lines
-					if (QuadMath::isPointInside(pair.second, quad)) {
+					// Check just the first and second closest lines. Or maybe the third one if we are outside a corner
+					if (QuadMath::isPointInside(pair.second, quad) && !checkingThirdClosestLine) {
 						return Vec3(pair.second);
 					}
-					// If we have already checked the two closest lines, then we are probably outside a corner
-					// Or the rare case of only two elements in distanceToLines
-					// Just pick the closest vertex and be done with it
-					if (counter > 0 ) {
-						float dist0 = VMath::distance(pos, quad.getV0());
-						float dist1 = VMath::distance(pos, quad.getV1());
-						float dist2 = VMath::distance(pos, quad.getV2());
-						float dist3 = VMath::distance(pos, quad.getV3());
-						// This map will order the distances from smallest to largest
-						std::map<float, Vec3> distanceToVertices = {
-							{ dist0, quad.getV0() },
-							{ dist1, quad.getV1() },
-							{ dist2, quad.getV2() },
-							{ dist3, quad.getV3() }
-						};
-						// Pick the closest vertex
-						return Vec3(distanceToVertices.begin()->second);
+
+					if (checkingThirdClosestLine) {
+						// Turns out if we are outside an acute angle, we might still be in a voronoi region!
+						// REFERENCE: Chapter 5.1.5 in Real-Time Collision Detection by Christer Ericson
+						if (QuadMath::isPointInside(pair.second, quad)) {
+							return Vec3(pair.second);
+						}
+						else {
+							// Just pick the closest vertex and be done with it
+
+							float dist0 = VMath::distance(pos, quad.getV0());
+							float dist1 = VMath::distance(pos, quad.getV1());
+							float dist2 = VMath::distance(pos, quad.getV2());
+							float dist3 = VMath::distance(pos, quad.getV3());
+							// This map will order the distances from smallest to largest
+							std::map<float, Vec3> distanceToVertices = {
+								{ dist0, quad.getV0() },
+								{ dist1, quad.getV1() },
+								{ dist2, quad.getV2() },
+								{ dist3, quad.getV3() }
+							};
+							// Pick the closest vertex
+							return Vec3(distanceToVertices.begin()->second);
+						}
+
+					}
+
+					// If we have already checked the two closest lines, then we might be outside a corner
+					if (counter > 0) {
+						// Pick the closest vertex if we are outside a corner. This is known as the Voronoi region 
+						// REFERENCE: Chapter 5.1.5 in Real-Time Collision Detection by Christer Ericson
+						// Bottom left corner. Right of line01 and right of line 30
+						if (orientedDist01 > -VERY_SMALL && orientedDist30 > -VERY_SMALL) {
+							return quad.getV0();
+						}
+						// Bottom right corner. Right of line01 and right of line 12
+						if (orientedDist01 > -VERY_SMALL && orientedDist12 > -VERY_SMALL) {
+							return quad.getV1();
+						}
+						// Top right corner. Right of line12 and right of line 23
+						if (orientedDist12 > -VERY_SMALL && orientedDist23 > -VERY_SMALL) {
+							return quad.getV2();
+						}
+						// Top left corner. Right of line23 and right of line 30
+						if (orientedDist23 > -VERY_SMALL && orientedDist30 > -VERY_SMALL) {
+							return quad.getV3();
+						}
+
+						// If it turned out we weren't actually in one of those four voronoi regions
+						// use the third closest line instead. Do one more loop
+						checkingThirdClosestLine = true;
 					}
 					counter++;
 				}
