@@ -71,7 +71,6 @@ namespace MATHEX {
 		}
 
 		// Returns the closest point on the quad based on the position given
-		// Seems to work as long as you are kinda close to the quad
 		// UN - Tested 2025-03-10
 		static const Vec3 closestPointOnQuad(const MATH::Vec3& pos, const Quad& quad) {
 			// Project position onto the plane of the quad
