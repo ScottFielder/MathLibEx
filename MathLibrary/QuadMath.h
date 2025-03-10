@@ -99,7 +99,7 @@ namespace MATHEX {
 				Vec4 pointOnLine30 = VMath::perspectiveDivide(DQMath::project(pointOnPlane, line30));
 
 				// Are we in one of those pesky Voronoi regions?
-				// PIC: https://github.com/ScottFielder/MathLibEx/blob/master/Sketches/quad_voronoi_regions.png
+				// PIC: https://github.com/ScottFielder/MathLibEx/blob/master/Images/quad_voronoi_regions.png
 				// The directions of the lines in my pic are kinda important (though ultimately arbitrary)
 				// I'll need to check the directions in relation to the sky at some point
 				Vec4 dir;
