@@ -42,6 +42,15 @@ namespace MATHEX {
 		return dot (line, v);
 	}
 
+	// Swap order of the dot product for point and line
+	// The dot is commutative. Phew!
+	inline const Plane dot(const MATH::Vec4& v, const DualQuat& line) {
+		return dot(line, v);
+	}
+	inline const Plane operator | (const MATH::Vec4& v, const DualQuat& line) {
+		return dot(line, v);
+	}
+
 	// Now we are dotting the same type of things together, it returns just a float
 	// If the two arguments are normalized, returns cos(theta)
 	inline float dot(const Plane& p1, const Plane& p2) {

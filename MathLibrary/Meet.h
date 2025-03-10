@@ -67,6 +67,16 @@ namespace MATHEX {
 		return meet(v,p);
 	}
 
+	// Swap order for the meet of a point and a plane
+	// Looks like I can safely just negate the other way around
+	// DERIVATION: https://github.com/ScottFielder/MathLibEx/blob/master/Notes/Meet_plane_with_point.pdf
+	inline const DualQuat meet(const Plane& p, const MATH::Vec4& v) {
+		return meet(v, p) * -1.0f;
+	}
+	inline const DualQuat operator ^ (const Plane& p, const MATH::Vec4& v) {
+		return meet(p, v);
+	}
+
 }
 #endif
 

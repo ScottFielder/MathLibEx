@@ -323,6 +323,12 @@ namespace MATHEX {
 		static const MATH::Vec4 project(const MATH::Vec4& point, const DualQuat& line) {
 			return (line | point) ^ line;
 		}
+
+		// Projecting a line onto a point
+		static const DualQuat project(const DualQuat& line, const MATH::Vec4& point) {
+			// Ooh, looks like we might actually need the geometric product here compared to the project point onto line
+			return (point | line) * point;
+		}
 	};
 }
 #endif

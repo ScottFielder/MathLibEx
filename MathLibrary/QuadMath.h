@@ -5,6 +5,7 @@
 #include "Join.h"
 #include "DQMath.h"
 #include <map>
+#include <string>
 
 namespace MATHEX {
 
@@ -71,7 +72,7 @@ namespace MATHEX {
 
 		// Returns the closest point on the quad based on the position given
 		// Seems to work as long as you are kinda close to the quad
-		// UN - Tested 2025-03-07 
+		// UN - Tested 2025-03-10
 		static const Vec3 closestPointOnQuad(const MATH::Vec3& pos, const Quad& quad) {
 			// Project position onto the plane of the quad
 			Vec4 pointOnPlane = PMath::project(pos, getPlane(quad));
@@ -91,17 +92,140 @@ namespace MATHEX {
 				DualQuat line23 = quad.getV2() & quad.getV3();
 				DualQuat line30 = quad.getV3() & quad.getV0();
 
-				// What are the two closest edges to the point on the plane?
-				float orientedDist01 = DQMath::orientedDist(pointOnPlane, line01);
-				float orientedDist12 = DQMath::orientedDist(pointOnPlane, line12);
-				float orientedDist23 = DQMath::orientedDist(pointOnPlane, line23);
-				float orientedDist30 = DQMath::orientedDist(pointOnPlane, line30);
-
 				// Project the point on the plane to all four edge lines
 				Vec4 pointOnLine01 = VMath::perspectiveDivide(DQMath::project(pointOnPlane, line01));
 				Vec4 pointOnLine12 = VMath::perspectiveDivide(DQMath::project(pointOnPlane, line12));
 				Vec4 pointOnLine23 = VMath::perspectiveDivide(DQMath::project(pointOnPlane, line23));
 				Vec4 pointOnLine30 = VMath::perspectiveDivide(DQMath::project(pointOnPlane, line30));
+
+				// Are we in one of those pesky Voronoi regions?
+				// PIC: https://github.com/ScottFielder/MathLibEx/blob/master/Sketches/quad_voronoi_regions.png
+				// The directions of the lines in my pic are kinda important (though ultimately arbitrary)
+				// I'll need to check the directions in relation to the sky at some point
+				Vec4 dir;
+				const Plane sky = Plane(0, 0, 0, 1);
+
+				// Let's start with region 0 outside V0
+				DualQuat lineVoronoi0_0 = pointOnLine30 & pointOnPlane;
+				DualQuat lineVoronoi0_1 = pointOnLine01 & pointOnPlane;
+
+				// Lines need to go through vertex V0, so project it
+				lineVoronoi0_0 = DQMath::project(lineVoronoi0_0, quad.getV0());
+				lineVoronoi0_1 = DQMath::project(lineVoronoi0_1, quad.getV0());
+
+				// To match my pic 
+				// Ensure lineVoronoi0_0 is pointing roughly right
+				// and lineVoronoi0_1 is pointing roughly down
+				// projecting the line onto the point sometimes switches direction. So best to do this check after projecting
+				dir = lineVoronoi0_0 ^ sky;
+				if (dir.x < 0) {
+					lineVoronoi0_0 = lineVoronoi0_0 * -1;
+				}
+				dir = lineVoronoi0_1 ^ sky;
+				if (dir.y > 0) {
+					lineVoronoi0_1 = lineVoronoi0_1 * -1;
+				}
+
+				// We are in Voronoi region if the point on the plane
+				// is on the right of both lines
+				float orientedDist0_0 = DQMath::orientedDist(pointOnPlane, lineVoronoi0_0);
+				float orientedDist0_1 = DQMath::orientedDist(pointOnPlane, lineVoronoi0_1);
+				// In this case, the oriented distances will both be negative for the right side. 
+				if (orientedDist0_0 < VERY_SMALL &&
+					orientedDist0_1 < VERY_SMALL) {
+					return quad.getV0();
+				}
+
+				// Region 1 outside V1
+				DualQuat lineVoronoi1_0 = pointOnLine01 & pointOnPlane;
+				DualQuat lineVoronoi1_1 = pointOnLine12 & pointOnPlane;
+
+				// Lines need to go through vertex V1, so project it
+				lineVoronoi1_0 = DQMath::project(lineVoronoi1_0, quad.getV1());
+				lineVoronoi1_1 = DQMath::project(lineVoronoi1_1, quad.getV1());
+
+				// To match my pic 
+				// Ensure lineVoronoi1_0 is pointing roughly up
+				// and    lineVoronoi1_1 is pointing roughly right
+				dir = lineVoronoi1_0 ^ sky;
+				if (dir.y < 0) {
+					lineVoronoi1_0 = lineVoronoi1_0 * -1;
+				}
+				dir = lineVoronoi1_1 ^ sky;
+				if (dir.x < 0) {
+					lineVoronoi1_1 = lineVoronoi1_1 * -1;
+				}
+
+				// We are in Voronoi region if the point on the plane
+				// is on the right of both lines
+				float orientedDist1_0 = DQMath::orientedDist(pointOnPlane, lineVoronoi1_0);
+				float orientedDist1_1 = DQMath::orientedDist(pointOnPlane, lineVoronoi1_1);
+				if (orientedDist1_0 < VERY_SMALL &&
+					orientedDist1_1 < VERY_SMALL) {
+					return quad.getV1();
+				}
+
+				// Region 2 outside V2
+				DualQuat lineVoronoi2_0 = pointOnLine12 & pointOnPlane;
+				DualQuat lineVoronoi2_1 = pointOnLine23 & pointOnPlane;
+
+				// Lines need to go through vertex V2, so project it
+				lineVoronoi2_0 = DQMath::project(lineVoronoi2_0, quad.getV2());
+				lineVoronoi2_1 = DQMath::project(lineVoronoi2_1, quad.getV2());
+
+				// To match my pic 
+				// Ensure lineVoronoi2_0 is pointing roughly left
+				// and    lineVoronoi2_1 is pointing roughly up
+				dir = lineVoronoi2_0 ^ sky;
+				if (dir.x > 0) {
+					lineVoronoi2_0 = lineVoronoi2_0 * -1;
+				}
+				dir = lineVoronoi2_1 ^ sky;
+				if (dir.y < 0) {
+					lineVoronoi2_1 = lineVoronoi2_1 * -1;
+				}
+
+				float orientedDist2_0 = DQMath::orientedDist(pointOnPlane, lineVoronoi2_0);
+				float orientedDist2_1 = DQMath::orientedDist(pointOnPlane, lineVoronoi2_1);
+				if (orientedDist2_0 < VERY_SMALL &&
+					orientedDist2_1 < VERY_SMALL) {
+					return quad.getV2();
+				}
+
+				// Last Voronoi region to check
+				// Region 3 outside V3
+				DualQuat lineVoronoi3_0 = pointOnLine23 & pointOnPlane;
+				DualQuat lineVoronoi3_1 = pointOnLine30 & pointOnPlane;
+
+				// Lines need to go through vertex V3, so project it
+				lineVoronoi3_0 = DQMath::project(lineVoronoi3_0, quad.getV3());
+				lineVoronoi3_1 = DQMath::project(lineVoronoi3_1, quad.getV3());
+
+				// To match my pic
+				// Ensure lineVoronoi3_0 is pointing roughly down
+				// and    lineVoronoi3_1 is pointing roughly left
+				dir = lineVoronoi3_0 ^ sky;
+				if (dir.y > 0) {
+					lineVoronoi3_0 = lineVoronoi3_0 * -1;
+				}
+				dir = lineVoronoi3_1 ^ sky;
+				if (dir.x > 0) {
+					lineVoronoi3_1 = lineVoronoi3_1 * -1;
+				}
+
+				float orientedDist3_0 = DQMath::orientedDist(pointOnPlane, lineVoronoi3_0);
+				float orientedDist3_1 = DQMath::orientedDist(pointOnPlane, lineVoronoi3_1);
+				if (orientedDist3_0 < VERY_SMALL &&
+					orientedDist3_1 < VERY_SMALL) {
+					return quad.getV3();
+				}
+
+				// All done checking the four Voronoi regions
+				// if we werent in a voronoi region after all, then use the closest point on line edges
+				float orientedDist01 = DQMath::orientedDist(pointOnPlane, line01);
+				float orientedDist12 = DQMath::orientedDist(pointOnPlane, line12);
+				float orientedDist23 = DQMath::orientedDist(pointOnPlane, line23);
+				float orientedDist30 = DQMath::orientedDist(pointOnPlane, line30);
 
 				// Put all the distances and pointsOnLine in a std::map
 				// It will automatically sort them by distance from smallest to largest
@@ -113,72 +237,15 @@ namespace MATHEX {
 					{ fabs(orientedDist30), pointOnLine30 }
 				};
 
-				// Loop through the map to find the closest line that has a projected point inside the quad
-				int counter = 0;
-				bool checkingThirdClosestLine = false;
-
 				for (const auto& pair : distanceToLines) {
-					// Check just the first and second closest lines. Or maybe the third one if we are outside a corner
-					if (QuadMath::isPointInside(pair.second, quad) && !checkingThirdClosestLine) {
+					// Just use the closest edge
+					if (QuadMath::isPointInside(pair.second, quad)) {
 						return Vec3(pair.second);
 					}
 
-					if (checkingThirdClosestLine) {
-						// Turns out if we are outside an acute angle, we might still be in a voronoi region!
-						// REFERENCE: Chapter 5.1.5 in Real-Time Collision Detection by Christer Ericson
-						if (QuadMath::isPointInside(pair.second, quad)) {
-							return Vec3(pair.second);
-						}
-						else {
-							// Just pick the closest vertex and be done with it
-
-							float dist0 = VMath::distance(pos, quad.getV0());
-							float dist1 = VMath::distance(pos, quad.getV1());
-							float dist2 = VMath::distance(pos, quad.getV2());
-							float dist3 = VMath::distance(pos, quad.getV3());
-							// This map will order the distances from smallest to largest
-							std::map<float, Vec3> distanceToVertices = {
-								{ dist0, quad.getV0() },
-								{ dist1, quad.getV1() },
-								{ dist2, quad.getV2() },
-								{ dist3, quad.getV3() }
-							};
-							// Pick the closest vertex
-							return Vec3(distanceToVertices.begin()->second);
-						}
-
-					}
-
-					// If we have already checked the two closest lines, then we might be outside a corner
-					if (counter > 0) {
-						// Pick the closest vertex if we are outside a corner. This is known as the Voronoi region 
-						// REFERENCE: Chapter 5.1.5 in Real-Time Collision Detection by Christer Ericson
-						// Bottom left corner. Right of line01 and right of line 30
-						if (orientedDist01 > -VERY_SMALL && orientedDist30 > -VERY_SMALL) {
-							return quad.getV0();
-						}
-						// Bottom right corner. Right of line01 and right of line 12
-						if (orientedDist01 > -VERY_SMALL && orientedDist12 > -VERY_SMALL) {
-							return quad.getV1();
-						}
-						// Top right corner. Right of line12 and right of line 23
-						if (orientedDist12 > -VERY_SMALL && orientedDist23 > -VERY_SMALL) {
-							return quad.getV2();
-						}
-						// Top left corner. Right of line23 and right of line 30
-						if (orientedDist23 > -VERY_SMALL && orientedDist30 > -VERY_SMALL) {
-							return quad.getV3();
-						}
-
-						// If it turned out we weren't actually in one of those four voronoi regions
-						// use the third closest line instead. Do one more loop
-						checkingThirdClosestLine = true;
-					}
-					counter++;
 				}
 			}
 		}
-
 	};
 }
 #endif // !QUADMATH_H
