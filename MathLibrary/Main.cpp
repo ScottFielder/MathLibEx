@@ -83,6 +83,7 @@ void sphereTest();
 void projectTest();
 void quadTest();
 void closestPointOnQuadTest();
+void quadAreaTest();
 
 
 /// Utility print() calls for glm to math library format 
@@ -101,7 +102,8 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	closestPointOnQuadTest();
+	quadAreaTest();
+	//closestPointOnQuadTest();
 	//quadTest();
 	//projectTest();
 	//dqLookAtTest();
@@ -129,6 +131,29 @@ int main(int argc, char* argv[]) {
 	//dualQuatSlerpVectorTest();
 	//dualQuatMatrixTest();
 }
+
+void quadAreaTest() {
+	// Scott asks, what if the quad looks like a triangle?
+	Vec3 v0(0, 0, 0);
+	Vec3 v1(0, 0.5, 0);
+	Vec3 v2(0, 1, 0);
+	Vec3 v3(-1, 0, 0);
+	// Area should be 0.5
+	Quad quad = Quad(v0, v1, v2, v3);
+	quad.print("Quad");
+	float area = QuadMath::getArea(quad);
+	std::cout << "Area = " << area << std::endl;
+
+	//{
+	//	// This should blow up as it has an area of zero
+	//	Vec3 v0(0, 0, 0);
+	//	Vec3 v1(0, 0.5, 0);
+	//	Vec3 v2(0, 1, 0);
+	//	Vec3 v3(0, 2, 0);
+	//	Quad quad = Quad(v0, v1, v2, v3);
+	//}
+}
+
 
 void closestPointOnQuadTest() {
 	Vec3 pos1(-1, 0.5,  0);
