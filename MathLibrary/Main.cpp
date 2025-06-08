@@ -102,7 +102,8 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	quadAreaTest();
+	dualQuatTest();
+	//quadAreaTest();
 	//closestPointOnQuadTest();
 	//quadTest();
 	//projectTest();
@@ -296,8 +297,8 @@ void dqLookAtTest() {
 
 	printf("************************************************************\n\n");
 	printf("First check with eye (0, 0, 20), at (1, 0, 20), up (0, 1, 0)\n\n");
-	DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
-	DQMath::toMatrix4(viewDq2).print("view matrix using R^(-1) * T^(-1)");
+	///DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
+	///DQMath::toMatrix4(viewDq2).print("view matrix using R^(-1) * T^(-1)");
 	glmPrintM4(mt, "view matrix using glm::lookAt");
 	printf("\n");
 	view.print("view matrix using MMath::lookAt");
@@ -311,7 +312,7 @@ void dqLookAtTest() {
 		glm::vec3(eye.x, eye.y, eye.z),
 		glm::vec3(at.x, at.y, at.z),
 		glm::vec3(up.x, up.y, up.z));
-	DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
+	///DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
 	glmPrintM4(mt, "view matrix using glm::lookAt");
 	printf("\n");
 	view.print("view matrix using MMath::lookAt");
@@ -661,6 +662,11 @@ void flectorTest() {
 }
 
 void dualQuatTest() {
+
+	DualQuat scott(0.0f, Vec3(0, 1, 0), Vec3(0, 0, 0));
+	scott.print("Scott");
+	
+	Matrix4 v = MMath::toMatrix4(scott);
 	/// Ok I'm not doing this right 
 	DualQuat identity;
 	identity.print("Identity of Umer's dual quaternion");

@@ -1,6 +1,7 @@
 #ifndef DUALQUAT_H
 #define DUALQUAT_H
-#include <Quaternion.h>
+#include "QMath.h"
+
 using namespace MATH;
 
 /// A dual quaternion can handle rotations and translations. Contains 8 floats
@@ -20,6 +21,7 @@ namespace MATHEX {
 			float e03;
 			float e0123;
 		};
+
 		struct {
 			Quaternion oppositeRotation; // real, e23, e31 and e12 are the same as w, -i, -j and -k in a regular quaternion. 
 			float dx, dy, dz, screw;     // Translations are encoded in dx, dy and dz. The last element combines rotation and translation just like a screw motion
@@ -30,13 +32,31 @@ namespace MATHEX {
 		}
 
 		/// This is the unit dual quaternion. Doesn't rotate or translate
-		/// It is literally the number 1
-		inline DualQuat() {
+		/// It is literally just the number 1
+		DualQuat() {
 			set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 		}
 
-		inline DualQuat(float real_, float e23_, float e31_, float e12_, float e01_, float e02_, float e03_, float e0123_) {
+		DualQuat(float real_, float e23_, float e31_, float e12_, float e01_, float e02_, float e03_, float e0123_) {
 			set(real_, e23_, e31_, e12_, e01_, e02_, e03_, e0123_);
+		}
+
+		
+		DualQuat(float angle, const Vec3 &axis, const Vec3 & translation){
+			
+			Vec3 rotationAxis = VMath::normalize(axis);
+			float theta = angle * DEGREES_TO_RADIANS;
+			float cosVal = cos(theta / 2.0f);
+			float sinVal = sin(theta / 2.0f);
+
+			real = cosVal;
+			e23 = rotationAxis.x * sinVal;
+			e31 = rotationAxis.y * sinVal;;
+			e12 = rotationAxis.z * sinVal;;
+			e01 = translation.x / 2.0f;
+			e02 = translation.y / 2.0f;
+			e03 = translation.z / 2.0f;
+			e0123 = 0.0f;
 		}
 
 		/// A copy constructor
@@ -51,7 +71,7 @@ namespace MATHEX {
 		}
 
 		/// Now I can use the structure itself as an array.
-		/// When overloading the [] operator you need to declair one
+		/// When overloading the [] operator you need to declare one
 		/// to read the array and one to write to the array. 
 		///  Returns a const - the rvalue
 		inline const float operator [] (int index) const {

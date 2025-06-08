@@ -1,8 +1,8 @@
 #ifndef DQMATH_H
 #define DQMATH_H
 #include <Vector.h>
-#include <QMath.h>
-#include <MMath.h>
+#include "QMath.h"
+#include "MMath.h"
 #include "DualQuat.h"
 #include "GeometricProduct.h"
 #include "Meet.h"
@@ -109,8 +109,7 @@ namespace MATHEX {
 			return result.point;
 		}
 
-		static const MATH::Quaternion getRotation(const DualQuat& dq)
-		{
+		static const MATH::Quaternion getRotation(const DualQuat& dq) {
 			// Find the rotation using the first four elements of the dual quaternion
 			MATH::Quaternion rot;
 			rot.w = dq.real;
@@ -150,14 +149,14 @@ namespace MATHEX {
 			return translate(getTranslation(dq));
 		}
 
-		// Convert a dual quaternion to a 4x4 matrix
-		// SF worries that the order below specifies T * R, but what if we passed in R * T?
-		// Turns out that the move below is called Euclidean Factorisation, and it decomposes a motor into a rotation around the origin followed by a translation.
-		// REFERENCE: https://enkimute.github.io/LookMaNoMatrices/
-		static const MATH::Matrix4 toMatrix4(const DualQuat& dq)
-		{
-			return MATH::MMath::translate(getTranslation(dq)) * MATH::MMath::toMatrix4(getRotation(dq));
-		}
+		//// Convert a dual quaternion to a 4x4 matrix
+		//// SF worries that the order below specifies T * R, but what if we passed in R * T?
+		//// Turns out that the move below is called Euclidean Factorisation, and it decomposes a motor into a rotation around the origin followed by a translation.
+		//// REFERENCE: https://enkimute.github.io/LookMaNoMatrices/
+		//static const MATH::Matrix4 toMatrix4(const DualQuat& dq)
+		//{
+		//	return MATH::MMath::translate(getTranslation(dq)) * MATH::MMath::toMatrix4(getRotation(dq));
+		//}
 
 		// Slerp from one translation and orientation to another translation and orientation
 		// Just like the regular quaternion slerp, but now we can include position too!
