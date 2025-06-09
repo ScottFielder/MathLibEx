@@ -50,9 +50,9 @@ namespace MATHEX {
 			float sinVal = sin(theta / 2.0f);
 
 			real = cosVal;
-			e23 = rotationAxis.x * sinVal;
-			e31 = rotationAxis.y * sinVal;;
-			e12 = rotationAxis.z * sinVal;;
+			e23 = -rotationAxis.x * sinVal;
+			e31 = -rotationAxis.y * sinVal;;
+			e12 = -rotationAxis.z * sinVal;;
 			e01 = translation.x / 2.0f;
 			e02 = translation.y / 2.0f;
 			e03 = translation.z / 2.0f;
