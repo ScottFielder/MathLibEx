@@ -20,7 +20,7 @@
 #include "Flector.h"
 #include "GeometricProduct.h"
 #include "DQMath.h"
-#include "PoincareDuality.h"
+#include "Dual.h"
 #include "Meet.h"
 #include "Join.h"
 #include "Dot.h"
@@ -65,7 +65,7 @@ void RayTest();
 void dualQuatTest();
 void flectorTest();
 void intersectionTest();
-void poincareDualityTest();
+void DualTest();
 void meetTest();
 void joinTest();
 void dualQuatSlerpTest();
@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
 	//dualQuatTest();
 	//flectorTest();
 	//intersectionTest();
-	//poincareDualityTest();
+	//DualTest();
 	//meetTest();
 	//joinTest();
 	//dualQuatSlerpTest();
@@ -620,7 +620,7 @@ void meetTest() {
 	PMath::intersection(yPlane, yLine).print("Checking with PMath call too");
 }
 
-void poincareDualityTest() {
+void DualTest() {
 	Plane xPlane(1, 0, 0, 0);
 	Vec4 xPlaneDual = !xPlane;
 	xPlane.print("x plane");

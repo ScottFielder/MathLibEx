@@ -50,7 +50,7 @@
     <ClInclude Include="Meet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PoincareDuality.h">
+    <ClInclude Include="Dual.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Quadratic.h">
