@@ -234,9 +234,8 @@ namespace MATHEX {
 			float quatMag = MATH::QMath::magnitude(getRotation(dq));
 			if (quatMag < VERY_SMALL) {
 				// Divide by the infinite mag instead here
-				float infiniteMag = sqrt(dq.e01 * dq.e01 + dq.e02 * dq.e02 + dq.e03 * dq.e03
-					+ dq.e0123 * dq.e0123
-				);
+				float infiniteMag = sqrt(dq.e01 * dq.e01 + dq.e02 * dq.e02 + dq.e03 * dq.e03 + 
+					                     dq.e0123 * dq.e0123);
 				return dq / infiniteMag;
 			}
 			// Otherwise just use the quaternion magnitude
