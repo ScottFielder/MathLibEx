@@ -12,8 +12,7 @@
 
 namespace MATHEX {
 
-	class DQMath {
-	public:
+	struct DQMath {
 
 		/// Flip the sign on the axis of rotation and translation bivectors
 		/// TODO: Not sure if I need to flip e0123 as well?
@@ -53,6 +52,7 @@ namespace MATHEX {
 		}
 
 		/// Return a pure translation dual quaternion from a Vec3
+		/// TODO: This just behaves like a Constructor.
 		static const DualQuat translate(const MATH::Vec3& translation) {
 			// No rotation, but set the last four floats to be half the translation
 			DualQuat result;

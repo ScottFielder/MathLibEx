@@ -7,20 +7,17 @@ using namespace MATH;
 /// A dual quaternion can handle rotations and translations. Contains 8 floats
 
 namespace MATHEX {
-	union DualQuat {
-	private:
-		float  dq[8]; /// The DQ is the size of 2 Quaternions = 8 floats
+	class DualQuat {
 	public:
-		struct {
-			float real; 
-			float e23;  /// This is like -i for a regular quaternion. Squares to -1
-			float e31;  /// -j
-			float e12;  /// -k
-			float e01;  /// Every term with a zero in it squares to zero. It's how translations are handled. 
-			float e02;
-			float e03;
-			float e0123;
-		};
+		float real; 
+		float e23;  /// This is like -i for a regular quaternion. Squares to -1
+		float e31;  /// -j
+		float e12;  /// -k
+		float e01;  /// Every term with a zero in it squares to zero. It's how translations are handled. 
+		float e02;
+		float e03;
+		float e0123;
+	
 
 		struct {
 			Quaternion oppositeRotation; // real, e23, e31 and e12 are the same as w, -i, -j and -k in a regular quaternion. 
@@ -41,22 +38,50 @@ namespace MATHEX {
 			set(real_, e23_, e31_, e12_, e01_, e02_, e03_, e0123_);
 		}
 
-		
-		DualQuat(float angle, const Vec3 &axis, const Vec3 & translation){
-			
+		DualQuat(float angleDeg, const Vec3& axis){
 			Vec3 rotationAxis = VMath::normalize(axis);
-			float theta = angle * DEGREES_TO_RADIANS;
+			float theta = angleDeg * DEGREES_TO_RADIANS;
 			float cosVal = cos(theta / 2.0f);
 			float sinVal = sin(theta / 2.0f);
-
 			real = cosVal;
-			e23 = -rotationAxis.x * sinVal;
-			e31 = -rotationAxis.y * sinVal;;
-			e12 = -rotationAxis.z * sinVal;;
+			e23 = rotationAxis.x * sinVal;
+			e31 = rotationAxis.y * sinVal;
+			e12 = rotationAxis.z * sinVal;
+			e01 = 0.0f;
+			e02 = 0.0f;
+			e03 = 0.0f;
+			e0123 = 0.0f;
+		}
+
+		DualQuat(const Quaternion& rotation) {
+			real = rotation.w;
+			e23 = -rotation.ijk.x;
+			e31 = -rotation.ijk.y;
+			e12 = -rotation.ijk.z;
+			e01 = 0.0f;
+			e02 = 0.0f;
+			e03 = 0.0f;
+			e0123 = 0.0f;
+		}
+
+		DualQuat(const Vec3& translation) {
+			real = 1.0f;
+			e23 = 0.0f;
+			e31 = 0.0f;
+			e12 = 0.0f;
 			e01 = translation.x / 2.0f;
 			e02 = translation.y / 2.0f;
 			e03 = translation.z / 2.0f;
 			e0123 = 0.0f;
+
+		}
+
+		
+
+		DualQuat(float angleDeg, const Vec3 &axis, const Vec3 & translation){
+			DualQuat r = DualQuat(angleDeg, axis); 
+			DualQuat t = DualQuat(t);
+			*this = r * t; /// or is it t * r
 		}
 
 		/// A copy constructor
@@ -70,18 +95,28 @@ namespace MATHEX {
 			return *this;
 		}
 
+		
+		/// Type conversion operators 
+		operator const float* () const {
+			return static_cast<const float*>(&real);
+		}
+
+		operator float* () {
+			return static_cast<float*>(&real);
+		}
+
 		/// Now I can use the structure itself as an array.
 		/// When overloading the [] operator you need to declare one
 		/// to read the array and one to write to the array. 
 		///  Returns a const - the rvalue
 		inline const float operator [] (int index) const {
-			return *(dq + index);
+			return *(&real + index);
 		}
 
 		/// This one is for writing to the structure as if where an array 
 		/// it returns a modifiable lvalue
 		inline float& operator [] (int index) {
-			return *(dq + index);
+			return *(&real + index);
 		}
 
 		inline const DualQuat operator * (float c) const {
