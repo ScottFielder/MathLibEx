@@ -102,7 +102,7 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	dualQuatTest();
+	//dualQuatTest();
 	//quadAreaTest();
 	//closestPointOnQuadTest();
 	//quadTest();
@@ -122,14 +122,14 @@ int main(int argc, char* argv[]) {
 	//DualTest();
 	//meetTest();
 	//joinTest();
-	//dualQuatSlerpTest();
+	dualQuatSlerpTest();
 	//rotateTest();
 	//gradeTest();
 	//normalizeLineTest();
 	//translateAlongLineTest();
 	//rayPlaneTest();
 	//dotTest();
-	//dualQuatSlerpVectorTest();
+	// dualQuatSlerpVectorTest();
 	//dualQuatMatrixTest();
 }
 
@@ -312,7 +312,7 @@ void dqLookAtTest() {
 		glm::vec3(eye.x, eye.y, eye.z),
 		glm::vec3(at.x, at.y, at.z),
 		glm::vec3(up.x, up.y, up.z));
-	///DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
+	//DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
 	glmPrintM4(mt, "view matrix using glm::lookAt");
 	printf("\n");
 	view.print("view matrix using MMath::lookAt");
@@ -441,6 +441,9 @@ void dualQuatMatrixTest(){
 	/// As far as I can tell I'm stuck here
 }
 void dualQuatSlerpVectorTest() {
+	printf("************************************************************\n");
+	printf("dualQuatSlerpVectorTest\n\n");
+
 	Vec3 initialVector(0, 0, 0);
 	Vec3 startTranslation(2, 0, 0);
 	Quaternion endRot = QMath::angleAxisRotation(180, Vec3(0, 0, 1));
@@ -464,6 +467,7 @@ void dualQuatSlerpVectorTest() {
 	DQMath::getTranslation(slerpDQEnd).print("pos");
 	DQMath::getRotation(slerpDQEnd).print("rot");
 	DQMath::rigidTransformation(slerpDQEnd, initialVector).print("New Vector");
+	printf("************************************************************\n\n");
 
 }
 
@@ -513,7 +517,9 @@ void rayPlaneTest() {
 	// Now try using geometric algebra
 	// Ray is a line joining two points
 	Vec3 pointOnRay = rayStart + rayDir;
-	DualQuat rayDualQuat = pointOnRay & rayStart;
+	Vec4 pointOnRay4d = Vec4(pointOnRay, 1.0f);
+	Vec4 rayStart4d   = Vec4(rayStart, 1.0f);
+	DualQuat rayDualQuat = join(pointOnRay4d, rayStart4d);
 	// Intersection point is the meet of the ray and the plane
 	// TODO (UN) I wonder if the Plane constructor is ambiguous here on whether it is +d or -d
 	Vec4 intersectionPoint2 = rayDualQuat ^ Plane(planeNormal, -planeD);
@@ -570,32 +576,82 @@ void rotateTest() {
 }
 
 void dualQuatSlerpTest() {
-	Vec3 startPos(-1, -2, -3);
-	Vec3 endPos(1, 2, 3);
+	printf("************************************************************\n");
+	printf("dualQuatSlerpTest\n");
+	const float epsilon = VERY_SMALL * 100;
+
+	Vec3 startPos(-2, 0, 0);
+	Vec3 endPos  ( 5, 11, 0);
+	float angleDeg = 180;
 	Quaternion startRot = QMath::angleAxisRotation(0, Vec3(0, 1, 0));
-	Quaternion endRot = QMath::angleAxisRotation(90, Vec3(0, 1, 0));
+	Quaternion endRot = QMath::angleAxisRotation(angleDeg, Vec3(0, 1, 0));
 	DualQuat startDQ = DQMath::translate(startPos) * DQMath::rotate(startRot);
 	DualQuat endDQ = DQMath::translate(endPos) * DQMath::rotate(endRot);
 	DualQuat slerpDQStart  = DQMath::slerp(startDQ, endDQ, 0.0f);
 	DualQuat slerpDQMiddle = DQMath::slerp(startDQ, endDQ, 0.5f);
 	DualQuat slerpDQEnd    = DQMath::slerp(startDQ, endDQ, 1.0f);
 
-	startPos.print("Starting pos");
-	startRot.print("Starting rot");
-	endPos.print("Ending pos");
-	endRot.print("Ending rot");
-	std::cout << "***********************\n";
-	slerpDQStart.print("Slerp with t = 0");
-	DQMath::getTranslation(slerpDQStart).print("pos");
-	DQMath::getRotation(slerpDQStart).print("rot");
-	std::cout << "***********************\n";
-	slerpDQMiddle.print("Slerp with t = 0.5");
-	DQMath::getTranslation(slerpDQMiddle).print("pos");
-	DQMath::getRotation(slerpDQMiddle).print("rot");
-	std::cout << "***********************\n";
-	slerpDQEnd.print("Slerp with t = 1");
-	DQMath::getTranslation(slerpDQEnd).print("pos");
-	DQMath::getRotation(slerpDQEnd).print("rot");
+	//startPos.print("Starting pos");
+	//startRot.print("Starting rot");
+	//endPos.print("Ending pos");
+	//endRot.print("Ending rot");
+	//std::cout << "***********************\n";
+	//slerpDQStart.print("Dual Quat with t = 0");
+	Vec3 posTzero = DQMath::getTranslation(slerpDQStart);
+	//posTzero.print("pos t = 0");
+	Quaternion rotTzero = DQMath::getRotation(slerpDQStart);
+	//rotTzero.print("rot t = 0");
+	bool passedPos1 = false;
+	if (VMath::mag(posTzero - startPos) < epsilon) {
+		passedPos1 = true;
+	}
+	bool passedRot1 = false;
+	if (QMath::magnitude(rotTzero - startRot) < epsilon) {
+		passedRot1 = true;
+	}
+	//std::cout << "***********************\n";
+	//slerpDQMiddle.print("Slerp with t = 0.5");
+	Vec3 posThalf = DQMath::getTranslation(slerpDQMiddle);
+	//posThalf.print("pos t = 0.5");
+	Quaternion rotThalf = DQMath::getRotation(slerpDQMiddle);
+	//rotThalf.print("rot t = 0.5");
+	bool passedPos2 = false;
+	Quaternion middleRot = QMath::normalize(startRot + endRot);
+	Vec3 middlePos = QMath::rotate(startPos, middleRot) + (endPos + startPos) / 2;
+	if (VMath::mag(posThalf - middlePos) < epsilon) {
+		passedPos2 = true;
+	}
+	bool passedRot2 = false;
+	if (QMath::magnitude(rotThalf - middleRot) < epsilon) {
+		passedRot2 = true;
+	}
+	//std::cout << "***********************\n";
+	//slerpDQEnd.print("Slerp with t = 1");
+	Vec3 posTone = DQMath::getTranslation(slerpDQEnd);
+	//posTone.print("pos t = 1");
+	Quaternion rotTone = DQMath::getRotation(slerpDQEnd);
+	//rotTone.print("rot t = 1");
+	bool passedPos3 = false;
+	if (VMath::mag(posTone - endPos) < epsilon) {
+		passedPos3 = true;
+	}
+	bool passedRot3 = false;
+	if (QMath::magnitude(rotTone - endRot) < epsilon) {
+		passedRot3 = true;
+	}
+
+	//// Figuring out coloured text and background using https://medium.com/@vitorcosta.matias/print-coloured-texts-in-console-a0db6f589138
+	const string PASSED{ "\033[42mPASSED\033[m" };
+	const string FAILED{ "\033[41mFAILED\033[m" };
+	if (passedPos1 && passedPos2 && passedPos3 &&
+		passedRot1 && passedRot2 && passedRot3) {
+		std::cout << PASSED << "\n";
+	}
+	else {
+		std::cout << FAILED << "\n";
+	}
+	printf("************************************************************\n\n");
+
 }
 
 void joinTest() {
@@ -663,7 +719,11 @@ void flectorTest() {
 
 void dualQuatTest() {
 
-	DualQuat scott(0.0f, Vec3(0, 1, 0), Vec3(0, 0, 0));
+	//DualQuat scott(0.0f, Vec3(0, 1, 0), Vec3(0, 0, 0));
+	// UN - I think you'll need to do this in two steps depending on R*T or T*R
+	DualQuat T = DQMath::translate(Vec3(0, 0, 0));
+	DualQuat R = DQMath::rotate(0.0f, Vec3(0, 1, 0));
+	DualQuat scott = T * R;
 	scott.print("Scott");
 	
 	Matrix4 v = MMath::toMatrix4(scott);

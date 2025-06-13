@@ -23,7 +23,6 @@ namespace MATHEX {
 		return join(p1, p2);
 	}
 
-
 	// A line and a point join to make a plane
 	inline const Plane join(const DualQuat& q, const MATH::Vec4& p) {
 		return !(!q ^ !p);

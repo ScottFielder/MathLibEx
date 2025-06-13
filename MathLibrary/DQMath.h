@@ -278,13 +278,13 @@ namespace MATHEX {
 
 			DualQuat result;
 			// First iteration where P and Q are points to align the positions
-			result = motorAtoB(eye, originalEye);
+			result = motorAtoB(Vec4(eye), Vec4(originalEye));
 			// Funny I had to inverse the translation here to make this work, but not the rotation later on
 			result = inverse(result);
 
 			// Second iteration where P and Q are lines to align the targets
-			DualQuat P = originalEye & rigidTransformation(result, at);
-			DualQuat Q = originalEye & originalAt;
+			DualQuat P = Vec4(originalEye) & rigidTransformation(result, at);
+			DualQuat Q = Vec4(originalEye) & originalAt;
 			result = motorAtoB(normalize(P), normalize(Q)) * result;
 			// Third and final iteration where P and Q are planes to align the up directions
 			Plane Pplane = Q & rigidTransformation(result, up);

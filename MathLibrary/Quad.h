@@ -17,10 +17,10 @@ namespace  MATHEX {
 		// Also, all four vertices should reside on the same plane (no bent quads)
 		inline bool isValid() const {
 			// Find the edge lines that go all the way around the quad using the join operator (&)
-			DualQuat line01 = v0 & v1;
-			DualQuat line12 = v1 & v2;
-			DualQuat line23 = v2 & v3;
-			DualQuat line30 = v3 & v0;
+			DualQuat line01 = Vec4(v0) & Vec4(v1);
+			DualQuat line12 = Vec4(v1) & Vec4(v2);
+			DualQuat line23 = Vec4(v2) & Vec4(v3);
+			DualQuat line30 = Vec4(v3) & Vec4(v0);
 			// Add them up
 			DualQuat sum = line01 + line12 + line23 + line30;
 			// Now take the magnitude of the infinite line part of the sum

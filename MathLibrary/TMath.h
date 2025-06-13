@@ -14,7 +14,7 @@ namespace MATHEX {
 		// UN - Tested 2025-02-24 for Sphere-Triangle collision assignment
 		static const Plane getPlane(const Triangle& t) {
 			// Join three points to get a plane
-			return t.getV0() & t.getV1() & t.getV2();
+			return Vec4(t.getV0()) & Vec4(t.getV1()) & Vec4(t.getV2());
 
 			/// Would not this be more intuitive? SSF
 			//return Plane(t.getV0(), t.getV1(), t.getV2());
@@ -44,9 +44,9 @@ namespace MATHEX {
 			// Are we in the plane of the triangle at least?	
 			if (!isPointOnPlane(v, t)) return false;
 			// Ok we are in the plane at least, now let's check if we are inside the triangle
-			float orientedDist0 = DQMath::orientedDist(v, join(t.getV0(), t.getV1()));
-			float orientedDist1 = DQMath::orientedDist(v, join(t.getV1(), t.getV2()));
-			float orientedDist2 = DQMath::orientedDist(v, join(t.getV2(), t.getV0()));
+			float orientedDist0 = DQMath::orientedDist(Vec4(v), join(Vec4(t.getV0()), Vec4(t.getV1())));
+			float orientedDist1 = DQMath::orientedDist(Vec4(v), join(Vec4(t.getV1()), Vec4(t.getV2())));
+			float orientedDist2 = DQMath::orientedDist(Vec4(v), join(Vec4(t.getV2()), Vec4(t.getV0())));
 
 			// Is the point on the left side of all edges? Or the right side of all the edges?
 			// Leave a bit of wiggle room for numerical error
@@ -67,9 +67,9 @@ namespace MATHEX {
 			// Are we in the plane of the triangle at least?	
 			if (!isPointOnPlane(centre, t)) return false;
 			// Ok we are in the plane at least, now let's check if we are inside the triangle
-			float orientedDist0 = DQMath::orientedDist(centre, join(t.getV0(), t.getV1()));
-			float orientedDist1 = DQMath::orientedDist(centre, join(t.getV1(), t.getV2()));
-			float orientedDist2 = DQMath::orientedDist(centre, join(t.getV2(), t.getV0()));
+			float orientedDist0 = DQMath::orientedDist(Vec4(centre), join(Vec4(t.getV0()), Vec4(t.getV1())));
+			float orientedDist1 = DQMath::orientedDist(Vec4(centre), join(Vec4(t.getV1()), Vec4(t.getV2())));
+			float orientedDist2 = DQMath::orientedDist(Vec4(centre), join(Vec4(t.getV2()), Vec4(t.getV0())));
 
 			// Is the point on the left side of all edges? Or the right side of all the edges?
 			// Take into account the radius

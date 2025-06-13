@@ -13,17 +13,17 @@ namespace MATHEX {
 	public:
 		// Join three points to get a plane
 		static const Plane getPlane(const Quad& quad) {
-			return quad.getV0() & quad.getV1() & quad.getV2();
+			return Vec4(quad.getV0()) & Vec4(quad.getV1()) & Vec4(quad.getV2());
 		}
 
 		// Find the surface area of the quad
 		// REFERENCE: https://github.com/ScottFielder/MathLibEx/blob/master/Literature/3D_PGA_Cheat_Sheet_2019_siggraph.pdf
 		static const float getArea(const Quad& quad) {
 			// Find the edge lines that go all the way round the quad
-			DualQuat line01 = quad.getV0() & quad.getV1();
-			DualQuat line12 = quad.getV1() & quad.getV2();
-			DualQuat line23 = quad.getV2() & quad.getV3();
-			DualQuat line30 = quad.getV3() & quad.getV0();
+			DualQuat line01 = Vec4(quad.getV0()) & Vec4(quad.getV1());
+			DualQuat line12 = Vec4(quad.getV1()) & Vec4(quad.getV2());
+			DualQuat line23 = Vec4(quad.getV2()) & Vec4(quad.getV3());
+			DualQuat line30 = Vec4(quad.getV3()) & Vec4(quad.getV0());
 			// Add them up
 			DualQuat sum = line01 + line12 + line23 + line30;
 			// Now take the magnitude of the infinite part of the sum and divide by two
@@ -52,10 +52,10 @@ namespace MATHEX {
 			// Are we in the plane of the quad at least?	
 			if (!isPointOnPlane(point, quad)) return false;
 			// Ok we are in the plane at least, now let's check if we are inside the quad
-			float orientedDist0 = DQMath::orientedDist(point, quad.getV0() & quad.getV1());
-			float orientedDist1 = DQMath::orientedDist(point, quad.getV1() & quad.getV2());
-			float orientedDist2 = DQMath::orientedDist(point, quad.getV2() & quad.getV3());
-			float orientedDist3 = DQMath::orientedDist(point, quad.getV3() & quad.getV0());
+			float orientedDist0 = DQMath::orientedDist(Vec4(point), Vec4(quad.getV0()) & Vec4(quad.getV1()));
+			float orientedDist1 = DQMath::orientedDist(Vec4(point), Vec4(quad.getV1()) & Vec4(quad.getV2()));
+			float orientedDist2 = DQMath::orientedDist(Vec4(point), Vec4(quad.getV2()) & Vec4(quad.getV3()));
+			float orientedDist3 = DQMath::orientedDist(Vec4(point), Vec4(quad.getV3()) & Vec4(quad.getV0()));
 
 			// Is the point on the left side of all edges? Or the right side of all the edges?
 			// Leave a bit of wiggle room for numerical error
@@ -86,10 +86,10 @@ namespace MATHEX {
 				// Now we need to consider the outside edges of the quad
 				// I overloaded the "&" operator to join two points into a line
 				// Notice I am being careful in the order of the points to wind around the quad consistently
-				DualQuat line01 = quad.getV0() & quad.getV1();
-				DualQuat line12 = quad.getV1() & quad.getV2();
-				DualQuat line23 = quad.getV2() & quad.getV3();
-				DualQuat line30 = quad.getV3() & quad.getV0();
+				DualQuat line01 = Vec4(quad.getV0()) & Vec4(quad.getV1());
+				DualQuat line12 = Vec4(quad.getV1()) & Vec4(quad.getV2());
+				DualQuat line23 = Vec4(quad.getV2()) & Vec4(quad.getV3());
+				DualQuat line30 = Vec4(quad.getV3()) & Vec4(quad.getV0());
 
 				// Project the point on the plane to all four edge lines
 				Vec4 pointOnLine01 = VMath::perspectiveDivide(DQMath::project(pointOnPlane, line01));

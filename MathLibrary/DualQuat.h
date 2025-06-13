@@ -38,15 +38,14 @@ namespace MATHEX {
 			set(real_, e23_, e31_, e12_, e01_, e02_, e03_, e0123_);
 		}
 
+		// UN - Using the Quaternion union to set up a pure rotation DualQuat
 		DualQuat(float angleDeg, const Vec3& axis){
-			Vec3 rotationAxis = VMath::normalize(axis);
-			float theta = angleDeg * DEGREES_TO_RADIANS;
-			float cosVal = cos(theta / 2.0f);
-			float sinVal = sin(theta / 2.0f);
-			real = cosVal;
-			e23 = rotationAxis.x * sinVal;
-			e31 = rotationAxis.y * sinVal;
-			e12 = rotationAxis.z * sinVal;
+			Quaternion q = QMath::angleAxisRotation(angleDeg, axis);
+			real = q.w;
+			e23 = -q.e32;
+			e31 = -q.e13;
+			e12 = -q.e21;
+
 			e01 = 0.0f;
 			e02 = 0.0f;
 			e03 = 0.0f;
@@ -55,9 +54,9 @@ namespace MATHEX {
 
 		DualQuat(const Quaternion& rotation) {
 			real = rotation.w;
-			e23 = -rotation.ijk.x;
-			e31 = -rotation.ijk.y;
-			e12 = -rotation.ijk.z;
+			e23 = -rotation.e32;
+			e31 = -rotation.e13;
+			e12 = -rotation.e21;
 			e01 = 0.0f;
 			e02 = 0.0f;
 			e03 = 0.0f;
@@ -77,12 +76,14 @@ namespace MATHEX {
 		}
 
 		
-
-		DualQuat(float angleDeg, const Vec3 &axis, const Vec3 & translation){
-			DualQuat r = DualQuat(angleDeg, axis); 
-			DualQuat t = DualQuat(t);
-			*this = r * t; /// or is it t * r
-		}
+		// UN - Need the geometric product to do r * t in this constructor
+		//      But that file needs DualQuat.h...
+		// 
+		//DualQuat(float angleDeg, const Vec3 &axis, const Vec3 & translation){
+		//	DualQuat r = DualQuat(angleDeg, axis); 
+		//	DualQuat t = DualQuat(t);
+		//	*this = r * t; /// or is it t * r
+		//}
 
 		/// A copy constructor
 		inline DualQuat(const DualQuat& dq) {
