@@ -77,10 +77,10 @@ namespace MATHEX {
 
 		// This constructor does two things!
 		// Rotates THEN Translates. ie T * R
+		// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Dual_quat_rotate_then_translate.pdf
 		DualQuat(float angleDeg, const Vec3 &axis, const Vec3 & translation){
 			DualQuat R = DualQuat(angleDeg, axis); 
 			DualQuat T = DualQuat(translation);
-			// UN - TODO: Put in URL for my scribbles
 			real = T.real * R.real;
 			e23  = T.real * R.e23;
 			e31  = T.real * R.e31;
