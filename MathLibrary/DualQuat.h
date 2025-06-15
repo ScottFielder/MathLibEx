@@ -63,6 +63,7 @@ namespace MATHEX {
 			e0123 = 0.0f;
 		}
 
+		// UN - TODO: I'll need to flip the signs on e01, e02, e03 at some point...
 		DualQuat(const Vec3& translation) {
 			real = 1.0f;
 			e23 = 0.0f;
@@ -72,18 +73,25 @@ namespace MATHEX {
 			e02 = translation.y / 2.0f;
 			e03 = translation.z / 2.0f;
 			e0123 = 0.0f;
-
 		}
 
-		
-		// UN - Need the geometric product to do r * t in this constructor
-		//      But that file needs DualQuat.h...
-		// 
-		//DualQuat(float angleDeg, const Vec3 &axis, const Vec3 & translation){
-		//	DualQuat r = DualQuat(angleDeg, axis); 
-		//	DualQuat t = DualQuat(t);
-		//	*this = r * t; /// or is it t * r
-		//}
+		// This constructor does two things!
+		// Rotates THEN Translates. ie T * R
+		DualQuat(float angleDeg, const Vec3 &axis, const Vec3 & translation){
+			DualQuat R = DualQuat(angleDeg, axis); 
+			DualQuat T = DualQuat(translation);
+			// UN - TODO: Put in URL for my scribbles
+			real = T.real * R.real;
+			e23  = T.real * R.e23;
+			e31  = T.real * R.e31;
+			e12  = T.real * R.e12;
+
+			e01  =  T.e01 * R.real - T.e02 * R.e12  + T.e03 * R.e31;
+			e02  =  T.e01 * R.e12  + T.e02 * R.real - T.e03 * R.e23;
+			e03  = -T.e01 * R.e31  + T.e02 * R.e23  + T.e03 * R.real;
+
+			e0123 = T.e01 * R.e23 + T.e02 * R.e31 + T.e03 * R.e12;
+		}
 
 		/// A copy constructor
 		inline DualQuat(const DualQuat& dq) {

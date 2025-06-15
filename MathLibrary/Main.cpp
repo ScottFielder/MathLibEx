@@ -57,6 +57,7 @@ void determinantTest();
 void slerpTest();
 
 /// MathLibEx tests
+void dqConstructorTest();
 void dqLookAtTest();
 void planeTest();
 void QuadraticTest();
@@ -100,8 +101,12 @@ using namespace MATHEX;
 using namespace glm;
 using namespace std;
 
+// Figuring out coloured text and background using https://medium.com/@vitorcosta.matias/print-coloured-texts-in-console-a0db6f589138
+const string PASSED{ "\033[42mPASSED\033[m" };
+const string FAILED{ "\033[41mFAILED\033[m" };
 
 int main(int argc, char* argv[]) {
+	dqConstructorTest(); // GREEN for GOOD!
 	//dualQuatTest();
 	//quadAreaTest();
 	//closestPointOnQuadTest();
@@ -122,7 +127,7 @@ int main(int argc, char* argv[]) {
 	//DualTest();
 	//meetTest();
 	//joinTest();
-	dualQuatSlerpTest();
+	// dualQuatSlerpTest(); // GREEN for GOOD!
 	//rotateTest();
 	//gradeTest();
 	//normalizeLineTest();
@@ -131,6 +136,41 @@ int main(int argc, char* argv[]) {
 	//dotTest();
 	// dualQuatSlerpVectorTest();
 	//dualQuatMatrixTest();
+}
+
+void dqConstructorTest() {
+	printf("************************************************************\n");
+	printf("dqConstructorTest\n");
+
+	float epsilon = VERY_SMALL * 10;
+	float angleDeg = -32;
+	Vec3 axis = VMath::normalize(Vec3(1, 2, -1));
+	Vec3 translation(-4.5f, 12.3f, -0.2f);
+
+	// What happens if we rotate THEN translate the following vector?
+	Vec3 v(1, 2, -3);
+
+	// We know Matrices work. Start with those
+	Matrix4 R = MMath::rotate(angleDeg, axis);
+	Matrix4 T = MMath::translate(translation);
+	// T * R does a rotate then translate
+	Matrix4 matTransform = T * R;
+	Vec3 vTransformedWithMat = matTransform * v;
+
+	// Do the same with the Dual Quat constructor that builds rotation THEN translation
+	DualQuat dqTransform = DualQuat(angleDeg, axis, translation);
+	Vec4 v4d = Vec4(v);
+	Vec4 v4dTransformedWithDq = DQMath::rigidTransformation(dqTransform, v4d);
+	Vec3 vTransformedWithDq = Vec3(v4dTransformedWithDq);
+
+	float diffMag = VMath::mag(vTransformedWithMat - vTransformedWithDq);
+	if (diffMag < epsilon) {
+		std::cout << PASSED << "\n";
+	}
+	else {
+		std::cout << FAILED << "\n";
+	}
+
 }
 
 void quadAreaTest() {
@@ -640,9 +680,6 @@ void dualQuatSlerpTest() {
 		passedRot3 = true;
 	}
 
-	//// Figuring out coloured text and background using https://medium.com/@vitorcosta.matias/print-coloured-texts-in-console-a0db6f589138
-	const string PASSED{ "\033[42mPASSED\033[m" };
-	const string FAILED{ "\033[41mFAILED\033[m" };
 	if (passedPos1 && passedPos2 && passedPos3 &&
 		passedRot1 && passedRot2 && passedRot3) {
 		std::cout << PASSED << "\n";
@@ -650,8 +687,6 @@ void dualQuatSlerpTest() {
 	else {
 		std::cout << FAILED << "\n";
 	}
-	printf("************************************************************\n\n");
-
 }
 
 void joinTest() {
