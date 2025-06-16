@@ -514,7 +514,7 @@ void dualQuatMatrixTest(){
 	Matrix4  transform_mat = R3_mat * R2_mat * T3_mat * T2_mat * R1_mat * T1_mat;
 	DualQuat transform_dq  = R3_dq  * R2_dq  * T3_dq  * T2_dq  * R1_dq  * T1_dq;
 
-	Matrix4 transform_dq_to_mat = DQMath::toMatrix4(transform_dq);
+	Matrix4 transform_dq_to_mat = MMath::toMatrix4(transform_dq);
 
 	// Do these matrices do the same thing to a vector?
 	Vec3 v(1, 2, -3);
@@ -531,7 +531,7 @@ void dualQuatMatrixTest(){
 	// What if we inverse them?
 	Matrix4  transform_mat_inversed = MMath::inverse(transform_mat);
 	DualQuat transform_dq_inversed = DQMath::inverse(transform_dq);
-	Matrix4  transform_dq_to_mat_inversed = DQMath::toMatrix4(transform_dq_inversed);
+	Matrix4  transform_dq_to_mat_inversed = MMath::toMatrix4(transform_dq_inversed);
 
 	vTransformed_mat = transform_mat_inversed * v;
 	vTransformed_dq_to_mat = transform_dq_to_mat_inversed * v;

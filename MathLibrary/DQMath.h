@@ -149,14 +149,6 @@ namespace MATHEX {
 			return translate(getTranslation(dq));
 		}
 
-		//// Convert a dual quaternion to a 4x4 matrix
-		//// Turns out that the move below is called Euclidean Factorisation, and it decomposes a motor into a rotation around the origin followed by a translation.
-		//// REFERENCE: https://enkimute.github.io/LookMaNoMatrices/
-		static const MATH::Matrix4 toMatrix4(const DualQuat& dq)
-		{
-			return MATH::MMath::translate(getTranslation(dq)) * MATH::MMath::toMatrix4(getRotation(dq));
-		}
-
 		// Slerp from one translation and orientation to another translation and orientation
 		// Just like the regular quaternion slerp, but now we can include position too!
 		// EXAMPLE:   https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Dual_quat_slerp.pdf
