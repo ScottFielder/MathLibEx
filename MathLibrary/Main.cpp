@@ -109,8 +109,10 @@ const string PASSED{ "\033[42mPASSED\033[m" };
 const string FAILED{ "\033[41mFAILED\033[m" };
 
 int main(int argc, char* argv[]) {
+	dualQuatMatrixTest();  // GREEN for GOOD!
 	//dqConstructorTest(); // GREEN for GOOD!
-	dualQuatTest(); // GREEN for GOOD!
+	//dualQuatTest();      // GREEN for GOOD!
+	//dualQuatSlerpTest(); // GREEN for GOOD!
 	//quadAreaTest();
 	//closestPointOnQuadTest();
 	//quadTest();
@@ -130,7 +132,6 @@ int main(int argc, char* argv[]) {
 	//DualTest();
 	//meetTest();
 	//joinTest();
-	//dualQuatSlerpTest(); // GREEN for GOOD!
 	//rotateTest();
 	//gradeTest();
 	//normalizeLineTest();
@@ -138,7 +139,6 @@ int main(int argc, char* argv[]) {
 	//rayPlaneTest();
 	//dotTest();
 	// dualQuatSlerpVectorTest();
-	//dualQuatMatrixTest();
 }
 
 void dqConstructorTest() {
@@ -476,11 +476,79 @@ void point2dTest() {
 }
 
 void dualQuatMatrixTest(){
-	glm::quat rotationQuaternion1 = glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::vec3 translationVector1(0.0f, 0.0f, 0.0f);
-	glm::dualquat glCombinned(rotationQuaternion1,translationVector1);
-	
-	/// As far as I can tell I'm stuck here
+	const string name = " dualQuatMatrixTest";
+	const float epsilon = VERY_SMALL * 1000.0f;
+
+	// Let's try a crazy matrix with lots of rotates and translates like this:
+	// R3 * R2 * T3 * T2 * R1 * T1
+
+	float angleDeg1 = 25.0f;
+	float angleDeg2 = -15.2f;
+	float angleDeg3 = 125.0f;
+
+	Vec3 axis1 = VMath::normalize(Vec3(1, 2, -1));
+	Vec3 axis2 = VMath::normalize(Vec3(0, 2, 5));
+	Vec3 axis3 = VMath::normalize(Vec3(1, 1, 1));
+
+	Vec3 translation1(1, 2, 4);
+	Vec3 translation2(-21.5f, 22.0f, -1.1f);
+	Vec3 translation3(7.5f, -12.0f, 101.1f);
+
+	// Make matrices
+	Matrix4 R1_mat = MMath::rotate(angleDeg1, axis1);
+	Matrix4 R2_mat = MMath::rotate(angleDeg2, axis2);
+	Matrix4 R3_mat = MMath::rotate(angleDeg3, axis3);
+	Matrix4 T1_mat = MMath::translate(translation1);
+	Matrix4 T2_mat = MMath::translate(translation2);
+	Matrix4 T3_mat = MMath::translate(translation3);
+
+	// Make Dual Quats
+	DualQuat R1_dq = DQMath::rotate(angleDeg1, axis1);
+	DualQuat R2_dq = DQMath::rotate(angleDeg2, axis2);
+	DualQuat R3_dq = DQMath::rotate(angleDeg3, axis3);
+	DualQuat T1_dq = DQMath::translate(translation1);
+	DualQuat T2_dq = DQMath::translate(translation2);
+	DualQuat T3_dq = DQMath::translate(translation3);
+
+	// Make a crazy transform
+	Matrix4  transform_mat = R3_mat * R2_mat * T3_mat * T2_mat * R1_mat * T1_mat;
+	DualQuat transform_dq  = R3_dq  * R2_dq  * T3_dq  * T2_dq  * R1_dq  * T1_dq;
+
+	Matrix4 transform_dq_to_mat = DQMath::toMatrix4(transform_dq);
+
+	// Do these matrices do the same thing to a vector?
+	Vec3 v(1, 2, -3);
+
+	Vec3 vTransformed_mat = transform_mat * v;
+	Vec3 vTransformed_dq_to_mat = transform_dq_to_mat * v;
+
+	bool test0 = false;
+	float diffMag = VMath::mag(vTransformed_mat - vTransformed_dq_to_mat);
+	if (diffMag < epsilon) {
+		test0 = true;
+	}
+
+	// What if we inverse them?
+	Matrix4  transform_mat_inversed = MMath::inverse(transform_mat);
+	DualQuat transform_dq_inversed = DQMath::inverse(transform_dq);
+	Matrix4  transform_dq_to_mat_inversed = DQMath::toMatrix4(transform_dq_inversed);
+
+	vTransformed_mat = transform_mat_inversed * v;
+	vTransformed_dq_to_mat = transform_dq_to_mat_inversed * v;
+
+	bool test1 = false;
+	diffMag = VMath::mag(vTransformed_mat - vTransformed_dq_to_mat);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	if (test0 && test1) {
+		std::cout << PASSED + name << "\n";
+	}
+	else {
+		std::cout << FAILED + name << "\n";
+	}
+
 }
 void dualQuatSlerpVectorTest() {
 	printf("************************************************************\n");
