@@ -38,6 +38,9 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/dual_quaternion.hpp> 
+// Trying to cast glm's dual quat into a matrix
+#include <glm/gtx/transform.hpp>
+#include <glm/glm.hpp>
 
 #include <glm/gtx/hash.hpp>
 
@@ -106,8 +109,8 @@ const string PASSED{ "\033[42mPASSED\033[m" };
 const string FAILED{ "\033[41mFAILED\033[m" };
 
 int main(int argc, char* argv[]) {
-	dqConstructorTest(); // GREEN for GOOD!
-	//dualQuatTest();
+	//dqConstructorTest(); // GREEN for GOOD!
+	dualQuatTest(); // GREEN for GOOD!
 	//quadAreaTest();
 	//closestPointOnQuadTest();
 	//quadTest();
@@ -751,59 +754,121 @@ void flectorTest() {
 }
 
 void dualQuatTest() {
+	const string name = " dualQuatTest";
+	const float epsilon = VERY_SMALL * 10.0f;
+	// Testing our dual quats against GLMs
+	// Our dual quats transform a vector like this:
+	// newVec4 = DQMath::rigidTransformation(dq, oldVec4);
+	//
+	// GLM seems to transform vectors like this: 
+	// Looks strange, as I thought we're supposed to do the sandwich with dqs? It's probably happening under the hood
+	// newVec4Glm = dqGlm * oldVec4Glm
 
-	//DualQuat scott(0.0f, Vec3(0, 1, 0), Vec3(0, 0, 0));
-	// UN - I think you'll need to do this in two steps depending on R*T or T*R
+	glm::vec4 v4Glm(1, 2, -3, 1);
+	Vec4 v4(v4Glm.x, v4Glm.y, v4Glm.z, v4Glm.w);
+
+	glm::vec4 v4_transformedGlm;
+	Vec4 v4_transformed;
+	Vec4 v4_glmConvertedToOurs;
+
+	float diffMag;
+
+	// Identity tests
 	DualQuat T = DQMath::translate(Vec3(0, 0, 0));
 	DualQuat R = DQMath::rotate(0.0f, Vec3(0, 1, 0));
-	DualQuat scott = T * R;
-	scott.print("Scott");
-	
-	Matrix4 v = MMath::toMatrix4(scott);
-	/// Ok I'm not doing this right 
-	DualQuat identity;
-	identity.print("Identity of Umer's dual quaternion");
+	DualQuat identity = T * R;
 	
 	glm::quat rotationQuaternion = glm::angleAxis(glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::vec3 translationVector(0.0f, 0.0f, 0.0f);
 	glm::dualquat glmIdeniity(rotationQuaternion,translationVector);
-	glmPrintDQ( glmIdeniity, "GLM's identity (I think) ");
-	printf("\n\n");
+	//glmPrintDQ( glmIdeniity, "GLM's identity (I think) ");
+
+	v4_transformed = DQMath::rigidTransformation(identity, v4);
+	v4_transformedGlm = glmIdeniity * v4Glm;
+	//glmPrintV4(v4_transformedGlm, "Transforming a point using glm's identity dual quat");
+	//v4_transformed.print("Now our version");
+
+	bool test0 = false;
+	v4_glmConvertedToOurs.set(v4_transformedGlm.x, v4_transformedGlm.y, v4_transformedGlm.z, v4_transformedGlm.w);
+	diffMag = VMath::mag(v4_glmConvertedToOurs - v4_transformed);
+	if (diffMag < epsilon) {
+		test0 = true;
+	}
+	//printf("\n\n");
 	
-	/// Translate test 
-	DualQuat translate2(1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f);
-	translate2.print("Translate 10 units along x");
+	/// Pure Translate test 
+	DualQuat translate2(Vec3(10, 0, 0));
+	//translate2.print("Translate 10 units along x");
 	
 	glm::quat rotationQuaternion2 = glm::angleAxis(glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::vec3 translationVector2(10.0f, 0.0f, 0.0f);
 	glm::dualquat glmTranslate2(rotationQuaternion2,translationVector2);
-	glmPrintDQ(glmTranslate2, "GLM tranlate by 10");
-	printf("\n\n");
+	//glmPrintDQ(glmTranslate2, "GLM tranlate by 10");
+	v4_transformed = DQMath::rigidTransformation(translate2, v4);
+	v4_transformedGlm = glmTranslate2 * v4Glm;
+	//glmPrintV4(v4_transformedGlm, "Transforming a point using glm's translate 10 along x dual quat");
+	//v4_transformed.print("Now our version");
 
-	/// Rotate test Oh No, they don't match. If I reverse the axis of rotation Vec3(0.0f, -1.0f, 0.0f)
-	/// it all works. I dumped into this before. 
-	DualQuat pureRotate = DQMath::rotate(QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)));
-	pureRotate.print("90 rotate along Y");
+	bool test1 = false;
+	v4_glmConvertedToOurs.set(v4_transformedGlm.x, v4_transformedGlm.y, v4_transformedGlm.z, v4_transformedGlm.w);
+	diffMag = VMath::mag(v4_glmConvertedToOurs - v4_transformed);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	//printf("\n\n");
+
+	// Pure Rotation test
+	DualQuat pureRotate = DualQuat(QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)));
+	//pureRotate.print("90 rotate along Y");
 
 	glm::quat rotationQuaternion3 = glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::vec3 translationVector3(0.0f, 0.0f, 0.0f);
 	glm::dualquat glmTranslate3(rotationQuaternion3,translationVector3);
-	glmPrintDQ(glmTranslate3, "GLM 90 along Y");
-	printf("\n\n");
+	//glmPrintDQ(glmTranslate3, "GLM 90 along Y");
 
-	//DualQuat identity;
-	//DualQuat translate1(1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f);
-	//translate1.print("Translate 4 units along x");
-	//DualQuat combine = translate1 * translate2;
-	//combine.print("Multiply two translate dual quaternions to get 14 units along x");
-	//DualQuat pureRotation = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(0, 1, 0)));
-	//pureRotation.print("Pure rotation of 90 degrees about y axis");
-	//DualQuat pureTranslation = DQMath::translate(Vec3(1, 2, 3));
-	//pureTranslation.print("Pure translation by (1, 2, 3)");
-	//Vec4 initialPos(1, 0, 0, 1);
-	//initialPos.print("Initial position");
-	//DQMath::rigidTransformation(pureRotation, initialPos).print("Rotated position");
-	//DQMath::rigidTransformation(pureTranslation, initialPos).print("Translated position");
+	v4_transformed = DQMath::rigidTransformation(pureRotate, v4);
+	v4_transformedGlm = glmTranslate3 * v4Glm;
+	//glmPrintV4(v4_transformedGlm, "Transforming x vector using glm's rotate 90 abt y dual quat");
+	//v4_transformed.print("Now our version");
+
+	bool test2 = false;
+	v4_glmConvertedToOurs.set(v4_transformedGlm.x, v4_transformedGlm.y, v4_transformedGlm.z, v4_transformedGlm.w);
+	diffMag = VMath::mag(v4_glmConvertedToOurs - v4_transformed);
+	if (diffMag < epsilon) {
+		test2 = true;
+	}
+
+	//printf("\n\n");
+
+	// Rotate then translate test
+	float angleDeg = 33.0f;
+	Vec3 axis = VMath::normalize(Vec3(1, 3, -2));
+	Vec3 translation(1.2, -32.6, 5);
+	DualQuat rotateThenTranslate = DualQuat(angleDeg, axis, translation);
+
+	glm::quat rotationQuaternion4 = glm::angleAxis(glm::radians(angleDeg), glm::vec3(axis.x, axis.y, axis.z));
+	glm::vec3 translationVector4(translation.x, translation.y, translation.z);
+	glm::dualquat rotateThenTranslateGlm(rotationQuaternion4, translationVector4);
+
+	v4_transformed = DQMath::rigidTransformation(rotateThenTranslate, v4);
+	v4_transformedGlm = rotateThenTranslateGlm * v4Glm;
+	//glmPrintV4(v4_transformedGlm, "Transforming using glm's rotate then translate dual quat");
+	//v4_transformed.print("Now our version");
+
+	bool test3 = false;
+	v4_glmConvertedToOurs.set(v4_transformedGlm.x, v4_transformedGlm.y, v4_transformedGlm.z, v4_transformedGlm.w);
+	diffMag = VMath::mag(v4_glmConvertedToOurs - v4_transformed);
+	if (diffMag < epsilon) {
+		test3 = true;
+	}
+
+	if (test0 && test1 && test2 && test3) {
+		std::cout << PASSED + name << "\n";
+	}
+	else {
+		std::cout << FAILED + name << "\n";
+	}
 }
 
 void QuadraticTest() {
