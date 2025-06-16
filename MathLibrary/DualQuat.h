@@ -81,14 +81,14 @@ namespace MATHEX {
 		DualQuat(float angleDeg, const Vec3 &axis, const Vec3 & translation){
 			DualQuat R = DualQuat(angleDeg, axis); 
 			DualQuat T = DualQuat(translation);
-			real = T.real * R.real;
-			e23  = T.real * R.e23;
-			e31  = T.real * R.e31;
-			e12  = T.real * R.e12;
+			real = R.real;
+			e23  = R.e23;
+			e31  = R.e31;
+			e12  = R.e12;
 
-			e01  =  T.e01 * R.real - T.e02 * R.e12  + T.e03 * R.e31;
-			e02  =  T.e01 * R.e12  + T.e02 * R.real - T.e03 * R.e23;
-			e03  = -T.e01 * R.e31  + T.e02 * R.e23  + T.e03 * R.real;
+			e01 =  T.e01 * R.real - T.e02 * R.e12  + T.e03 * R.e31;
+			e02 =  T.e01 * R.e12  + T.e02 * R.real - T.e03 * R.e23;
+			e03 = -T.e01 * R.e31  + T.e02 * R.e23  + T.e03 * R.real;
 
 			e0123 = T.e01 * R.e23 + T.e02 * R.e31 + T.e03 * R.e12;
 		}

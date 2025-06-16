@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
 	//DualTest();
 	//meetTest();
 	//joinTest();
-	// dualQuatSlerpTest(); // GREEN for GOOD!
+	//dualQuatSlerpTest(); // GREEN for GOOD!
 	//rotateTest();
 	//gradeTest();
 	//normalizeLineTest();
@@ -139,8 +139,7 @@ int main(int argc, char* argv[]) {
 }
 
 void dqConstructorTest() {
-	printf("************************************************************\n");
-	printf("dqConstructorTest\n");
+	const string name = " dqConstructorTest";
 
 	float epsilon = VERY_SMALL * 10;
 	float angleDeg = -32;
@@ -165,10 +164,10 @@ void dqConstructorTest() {
 
 	float diffMag = VMath::mag(vTransformedWithMat - vTransformedWithDq);
 	if (diffMag < epsilon) {
-		std::cout << PASSED << "\n";
+		std::cout << PASSED + name << "\n";
 	}
 	else {
-		std::cout << FAILED << "\n";
+		std::cout << FAILED + name << "\n";
 	}
 
 }
@@ -616,8 +615,7 @@ void rotateTest() {
 }
 
 void dualQuatSlerpTest() {
-	printf("************************************************************\n");
-	printf("dualQuatSlerpTest\n");
+	const string name = " dualQuatSlerpTest";
 	const float epsilon = VERY_SMALL * 100;
 
 	Vec3 startPos(-2, 0, 0);
@@ -682,10 +680,10 @@ void dualQuatSlerpTest() {
 
 	if (passedPos1 && passedPos2 && passedPos3 &&
 		passedRot1 && passedRot2 && passedRot3) {
-		std::cout << PASSED << "\n";
+		std::cout << PASSED + name << "\n";
 	}
 	else {
-		std::cout << FAILED << "\n";
+		std::cout << FAILED + name << "\n";
 	}
 }
 
