@@ -110,17 +110,17 @@ const string PASSED{ "\033[42mPASSED\033[m" };
 const string FAILED{ "\033[41mFAILED\033[m" };
 
 int main(int argc, char* argv[]) {
+	LookAtTest();					  // GREEN for GOOD!
+	dqLookAtTest();                   // GREEN for GOOD!
 	//dqGetRotationTranslationTest(); // GREEN for GOOD!
 	//dualQuatMatrixTest();           // GREEN for GOOD!
 	//dqConstructorTest();            // GREEN for GOOD!
 	//dualQuatTest();                 // GREEN for GOOD!
 	//dualQuatSlerpTest();            // GREEN for GOOD!
-	dqLookAtTest();                 // GREEN for GOOD!
 	//quadAreaTest();
 	//closestPointOnQuadTest();
 	//quadTest();
 	//projectTest();
-	//LookAtTest();
 	//sphereTest();
 	//triangleTest();
 	//point2dTest();
@@ -1503,20 +1503,71 @@ void UnOrthoTest() {
 
 
 void LookAtTest(){
-	glm::mat4 mt = glm::lookAt(glm::vec3(0.0f, 0.0f, -10.0f),
-								glm::vec3(0.0f, 0.0f, 0.0f), 
-								glm::vec3(1.0f, 0.0f, 0.0f));
+	const string name = " LookAtTest";
+	float epsilon = VERY_SMALL * 1000;
+	float diffMag;
+
+	// Set up eye, at and up vectors for us and glm
+	Vec3 eye, at, up;
+	eye = Vec3(0.0, 0.0, -10.0);
+	at = Vec3(0, 0, 0);
+	up = Vec3(1, 0, 0);
+	glm::vec3 eye_glm, at_glm, up_glm;
+	eye_glm = vec3(eye.x, eye.y, eye.z);
+	at_glm  = vec3(at.x ,  at.y,  at.z);
+	up_glm  = vec3(up.x ,  up.y,  up.z);
+
+	// Build our lookAt
+	Matrix4 lookat = MMath::lookAt(eye, at, up);
+
+	// Build glm's lookAt
+	glm::mat4 mt = glm::lookAt(glm::vec3(eye.x, eye.y, eye.z),
+							   glm::vec3( at.x,  at.y,  at.z), 
+							   glm::vec3( up.x,  up.y,  up.z));
 	
+	// What does lookAt do to this vector?
 	Vec3 v = Vec3(0, 0, 0);
-	Matrix4 lookat = MMath::lookAt(Vec3(0.0,0.0,-10.0), Vec3(0,0,0), Vec3(1,0,0));
-	
-	lookat.print();
-	glmPrintM4(mt);
-	Vec3 v1 = lookat * v;
-	v1.print();
+	glm::vec4 v_glm = vec4(v.x, v.y, v.z, 1.0f);
+
+	Vec3          v1 = lookat * v;
+	glm::vec4 v1_glm = mt     * v_glm;
+	// Turn glm's vector into one of ours for testing purposes
+	Vec3 v1_glm_3d = Vec3(v1_glm.x, v1_glm.y, v1_glm.z);
+
+	bool test1 = false;
+	diffMag = VMath::mag(v1 - v1_glm_3d);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	// Change vectors a bit and try again. 
+	// UN - Seems to be sensitive to at and vertex being transformed
+	at = Vec3(1, 0, 0);
+	v = Vec3(5, 0, 0);
+	v_glm = vec4(v.x, v.y, v.z, 1.0f);
+
+	lookat = MMath::lookAt(eye, at, up);
+	mt       = glm::lookAt(glm::vec3(eye.x, eye.y, eye.z),
+		                   glm::vec3(at.x, at.y, at.z),
+		                   glm::vec3(up.x, up.y, up.z));
+
+	Vec3 v2 = lookat * v;
+	glm::vec4 v2_glm = mt * v_glm;
+	Vec3 v2_glm_3d = Vec3(v2_glm.x, v2_glm.y, v2_glm.z);
+
+	bool test2 = false;
+	diffMag = VMath::mag(v2 - v2_glm_3d);
+	if (diffMag < epsilon) {
+		test2 = true;
+	}
+
+	if (test1 && test2) {
+		std::cout << PASSED + name << "\n";
+	}
+	else {
+		std::cout << FAILED + name << "\n";
+	}
 }
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// These are print statements for glm - they don't have them  
