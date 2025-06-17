@@ -110,16 +110,16 @@ const string PASSED{ "\033[42mPASSED\033[m" };
 const string FAILED{ "\033[41mFAILED\033[m" };
 
 int main(int argc, char* argv[]) {
-	dqGetRotationTranslationTest(); // GREEN for GOOD!
-	dualQuatMatrixTest();           // GREEN for GOOD!
-	dqConstructorTest();            // GREEN for GOOD!
-	dualQuatTest();                 // GREEN for GOOD!
-	dualQuatSlerpTest();            // GREEN for GOOD!
+	//dqGetRotationTranslationTest(); // GREEN for GOOD!
+	//dualQuatMatrixTest();           // GREEN for GOOD!
+	//dqConstructorTest();            // GREEN for GOOD!
+	//dualQuatTest();                 // GREEN for GOOD!
+	//dualQuatSlerpTest();            // GREEN for GOOD!
+	dqLookAtTest();                 // GREEN for GOOD!
 	//quadAreaTest();
 	//closestPointOnQuadTest();
 	//quadTest();
 	//projectTest();
-	//dqLookAtTest();
 	//LookAtTest();
 	//sphereTest();
 	//triangleTest();
@@ -395,47 +395,120 @@ void projectTest() {
 }
 
 void dqLookAtTest() {
+	const string name = " dqLookAtTest";
+	float epsilon = VERY_SMALL * 1000;
+
 	Vec4 eye = Vec4(0, 0, 20, 1); // camera is 20 units along the z-axis
 	Vec4 at =  Vec4(1, 0, 20, 1); // Looking to the right 
 	Vec4 up =  Vec4(0, 1, 0, 0);  // Up is along positive y
 
+	// View transforms should do the same things to the following vector position
+	Vec4 v(1, 2, -15.6, 1.0f);
+	glm::vec4 v_glm(v.x, v.y, v.z, v.w);
+
+	float diffMag;
+	Vec4 v_TR_inversed_dq;
+	Vec4 v_lookAt_dq;
+	Vec4 v_lookAt_mat;
+	Vec4 v_lookAt_mat_glm;
+	glm::vec4 v_glm_lookAt_mat_glm;
+
 	DualQuat viewDq1 = DQMath::lookAt(eye, at, up);
+	v_lookAt_dq = DQMath::rigidTransformation(viewDq1, v);
 
 	// check against building the view matrix using R^(-1) * T^(-1)
+	// We start looking down the -z. So look to the right is a -90 deg rot about y axis
 	float rotationAngleDeg = -90.0f;
 	Vec3 rotationAxis = Vec3(0.0f, 1.0f, 0.0f);
 	Quaternion cameraOrientation = QMath::angleAxisRotation(rotationAngleDeg, rotationAxis);
 	DualQuat viewDq2 = DQMath::rotate(QMath::inverse(cameraOrientation)) * DQMath::translate(-eye);
-
+	v_TR_inversed_dq = DQMath::rigidTransformation(viewDq2, v);
+	
 	// And check against the original lookAts
-	Matrix4 view = MMath::lookAt(eye, at, up);
+	Matrix4 view = MMath::lookAt(Vec3(eye), Vec3(at), Vec3(up));
+	v_lookAt_mat = view * v;
+
+	bool test0 = false;
+	diffMag = VMath::mag(v_lookAt_dq - v_lookAt_mat);
+	if (diffMag < epsilon) {
+		test0 = true;
+	}
+
 	glm::mat4 mt = glm::lookAt(
 		glm::vec3(eye.x, eye.y, eye.z),
-		glm::vec3(at.x, at.y, at.z),
-		glm::vec3(up.x, up.y, up.z));
+		glm::vec3(at.x , at.y , at.z),
+		glm::vec3(up.x , up.y , up.z));
+	v_glm_lookAt_mat_glm = mt * v_glm;
+	v_lookAt_mat_glm.set(v_glm_lookAt_mat_glm.x, v_glm_lookAt_mat_glm.y, v_glm_lookAt_mat_glm.z, v_glm_lookAt_mat_glm.w);
 
-	printf("************************************************************\n\n");
-	printf("First check with eye (0, 0, 20), at (1, 0, 20), up (0, 1, 0)\n\n");
-	///DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
-	///DQMath::toMatrix4(viewDq2).print("view matrix using R^(-1) * T^(-1)");
-	glmPrintM4(mt, "view matrix using glm::lookAt");
-	printf("\n");
-	view.print("view matrix using MMath::lookAt");
-	printf("************************************************************\n");
-	printf("************************************************************\n\n");
-	printf("Now check again, but up is along positive z now\nI don't know how to build a R^(-1) * T^(-1) for that, but I'll check the lookAts\n\n");
+	// Seems to be a discrepancy between MMath::lookAt and glm::lookAt?
+	//glmPrintM4(mt, "GLM's lookAt");
+	//view.print("MMath's lookAt");
+
+	bool test1 = false;
+	diffMag = VMath::mag(v_lookAt_dq - v_lookAt_mat_glm);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	bool test2 = false;
+	diffMag = VMath::mag(v_lookAt_mat - v_lookAt_mat_glm);
+	if (diffMag < epsilon) {
+		test2 = true;
+	}
+
+	bool test3 = false;
+	diffMag = VMath::mag(v_lookAt_dq - v_TR_inversed_dq);
+	if (diffMag < epsilon) {
+		test3 = true;
+	}
+
+
+	// Now check again, but up is along positive z now
 	up = Vec4(0, 0, 1, 0);
 	viewDq1 = DQMath::lookAt(eye, at, up);
-	view = MMath::lookAt(eye, at, up);
+	view = MMath::lookAt(Vec3(eye), Vec3(at), Vec3(up));
 	mt = glm::lookAt(
 		glm::vec3(eye.x, eye.y, eye.z),
-		glm::vec3(at.x, at.y, at.z),
-		glm::vec3(up.x, up.y, up.z));
-	//DQMath::toMatrix4(viewDq1).print("view matrix using DQMath::lookAt");
-	glmPrintM4(mt, "view matrix using glm::lookAt");
-	printf("\n");
-	view.print("view matrix using MMath::lookAt");
-	printf("************************************************************\n");
+		glm::vec3(at.x , at.y , at.z),
+		glm::vec3(up.x , up.y , up.z));
+
+	// Seems to be a discrepancy between MMath::lookAt and glm::lookAt?
+	//printf("\n");
+	//glmPrintM4(mt, "GLM's lookAt");
+	//view.print("MMath's lookAt");
+
+	// What happens to the original vector now?
+	v_lookAt_dq = DQMath::rigidTransformation(viewDq1, v);
+	v_lookAt_mat = view * v;
+	v_glm_lookAt_mat_glm = mt * v_glm;
+	v_lookAt_mat_glm.set(v_glm_lookAt_mat_glm.x, v_glm_lookAt_mat_glm.y, v_glm_lookAt_mat_glm.z, v_glm_lookAt_mat_glm.w);
+
+	bool test4 = false;
+	diffMag = VMath::mag(v_lookAt_dq - v_lookAt_mat);
+	if (diffMag < epsilon) {
+		test4 = true;
+	}
+
+	bool test5 = false;
+	diffMag = VMath::mag(v_lookAt_dq - v_lookAt_mat_glm);
+	if (diffMag < epsilon) {
+		test5 = true;
+	}
+
+	bool test6 = false;
+	diffMag = VMath::mag(v_lookAt_mat - v_lookAt_mat_glm);
+	if (diffMag < epsilon) {
+		test6 = true;
+	}
+
+	if (test0 && test1 && test2 && test3 && test4 && test5 && test6) {
+		std::cout << PASSED + name << "\n";
+	}
+	else {
+		std::cout << FAILED + name << "\n";
+	}
+
 
 }
 
