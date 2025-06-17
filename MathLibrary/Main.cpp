@@ -60,6 +60,7 @@ void determinantTest();
 void slerpTest();
 
 /// MathLibEx tests
+void dqGetRotationTranslationTest();
 void dqConstructorTest();
 void dqLookAtTest();
 void planeTest();
@@ -109,10 +110,11 @@ const string PASSED{ "\033[42mPASSED\033[m" };
 const string FAILED{ "\033[41mFAILED\033[m" };
 
 int main(int argc, char* argv[]) {
-	dualQuatMatrixTest();  // GREEN for GOOD!
-	//dqConstructorTest(); // GREEN for GOOD!
-	//dualQuatTest();      // GREEN for GOOD!
-	//dualQuatSlerpTest(); // GREEN for GOOD!
+	dqGetRotationTranslationTest(); // GREEN for GOOD!
+	dualQuatMatrixTest();           // GREEN for GOOD!
+	dqConstructorTest();            // GREEN for GOOD!
+	dualQuatTest();                 // GREEN for GOOD!
+	dualQuatSlerpTest();            // GREEN for GOOD!
 	//quadAreaTest();
 	//closestPointOnQuadTest();
 	//quadTest();
@@ -139,6 +141,82 @@ int main(int argc, char* argv[]) {
 	//rayPlaneTest();
 	//dotTest();
 	// dualQuatSlerpVectorTest();
+}
+
+void dqGetRotationTranslationTest() {
+	const string name = " dqGetRotationTranslationTest";
+	// NOTE: epsilon is sensitive to the translation magnitude
+	float epsilon = VERY_SMALL * 1000;
+
+	float angleDeg = 250;
+	Vec3 axis = VMath::normalize(Vec3(1, 2, -1));
+	Vec3 translation(3.5f, 210.3f, -500.2f);
+
+	DualQuat R(angleDeg, axis);
+	DualQuat T(translation);
+
+	DualQuat TR = T * R;
+	DualQuat RT=  R * T;
+
+
+	// What was the original rotation?
+	DualQuat R_extracted_from_TR = DQMath::getRotationDualQuat(TR);
+	DualQuat T_extracted_from_TR = DQMath::getTranslationDualQuat(TR);
+	DualQuat R_extracted_from_RT = DQMath::getRotationDualQuat(RT);
+	DualQuat T_extracted_from_RT = DQMath::getTranslationDualQuat(RT);
+
+	// Does this do the same thing to a vector?
+	Vec4 v(1, 2, -5, 1);
+	Vec4 v_transformed;
+	Vec4 v_transformed_with_extracted_TR_dq;
+	Vec4 v_transformed_with_extracted_RT_dq;
+	float diffMag;
+
+	// Test rotation
+	v_transformed                      = DQMath::rigidTransformation(R                  , v);
+	v_transformed_with_extracted_TR_dq = DQMath::rigidTransformation(R_extracted_from_TR, v);
+	v_transformed_with_extracted_RT_dq = DQMath::rigidTransformation(R_extracted_from_RT, v);
+
+	bool test0 = false;
+	diffMag = VMath::mag(v_transformed - v_transformed_with_extracted_TR_dq);
+	if (diffMag < epsilon) {
+		test0 = true;
+	}
+
+	bool test1 = false;
+	diffMag = VMath::mag(v_transformed - v_transformed_with_extracted_RT_dq);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	// Test translation
+	v_transformed = DQMath::rigidTransformation(T, v);
+	v_transformed_with_extracted_TR_dq = DQMath::rigidTransformation(T_extracted_from_TR, v);
+
+	bool test2 = false;
+	diffMag = VMath::mag(v_transformed - v_transformed_with_extracted_TR_dq);
+	if (diffMag < epsilon) {
+		test2 = true;
+	}
+
+	// To test the RT case for translations, let's see if we can match the original transforms
+	// When we extract R and T from a dual quat, they are formed as a T * R transform 
+	DualQuat TR_built_from_RT       = T_extracted_from_RT * R_extracted_from_RT;
+	Vec4 v_transformed_RT           = DQMath::rigidTransformation(RT              , v);
+	Vec4 v_transformed_RT_extracted = DQMath::rigidTransformation(TR_built_from_RT, v);
+
+	bool test3 = false;
+	diffMag = VMath::mag(v_transformed_RT - v_transformed_RT_extracted);
+	if (diffMag < epsilon) {
+		test3 = true;
+	}
+
+	if (test0 && test1 && test2 && test3) {
+		std::cout << PASSED + name << "\n";
+	}
+	else {
+		std::cout << FAILED + name << "\n";
+	}
 }
 
 void dqConstructorTest() {

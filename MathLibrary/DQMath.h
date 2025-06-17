@@ -35,9 +35,9 @@ namespace MATHEX {
 			// Remember e23 = -i, e31 = -j, e12 = -k
 			DualQuat result;
 			result.real = rotation.w;
-			result.e23 = -rotation.ijk.x;
-			result.e31 = -rotation.ijk.y;
-			result.e12 = -rotation.ijk.z;
+			result.e23 = -rotation.e32;
+			result.e31 = -rotation.e13;
+			result.e12 = -rotation.e21;
 			result.e01 = 0.0f;
 			result.e02 = 0.0f;
 			result.e03 = 0.0f;
@@ -112,16 +112,21 @@ namespace MATHEX {
 		static const MATH::Quaternion getRotation(const DualQuat& dq) {
 			// Find the rotation using the first four elements of the dual quaternion
 			MATH::Quaternion rot;
-			rot.w = dq.real;
-			rot.ijk.x = -dq.e23;
-			rot.ijk.y = -dq.e31;
-			rot.ijk.z = -dq.e12;
+			rot.w   =  dq.real;
+			rot.e32 = -dq.e23;
+			rot.e13 = -dq.e31;
+			rot.e21 = -dq.e12;
 			return rot;
 		}
 
 		// Return a pure rotation dual quaternion from inside a general dual quaternion (that could have translation too)
 		static const DualQuat getRotationDualQuat(const DualQuat& dq) {
 			return rotate(getRotation(dq));
+		}
+
+		// Return a pure translation dual quaternion from inside a general dual quaternion (that could have rotation too)
+		static const DualQuat getTranslationDualQuat(const DualQuat& dq) {
+			return translate(getTranslation(dq));
 		}
 
 		// Return the translation vector from the dual quaternion
@@ -144,10 +149,6 @@ namespace MATHEX {
 			return translation;
 		}
 
-		// Return a pure translation dual quaternion from inside a general dual quaternion (that could have rotation too)
-		static const DualQuat getTranslationDualQuat(const DualQuat& dq) {
-			return translate(getTranslation(dq));
-		}
 
 		// Slerp from one translation and orientation to another translation and orientation
 		// Just like the regular quaternion slerp, but now we can include position too!
