@@ -121,7 +121,21 @@ namespace MATHEX {
 
 		// Return a pure rotation dual quaternion from inside a general dual quaternion (that could have translation too)
 		static const DualQuat getRotationDualQuat(const DualQuat& dq) {
-			return rotate(getRotation(dq));
+			// Rotation is always the first four elements
+			// even if the original transform is, for example, T * R or R * T
+			// Not so easy for translations as you'll see in getTranslation
+			DualQuat result;
+
+			result.real  = dq.real;
+			result.e23   = dq.e23;
+			result.e31   = dq.e31;
+			result.e12   = dq.e12;
+			result.e01   = 0.0f;
+			result.e02   = 0.0f;
+			result.e03   = 0.0f;
+			result.e0123 = 0.0f;
+
+			return result;
 		}
 
 		// Return a pure translation dual quaternion from inside a general dual quaternion (that could have rotation too)

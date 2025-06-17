@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
 
 void dqGetRotationTranslationTest() {
 	const string name = " dqGetRotationTranslationTest";
-	// NOTE: epsilon is sensitive to the translation magnitude
+	// NOTE: epsilon seems sensitive to the translation magnitude
 	float epsilon = VERY_SMALL * 1000;
 
 	float angleDeg = 250;
@@ -157,7 +157,6 @@ void dqGetRotationTranslationTest() {
 
 	DualQuat TR = T * R;
 	DualQuat RT=  R * T;
-
 
 	// What was the original rotation?
 	DualQuat R_extracted_from_TR = DQMath::getRotationDualQuat(TR);
