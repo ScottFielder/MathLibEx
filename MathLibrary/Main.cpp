@@ -100,6 +100,10 @@ void glmPrintDQ(glm::dualquat dq, const char* comment = nullptr);
 void glmPrintV3(glm::vec3 v, const char* comment = nullptr);
 void glmPrintV4(glm::vec4 v, const char* comment = nullptr);
 
+// Utilities to convert to and from glm vectors
+Vec3      convertFromGlmV3(const glm::vec3& v);
+glm::vec3 convertToGlmV3  (const Vec3& v);
+
 using namespace MATH;
 using namespace MATHEX;
 using namespace glm;
@@ -1513,26 +1517,24 @@ void LookAtTest(){
 	at = Vec3(0, 0, 0);
 	up = Vec3(1, 0, 0);
 	glm::vec3 eye_glm, at_glm, up_glm;
-	eye_glm = vec3(eye.x, eye.y, eye.z);
-	at_glm  = vec3(at.x ,  at.y,  at.z);
-	up_glm  = vec3(up.x ,  up.y,  up.z);
+	eye_glm = convertToGlmV3(eye);
+	at_glm  = convertToGlmV3(at );
+	up_glm  = convertToGlmV3(up );
 
 	// Build our lookAt
 	Matrix4 lookat = MMath::lookAt(eye, at, up);
 
 	// Build glm's lookAt
-	glm::mat4 mt = glm::lookAt(glm::vec3(eye.x, eye.y, eye.z),
-							   glm::vec3( at.x,  at.y,  at.z), 
-							   glm::vec3( up.x,  up.y,  up.z));
+	glm::mat4 mt = glm::lookAt(eye_glm, at_glm, up_glm);
 	
 	// What does lookAt do to this vector?
 	Vec3 v = Vec3(0, 0, 0);
 	glm::vec4 v_glm = vec4(v.x, v.y, v.z, 1.0f);
 
 	Vec3          v1 = lookat * v;
-	glm::vec4 v1_glm = mt     * v_glm;
+	glm::vec3 v1_glm = mt     * v_glm;
 	// Turn glm's vector into one of ours for testing purposes
-	Vec3 v1_glm_3d = Vec3(v1_glm.x, v1_glm.y, v1_glm.z);
+	Vec3 v1_glm_3d = convertFromGlmV3(v1_glm);
 
 	bool test1 = false;
 	diffMag = VMath::mag(v1 - v1_glm_3d);
@@ -1543,17 +1545,17 @@ void LookAtTest(){
 	// Change vectors a bit and try again. 
 	// UN - Seems to be sensitive to at and vertex being transformed
 	at = Vec3(1, 0, 0);
+	at_glm = convertToGlmV3(at);
+
 	v = Vec3(5, 0, 0);
 	v_glm = vec4(v.x, v.y, v.z, 1.0f);
 
-	lookat = MMath::lookAt(eye, at, up);
-	mt       = glm::lookAt(glm::vec3(eye.x, eye.y, eye.z),
-		                   glm::vec3(at.x, at.y, at.z),
-		                   glm::vec3(up.x, up.y, up.z));
+	lookat = MMath::lookAt(eye    , at    , up);
+	mt       = glm::lookAt(eye_glm, at_glm, up_glm);
 
 	Vec3 v2 = lookat * v;
-	glm::vec4 v2_glm = mt * v_glm;
-	Vec3 v2_glm_3d = Vec3(v2_glm.x, v2_glm.y, v2_glm.z);
+	glm::vec3 v2_glm = mt * v_glm;
+	Vec3 v2_glm_3d = convertFromGlmV3(v2_glm);
 
 	bool test2 = false;
 	diffMag = VMath::mag(v2 - v2_glm_3d);
@@ -1617,4 +1619,15 @@ void glmPrintV3(glm::vec3 v, const char* comment) {
 void glmPrintV4(glm::vec4 v, const char* comment) {
 	if (comment) printf("%s\n", comment);
 	printf("%1.4f %1.4f %1.4f %1.4f\n", v[0], v[1], v[2], v[3]);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// Converting objects to and from glm
+///////////////////////////////////////////////////////////////////////////////////////////////
+Vec3 convertFromGlmV3(const glm::vec3& v) {
+	return Vec3(v.x, v.y, v.z);
+}
+
+glm::vec3 convertToGlmV3(const Vec3& v) {
+	return glm::vec3(v.x, v.y, v.z);
 }
