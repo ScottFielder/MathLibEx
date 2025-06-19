@@ -100,6 +100,13 @@ void glmPrintDQ(glm::dualquat dq, const char* comment = nullptr);
 void glmPrintV3(glm::vec3 v, const char* comment = nullptr);
 void glmPrintV4(glm::vec4 v, const char* comment = nullptr);
 
+/// Utilities to compare vectors, matrices and quaternions with glm
+bool Compare(Vec3 v1, glm::vec3 v2, float epsilon);
+bool Compare(Vec4 v1, glm::vec4 v2, float epsilon);
+bool Compare(const Matrix3 m1, const glm::mat3 m2, float epsilon);
+bool Compare(const Matrix4 m1, const glm::mat4 m2, float epsilon);
+bool Compare(Quaternion q1, glm::quat q2, float epsilon);
+
 // Utilities to convert to and from glm vectors
 Vec3      convertFromGlmV3(const glm::vec3& v);
 glm::vec3 convertToGlmV3  (const Vec3& v);
@@ -1508,7 +1515,7 @@ void UnOrthoTest() {
 
 void LookAtTest(){
 	const string name = " LookAtTest";
-	float epsilon = VERY_SMALL * 1000;
+	float epsilon = VERY_SMALL * 100.0f;
 	float diffMag;
 
 	// Set up eye, at and up vectors for us and glm
@@ -1619,6 +1626,57 @@ void glmPrintV3(glm::vec3 v, const char* comment) {
 void glmPrintV4(glm::vec4 v, const char* comment) {
 	if (comment) printf("%s\n", comment);
 	printf("%1.4f %1.4f %1.4f %1.4f\n", v[0], v[1], v[2], v[3]);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+/// Comparing vectors, matrices and quaternions with glm
+///////////////////////////////////////////////////////////////////////////////////////////////
+bool Compare(Vec3 v1, glm::vec3 v2, float epsilon) {
+	for (int i = 0; i < 3; ++i) {
+		if (std::fabs(v1[i] - v2[i]) > epsilon) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Compare(Vec4 v1, glm::vec4 v2, float epsilon) {
+	for (int i = 0; i < 4; ++i) {
+		if (std::fabs(v1[i] - v2[i]) > epsilon) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Compare(Matrix3 m1, glm::mat3 m2, float epsilon) {
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			if (std::fabs(m1[i * 3 + j] - m2[i][j]) > epsilon) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool Compare(Matrix4 m1, glm::mat4 m2, float epsilon) {
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			if (std::fabs(m1[i * 4 + j] - m2[i][j]) > epsilon) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool Compare(Quaternion q1, glm::quat q2, float epsilon) {
+	for (int i = 0; i < 4; ++i) {
+		if (std::fabs(q1[i] - q2[i]) > epsilon) {
+			return false;
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
