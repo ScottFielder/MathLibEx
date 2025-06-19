@@ -44,6 +44,11 @@
 
 #include <glm/gtx/hash.hpp>
 
+using namespace MATH;
+using namespace MATHEX;
+using namespace glm;
+using namespace std;
+
 /// MathLib tests
 void LookAtTest();
 void inverseTest();
@@ -77,10 +82,9 @@ void dualQuatSlerpTest();
 void rotateTest();
 void gradeTest();
 void normalizeLineTest();
-void translateAlongLineTest();
+void dqTranslateAlongLineTest();
 void rayPlaneTest();
 void dotTest();
-void dualQuatSlerpVectorTest();
 void dualQuatMatrixTest();
 void point2dTest();
 void triangleTest();
@@ -111,27 +115,26 @@ bool Compare(Quaternion q1, glm::quat q2, float epsilon);
 Vec3      convertFromGlmV3(const glm::vec3& v);
 glm::vec3 convertToGlmV3  (const Vec3& v);
 
-using namespace MATH;
-using namespace MATHEX;
-using namespace glm;
-using namespace std;
-
+// Utilities to print passed or failed message
+void printPassedOrFailed(bool flag, const string& name);
 // Figuring out coloured text and background using https://medium.com/@vitorcosta.matias/print-coloured-texts-in-console-a0db6f589138
 const string PASSED{ "\033[42mPASSED\033[m" };
 const string FAILED{ "\033[41mFAILED\033[m" };
 
+
 int main(int argc, char* argv[]) {
+	dqTranslateAlongLineTest();       // GREEN for GOOD!
 	LookAtTest();					  // GREEN for GOOD!
 	dqLookAtTest();                   // GREEN for GOOD!
-	//dqGetRotationTranslationTest(); // GREEN for GOOD!
-	//dualQuatMatrixTest();           // GREEN for GOOD!
-	//dqConstructorTest();            // GREEN for GOOD!
-	//dualQuatTest();                 // GREEN for GOOD!
-	//dualQuatSlerpTest();            // GREEN for GOOD!
-	//quadAreaTest();
-	//closestPointOnQuadTest();
+	dqGetRotationTranslationTest();   // GREEN for GOOD!
+	dualQuatMatrixTest();             // GREEN for GOOD!
+	dqConstructorTest();              // GREEN for GOOD!
+	dualQuatTest();                   // GREEN for GOOD!
+	dualQuatSlerpTest();              // GREEN for GOOD!
+	projectTest();					  // GREEN for GOOD!
+	quadAreaTest();				      // GREEN for GOOD!
+	closestPointOnQuadTest();         // GREEN for GOOD!
 	//quadTest();
-	//projectTest();
 	//sphereTest();
 	//triangleTest();
 	//point2dTest();
@@ -139,7 +142,6 @@ int main(int argc, char* argv[]) {
 	//QuadraticTest();
 	//RaySphereTest();
 	//RayTest();
-	//dualQuatTest();
 	//flectorTest();
 	//intersectionTest();
 	//DualTest();
@@ -148,10 +150,8 @@ int main(int argc, char* argv[]) {
 	//rotateTest();
 	//gradeTest();
 	//normalizeLineTest();
-	//translateAlongLineTest();
 	//rayPlaneTest();
 	//dotTest();
-	// dualQuatSlerpVectorTest();
 }
 
 void dqGetRotationTranslationTest() {
@@ -221,18 +221,15 @@ void dqGetRotationTranslationTest() {
 		test3 = true;
 	}
 
-	if (test0 && test1 && test2 && test3) {
-		std::cout << PASSED + name << "\n";
-	}
-	else {
-		std::cout << FAILED + name << "\n";
-	}
+	bool flag = test0 && test1 && test2 && test3;
+	printPassedOrFailed(flag, name);
 }
 
 void dqConstructorTest() {
 	const string name = " dqConstructorTest";
-
 	float epsilon = VERY_SMALL * 10;
+	float diffMag;
+
 	float angleDeg = -32;
 	Vec3 axis = VMath::normalize(Vec3(1, 2, -1));
 	Vec3 translation(-4.5f, 12.3f, -0.2f);
@@ -253,27 +250,29 @@ void dqConstructorTest() {
 	Vec4 v4dTransformedWithDq = DQMath::rigidTransformation(dqTransform, v4d);
 	Vec3 vTransformedWithDq = Vec3(v4dTransformedWithDq);
 
-	float diffMag = VMath::mag(vTransformedWithMat - vTransformedWithDq);
-	if (diffMag < epsilon) {
-		std::cout << PASSED + name << "\n";
-	}
-	else {
-		std::cout << FAILED + name << "\n";
-	}
+	diffMag = VMath::mag(vTransformedWithMat - vTransformedWithDq);
+
+	bool flag = diffMag < epsilon;
+	printPassedOrFailed(flag, name);
 
 }
 
 void quadAreaTest() {
+	const string name = " quadAreaTest";
+	float epsilon = VERY_SMALL * 1;
+
 	// Scott asks, what if the quad looks like a triangle?
 	Vec3 v0(0, 0, 0);
 	Vec3 v1(0, 0.5, 0);
 	Vec3 v2(0, 1, 0);
 	Vec3 v3(-1, 0, 0);
 	// Area should be 0.5
+	const float correctAnswer = 0.5;
 	Quad quad = Quad(v0, v1, v2, v3);
-	quad.print("Quad");
 	float area = QuadMath::getArea(quad);
-	std::cout << "Area = " << area << std::endl;
+
+	bool flag = (area - correctAnswer) < epsilon;
+	printPassedOrFailed(flag, name);
 
 	//{
 	//	// This should blow up as it has an area of zero
@@ -285,43 +284,67 @@ void quadAreaTest() {
 	//}
 }
 
-
+// VISUALIZED: https://github.com/ScottFielder/MathLibrary/blob/master/Images/closestPointOnQuadTest.png
 void closestPointOnQuadTest() {
-	Vec3 pos1(-1, 0.5,  0);
-	Vec3 pos2( 0, 0.5, 10);
-	Vec3 pos3( 2,   2,  0);
-	Vec3 pos4(2, 0.01, -3);
+	const string name = " closestPointOnQuadTest";
+	float epsilon = VERY_SMALL * 1;
+	float diffMag;
+
+	Vec3 pos1(-1, 0.5 ,  0);
+	Vec3 pos2( 0, 0.35 , 2.5);
+	Vec3 pos3( 1,   1 ,  0);
+	Vec3 pos4(2, 0.01 , -3);
 	// Wind the quad anti-clockwise
-	Quad quad = Quad(
-		Vec3(0, 0, 0),
-		Vec3(1, 0, 0),
-		Vec3(0.5, 1, 0),
-		Vec3(0, 1, 0)
-	);
-	quad.print("Quad");
-	std::cout << std::endl;
+	Vec3 v0 = Vec3(0, 0, 0);
+	Vec3 v1 = Vec3(1, 0, 0);
+	Vec3 v2 = Vec3(0.5, 1, 0);
+	Vec3 v3 = Vec3(0, 1, 0);
+	Quad quad = Quad(v0, v1, v2, v3);
 
-	Vec3 closestPoint;
+	Vec3 closestPoint1, closestPoint2, closestPoint3, closestPoint4;
+	Vec3 correctAnswer1, correctAnswer2, correctAnswer3, correctAnswer4;
+	closestPoint1 = QuadMath::closestPointOnQuad(pos1, quad);
+	// Looking at the graph, answer should be:
+	correctAnswer1.set(0, 0.5, 0);
 
-	pos1.print("Pos1");
-	closestPoint = QuadMath::closestPointOnQuad(pos1, quad);
-	closestPoint.print("Closest Point on quad");
-	std::cout << std::endl;
+	closestPoint2 = QuadMath::closestPointOnQuad(pos2, quad);
+	// Looking at the graph, answer should be:
+	correctAnswer2.set(0, 0.35, 0);
 
-	pos2.print("Pos2");
-	closestPoint = QuadMath::closestPointOnQuad(pos2, quad);
-	closestPoint.print("Closest Point on quad");
-	std::cout << std::endl;
+	closestPoint3 = QuadMath::closestPointOnQuad(pos3, quad);
+	// Looking at the graph, answer should be:
+	correctAnswer3.set(0.6, 0.8, 0);
 
-	pos3.print("Pos3");
-	closestPoint = QuadMath::closestPointOnQuad(pos3, quad);
-	closestPoint.print("Closest Point on quad");
-	std::cout << std::endl;
+	closestPoint4 = QuadMath::closestPointOnQuad(pos4, quad);
+	// Looking at the graph, answer should be:
+	correctAnswer4 = v1;
 
-	pos4.print("Pos4");
-	closestPoint = QuadMath::closestPointOnQuad(pos4, quad);
-	closestPoint.print("Closest Point on quad");
-	std::cout << std::endl;
+	bool test1 = false;
+	diffMag = VMath::mag(correctAnswer1 - closestPoint1);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	bool test2 = false;
+	diffMag = VMath::mag(correctAnswer2 - closestPoint2);
+	if (diffMag < epsilon) {
+		test2 = true;
+	}
+
+	bool test3 = false;
+	diffMag = VMath::mag(correctAnswer3 - closestPoint3);
+	if (diffMag < epsilon) {
+		test3 = true;
+	}
+
+	bool test4 = false;
+	diffMag = VMath::mag(correctAnswer4 - closestPoint4);
+	if (diffMag < epsilon) {
+		test4 = true;
+	}
+
+	bool flag = test1 && test2 && test3 && test4;
+	printPassedOrFailed(flag, name);
 }
 
 
@@ -384,26 +407,47 @@ void quadTest() {
 }
 
 void projectTest() {
-	// Project a point onto a plane
-	Vec4 point(0, 5, 0, 1);
-	// Flat plane at y = 2
-	//Plane plane(Vec3(0, 1, 0), 2);
-	Plane plane = Vec4(0, 2, 0, 1) & Vec4(1, 2, 0, 1) & Vec4(0, 2, 1, 1);
-	point.print("Point");
-	plane.print("Plane");
-	Vec4 projectedPoint = PMath::project(point, plane);
-	projectedPoint.print("Projected Point");
-	std::cout << std::endl;
-	// Now project point onto a straight line going up through x = 10
-	DualQuat line = Vec4(10, 0, 0, 1) & Vec4(10, 1, 0, 1);
-	point.print("Point");
-	line.print("Line going straight up through x = 10");
-	projectedPoint = DQMath::project(point, line);
-	projectedPoint.print("Projected Point");
-	projectedPoint = VMath::perspectiveDivide(projectedPoint);
-	projectedPoint.print("Projected Point after perspective divide");
+	const string name = " projectTest";
+	float epsilon = VERY_SMALL * 1;
+	float diffMag;
 
+	// Project a point onto a plane
+	Vec4 point(-4.95f, 5.23f, 212.0f, 1.0f);
+	// Flat plane at y = 2
+	const float yPlane = 2;
+	//Plane plane(Vec3(0, 1, 0), 2);
+	Plane plane = Vec4(0, yPlane, 0, 1) & Vec4(1, yPlane, 0, 1) & Vec4(0, yPlane, 1, 1);
+	Vec4 projectedPoint = PMath::project(point, plane);
+	// The w component might not be one. Divide it out just in case
+	projectedPoint = VMath::perspectiveDivide(projectedPoint);
+	// Answer should be (point.x, yPlane, point.z)
+	Vec4 correctAnswer(point.x, yPlane, point.z, 1);
+
+	bool test0 = false;
+	diffMag = VMath::mag(projectedPoint - correctAnswer);
+	if (diffMag < epsilon) {
+		test0 = true;
+	}
+
+	// Now project point onto a straight line going up through x = 10 and z = 0
+	const float xValue = 10;
+	const float zValue = 0;
+	DualQuat line = Vec4(xValue, 0, zValue, 1) & Vec4(xValue, 1, zValue, 1);
+	projectedPoint = DQMath::project(point, line);
+	projectedPoint = VMath::perspectiveDivide(projectedPoint);
+	// Answer should be (xValue, point.y, zValue)
+	correctAnswer.set(xValue, point.y, zValue, 1);
+
+	bool test1 = false;
+	diffMag = VMath::mag(projectedPoint - correctAnswer);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	bool flag = test0 && test1;
+	printPassedOrFailed(flag, name);
 }
+
 
 void dqLookAtTest() {
 	const string name = " dqLookAtTest";
@@ -513,14 +557,8 @@ void dqLookAtTest() {
 		test6 = true;
 	}
 
-	if (test0 && test1 && test2 && test3 && test4 && test5 && test6) {
-		std::cout << PASSED + name << "\n";
-	}
-	else {
-		std::cout << FAILED + name << "\n";
-	}
-
-
+	bool flag = test0 && test1 && test2 && test3 && test4 && test5 && test6;
+	printPassedOrFailed(flag, name);
 }
 
 void sphereTest() {
@@ -703,45 +741,9 @@ void dualQuatMatrixTest(){
 		test1 = true;
 	}
 
-	if (test0 && test1) {
-		std::cout << PASSED + name << "\n";
-	}
-	else {
-		std::cout << FAILED + name << "\n";
-	}
-
+	bool flag = test0 && test1;
+	printPassedOrFailed(flag, name);
 }
-void dualQuatSlerpVectorTest() {
-	printf("************************************************************\n");
-	printf("dualQuatSlerpVectorTest\n\n");
-
-	Vec3 initialVector(0, 0, 0);
-	Vec3 startTranslation(2, 0, 0);
-	Quaternion endRot = QMath::angleAxisRotation(180, Vec3(0, 0, 1));
-	DualQuat startDQ = DQMath::translate(startTranslation);
-	DualQuat endDQ = DQMath::rotate(endRot) * startDQ;
-	DualQuat slerpDQStart = DQMath::slerp(startDQ, endDQ, 0.0f);
-	DualQuat slerpDQMiddle = DQMath::slerp(startDQ, endDQ, 0.5f);
-	DualQuat slerpDQEnd = DQMath::slerp(startDQ, endDQ, 1.0f);
-
-	slerpDQStart.print("Slerp with t = 0");
-	DQMath::getTranslation(slerpDQStart).print("pos");
-	DQMath::getRotation(slerpDQStart).print("rot");
-	DQMath::rigidTransformation(slerpDQStart, initialVector).print("New Vector");
-	std::cout << "***********************\n";
-	slerpDQMiddle.print("Slerp with t = 0.5");
-	DQMath::getTranslation(slerpDQMiddle).print("pos");
-	DQMath::getRotation(slerpDQMiddle).print("rot");
-	DQMath::rigidTransformation(slerpDQMiddle, initialVector).print("New Vector");
-	std::cout << "***********************\n";
-	slerpDQEnd.print("Slerp with t = 1");
-	DQMath::getTranslation(slerpDQEnd).print("pos");
-	DQMath::getRotation(slerpDQEnd).print("rot");
-	DQMath::rigidTransformation(slerpDQEnd, initialVector).print("New Vector");
-	printf("************************************************************\n\n");
-
-}
-
 
 void dotTest() {
 	// line 1 is straight across 
@@ -807,15 +809,54 @@ void rayPlaneTest() {
 }
 
 
-void translateAlongLineTest() {
+void dqTranslateAlongLineTest() {
+	const string name = " dqTranslateAlongLineTest";
+	const float epsilon = VERY_SMALL * 1.0f;
+	float diffMag;
+
 	Vec4 point1(-1, -1, -1, 1);
 	Vec4 point2(1, 1, 1, 1);
 	DualQuat line = point1 & point2;
-	DualQuat tr = DQMath::translateAlongLine(5, line);
+	float distanceAlongLine = 5.0f;
+	DualQuat dqT = DQMath::translateAlongLine(distanceAlongLine, line);
 	Vec4 pointToTranslate(0, 0, 0, 1);
-	pointToTranslate.print("Point to translate");
-	Vec4 translatedPoint = DQMath::rigidTransformation(tr, pointToTranslate);
-	translatedPoint.print("Translated point");
+	Vec4 translatedPoint = DQMath::rigidTransformation(dqT, pointToTranslate);
+
+	// How about doing the same thing with matrices?
+	Vec3 translationVector = point2 - point1;
+	// Scale to match distance
+	translationVector = distanceAlongLine * VMath::normalize(translationVector);
+	Matrix4 T = MMath::translate(translationVector);
+	Vec4 translatedPointUsingMat = T * pointToTranslate;
+
+	bool test0 = false;
+	diffMag = VMath::mag(translatedPoint - translatedPointUsingMat);
+	if (diffMag < epsilon) {
+		test0 = true;
+	}
+
+	// Try again with different points and distances
+	point1.set(0, -5, 0, 1);
+	point2.set(0, +5, 0, 1);
+	line = point1 & point2;
+	distanceAlongLine = 10.2f;
+	pointToTranslate.set(-15, 9.8, 23, 1);
+	dqT = DQMath::translateAlongLine(distanceAlongLine, line);
+	translatedPoint = DQMath::rigidTransformation(dqT, pointToTranslate);
+
+	translationVector = point2 - point1;
+	translationVector = distanceAlongLine * VMath::normalize(translationVector);
+	T = MMath::translate(translationVector);
+	translatedPointUsingMat = T * pointToTranslate;
+
+	bool test1 = false;
+	diffMag = VMath::mag(translatedPoint - translatedPointUsingMat);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	bool flag = test0 && test1;
+	printPassedOrFailed(flag, name);
 }
 void normalizeLineTest() {
 	DualQuat dq(1, 2, 3, 4, 5, 6, 7, 8);
@@ -910,13 +951,9 @@ void dualQuatSlerpTest() {
 		passedRot3 = true;
 	}
 
-	if (passedPos1 && passedPos2 && passedPos3 &&
-		passedRot1 && passedRot2 && passedRot3) {
-		std::cout << PASSED + name << "\n";
-	}
-	else {
-		std::cout << FAILED + name << "\n";
-	}
+	bool flag = passedPos1 && passedPos2 && passedPos3 && 
+		        passedRot1 && passedRot2 && passedRot3;
+	printPassedOrFailed(flag, name);
 }
 
 void joinTest() {
@@ -1092,12 +1129,8 @@ void dualQuatTest() {
 		test3 = true;
 	}
 
-	if (test0 && test1 && test2 && test3) {
-		std::cout << PASSED + name << "\n";
-	}
-	else {
-		std::cout << FAILED + name << "\n";
-	}
+	bool flag = test0 && test1 && test2 && test3;
+	printPassedOrFailed(flag, name);
 }
 
 void QuadraticTest() {
@@ -1570,12 +1603,8 @@ void LookAtTest(){
 		test2 = true;
 	}
 
-	if (test1 && test2) {
-		std::cout << PASSED + name << "\n";
-	}
-	else {
-		std::cout << FAILED + name << "\n";
-	}
+	bool flag = test1 && test2;
+	printPassedOrFailed(flag, name);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -1688,4 +1717,17 @@ Vec3 convertFromGlmV3(const glm::vec3& v) {
 
 glm::vec3 convertToGlmV3(const Vec3& v) {
 	return glm::vec3(v.x, v.y, v.z);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// Utility for passed/failed message
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+void printPassedOrFailed(bool flag, const string& name) {
+	if (flag) {
+		std::cout << PASSED + name << "\n";
+	}
+	else {
+		std::cout << FAILED + name << "\n";
+	}
 }
