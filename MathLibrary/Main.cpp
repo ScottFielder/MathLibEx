@@ -136,8 +136,7 @@ int main(int argc, char* argv[]) {
 	closestPointOnQuadTest();         // GREEN for GOOD!
 	pointInsideQuadTest();			  // GREEN for GOOD!
 	triangleTest();					  // GREEN for GOOD!
-	//point2dTest();
-	//planeTest();
+	planeTest();
 	//QuadraticTest();
 	//RaySphereTest();
 	//RayTest();
@@ -151,6 +150,7 @@ int main(int argc, char* argv[]) {
 	//normalizeLineTest();
 	//rayPlaneTest();
 	//dotTest();
+	//point2dTest();				  // Just simple operator tests
 	//sphereTest();					  // Just a timing test
 }
 
@@ -1378,6 +1378,9 @@ void inverseTest(){
 
 
 void planeTest() {
+	const string name = " planeTest";
+	const float epsilon = VERY_SMALL * 10.0f;
+	float diff;
 	/*Plane p1(2.0f, -2.0f, 5.0f, 8.0f);
 	p1.print();
 	Vec3 v = Vec3(4.0f, -4.0f, 3.0f);
@@ -1398,10 +1401,14 @@ void planeTest() {
 	float distance4 = PMath::distance(v3, p4);
 	printf("%f vs. %f\n", distance4, -17.0 / 3.0);*/
 
-	Matrix4 proj = MMath::perspective(52.8f, 1.0f, 1.0f, 10.0f) * MMath::lookAt(Vec3(0.0f, 0.0f, 8.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
-	
-	proj.print();
+	Vec3 eye = Vec3(0.0f, 0.0f, 8.0f);
+	float perspectiveArgumentZNear = 1.0f;
+	float perspectiveArgumentZFar = 10.0f;
 
+	Matrix4 proj = MMath::perspective(52.8f, 1.0f, perspectiveArgumentZNear, perspectiveArgumentZFar) *
+		           MMath::lookAt(eye, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
+	
+	// Woah, looks like SSF is extracting the near and far clipping planes here
 #define INDEX(column,row) (proj[(row-1) * 4 + (column-1)])
 
 	
@@ -1410,34 +1417,63 @@ void planeTest() {
 			INDEX(4,3) + INDEX(3,3),
 			INDEX(4,4) + INDEX(3,4));
 	near = PMath::normalize(near);
-	near.print();
 	Plane far(INDEX(4,1) - INDEX(3,1),
 			INDEX(4,2) - INDEX(3,2),
 			INDEX(4,3) - INDEX(3,3),
 			INDEX(4,4) - INDEX(3,4));
 	far = PMath::normalize(far);
-	far.print();
 	
 	Vec3 v5(0.0, 0.0, 0.0);
-	float distance5 = PMath::distance(v5, near);
-	printf("near %f\n", distance5);
-	distance5 = PMath::distance(v5, far);
-	printf("far %f\n", distance5);
+	float distance5 = fabs(PMath::distance(eye, near));
+	bool test1 = false;
+	if (fabs(distance5 - perspectiveArgumentZNear) < epsilon) {
+		test1 = true;
+	}
+	
+	distance5 = fabs(PMath::distance(eye, far));
+	bool test2 = false;
+	if (fabs(distance5 - perspectiveArgumentZFar) < epsilon) {
+		test2 = true;
+	}
 
+	// Weird how a plane's inverse is the same thing. Gotta check i've done this right tho...
 	Plane p1(1, 0, 0, 4);
 	Plane p1Inverse = PMath::inverse(p1);
-	p1.print("Plane before inverse");
-	p1Inverse.print("Plane after inverse");
+	bool test3 = false;
+	Plane pDiff = p1 - p1Inverse;
+	if (fabs(pDiff.x) < epsilon && fabs(pDiff.y) < epsilon && fabs(pDiff.z) < epsilon && fabs(pDiff.d) < epsilon) {
+		test3 = true;
+	}
 
+	// Normalize a plane by dividing it by the magnitude of the normal
+	Vec3 normal(4, 0, 0);
 	Plane p2(4, 0, 0, 2);
-	Plane p2Normalized = PMath::normalize(p2);
-	p2.print("Plane before normalizing");
-	p2Normalized.print("Plane after normalizing");
-	std::cout << "-------------------\n";
-	p2.set(1, 0, 0, 8);
-	p1.print("Starting plane");
-	p2.print("Ending plane");
-	PMath::normalize(PMath::midPlane(p1, p2)).print("Mid plane");
+	Plane p2Normalized1 = PMath::normalize(p2);
+	Plane p2Normalized2 = p2 / VMath::mag(normal);
+	bool test4 = false;
+	pDiff = p2Normalized1 - p2Normalized2;
+	if (fabs(pDiff.x) < epsilon && fabs(pDiff.y) < epsilon && fabs(pDiff.z) < epsilon && fabs(pDiff.d) < epsilon) {
+		test4 = true;
+	}
+
+	Vec3 normalStart(0, 1, 0);
+	Plane startPlane(normalStart, 0);
+
+	Vec3 normalEnd(1, 0, 0);
+	Plane endPlane(normalEnd, 0);
+
+	Plane midPlane1 = PMath::normalize(PMath::midPlane(startPlane, endPlane));
+	// Midplane should be halfway between starting and ending plane
+	Vec3 normalMid = VMath::normalize((normalStart + normalEnd) / 2.0f);
+	Plane midPlane2(normalMid, 0);
+	bool test5 = false;
+	pDiff = midPlane1 - midPlane2;
+	if (fabs(pDiff.x) < epsilon && fabs(pDiff.y) < epsilon && fabs(pDiff.z) < epsilon && fabs(pDiff.d) < epsilon) {
+		test5 = true;
+	}
+
+	bool flag = test1 && test2 && test3 && test4 && test5;
+	printPassedOrFailed(flag, name);
 }
 
 
