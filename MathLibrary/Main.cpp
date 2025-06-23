@@ -70,7 +70,7 @@ void dqConstructorTest();
 void dqLookAtTest();
 void planeTest();
 void QuadraticTest();
-void RaySphereTest();
+void raySphereTest();
 void RayTest();
 void dualQuatTest();
 void flectorTest();
@@ -136,9 +136,9 @@ int main(int argc, char* argv[]) {
 	closestPointOnQuadTest();         // GREEN for GOOD!
 	pointInsideQuadTest();			  // GREEN for GOOD!
 	triangleTest();					  // GREEN for GOOD!
-	planeTest();
+	planeTest();					  // GREEN for GOOD!
+	raySphereTest();			      // GREEN for GOOD!
 	//QuadraticTest();
-	//RaySphereTest();
 	//RayTest();
 	//flectorTest();
 	//intersectionTest();
@@ -1165,26 +1165,198 @@ void RayTest() {
     //intersection.print();
 }
 
+// VISUALIZED: https://github.com/ScottFielder/MathLibrary/blob/master/Images/raySphere.png
+// REFERENCE: https://hamishtodd1.substack.com/p/sphere-circle-and-cylinder-intersections
+// EXAMPLE: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Line_intersection_sphere.pdf
+void raySphereTest() {
+	const string name = " raySphereTest";
+	const float epsilon = VERY_SMALL * 1.0f;
+	float diffMag;
 
-void RaySphereTest() {
-    /// Two roots 
-    Ray r(Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 0.0f, 0.0f));
-    Sphere s(Vec3(3.0f, 0.0f, 0.0), 1.0f);
-    Roots intersection = RMath::intersection(r, s);
-    intersection.print();
+	const Vec3 sphereCentre = Vec3(3.0f, 0.0f, 0.0);
+	const float sphereRadius = 1.0f;
+    const Sphere s(sphereCentre, sphereRadius);
+    
+	/// Two roots 
+    Ray r0(Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 0.0f, 0.0f));
+    Roots root0 = RMath::intersection(r0, s);
+ 	Vec3 intersectionPoint0_a;
+	Vec3 intersectionPoint0_b;
+	if (root0.numRoots > 0) {
+		intersectionPoint0_a = r0.start + r0.direction * root0.firstRoot;
+		intersectionPoint0_b = r0.start + r0.direction * root0.secondRoot;
+	}
 
     /// One root 
     Ray r1(Vec3(0.0f, -1.0f, 0.0f), Vec3(1.0f, 0.0f, 0.0f));
-    Sphere s1(Vec3(3.0f, 0.0f, 0.0), 1.0f);
-    Roots intersection1 = RMath::intersection(r1, s1);
-    intersection1.print();
+    Roots root1 = RMath::intersection(r1, s);
+ 	Vec3 intersectionPoint1_a;
+	Vec3 intersectionPoint1_b;
+	if (root1.numRoots > 0) {
+		intersectionPoint1_a = r1.start + r1.direction * root1.firstRoot;
+		intersectionPoint1_b = r1.start + r1.direction * root1.secondRoot;
+	}
 
     /// No roots - no intersection
-    Ray r2(Vec3(0.0f, -1.0f, 0.0f), Vec3(1.0f, 0.0f, 0.0f));
-    Sphere s2(Vec3(3.0f, 0.0f, 0.0), 1.0f);
-    Roots intersection2 = RMath::intersection(r1, s1);
-    intersection2.print();
+    Ray r2(Vec3(0.0f, -3.0f, 0.0f), VMath::normalize(Vec3(1.0f, 0.5f, 0.0f)));
+    Roots root2 = RMath::intersection(r2, s);
+ 	Vec3 intersectionPoint2_a(-99, -99, -99);
+	Vec3 intersectionPoint2_b(-99, -99, -99);
+	if (root2.numRoots == 0) {
+		intersectionPoint2_a.set(0, 0, 0);
+		intersectionPoint2_b.set(0, 0, 0);
+	}
 
+	// Looking at the graph, I know what the answers should be;
+	Vec3 correctIntersection0_a(2, 0, 0);
+	Vec3 correctIntersection0_b(4, 0, 0);
+
+	Vec3 correctIntersection1_a(3, -1, 0);
+	Vec3 correctIntersection1_b(3, -1, 0);
+
+	Vec3 correctIntersection2_a(0, 0, 0);
+	Vec3 correctIntersection2_b(0, 0, 0);
+
+	// Would be nice to do this with PGA too
+	// I stumbled across this article that has a very nice way of doing line - sphere intersection using dual quats :
+	// https://hamishtodd1.substack.com/p/sphere-circle-and-cylinder-intersections
+	// written by Hamish Todd(he has some great PGA talks at GDC).
+	// I tried out an example on paper using his method and it worked nicely for a simple set up.
+	// I've attached photos of my scribbles at the top of the function.The first page is the one with a sketch of a line intersecting a sphere.
+	DualQuat line0 = DQMath::normalize(Vec4(r0.start, 1) & Vec4(r0.direction, 0));
+	DualQuat line1 = DQMath::normalize(Vec4(r1.start, 1) & Vec4(r1.direction, 0));
+	DualQuat line2 = DQMath::normalize(Vec4(r2.start, 1) & Vec4(r2.direction, 0));
+
+	Flector f0 = (line0 * Vec4(sphereCentre, 1));
+	Flector f1 = (line1 * Vec4(sphereCentre, 1));
+	Flector f2 = (line2 * Vec4(sphereCentre, 1));
+
+	Plane M0 = f0.plane;
+	Plane M1 = f1.plane;
+	Plane M2 = f2.plane;
+
+	Vec4 M0_grade3 = f0.point;
+	Vec4 M1_grade3 = f1.point;
+	Vec4 M2_grade3 = f2.point;
+
+	float d0_squared = sphereRadius * sphereRadius - DQMath::mag(dual(M0_grade3) * dual(M0_grade3));
+	float d1_squared = sphereRadius * sphereRadius - DQMath::mag(dual(M1_grade3) * dual(M1_grade3));
+	float d2_squared = sphereRadius * sphereRadius - DQMath::mag(dual(M2_grade3) * dual(M2_grade3));
+
+	// If d_squared > 0, 2 roots
+	// If d_squared = 0, 1 roots
+	// If d_squared < 0, 0 roots
+
+	Vec4 intersectionPointPGA0_a(0, 0, 0, 1);
+	Vec4 intersectionPointPGA0_b(0, 0, 0, 1);
+	Vec4 intersectionPointPGA1_a(0, 0, 0, 1);
+	Vec4 intersectionPointPGA1_b(0, 0, 0, 1);
+	Vec4 intersectionPointPGA2_a(-99, -99, -99, 1);
+	Vec4 intersectionPointPGA2_b(-99, -99, -99, 1);
+
+	Plane e0(0, 0, 0, 1);
+
+	// Should be two intersections for line0
+	if (d0_squared > 0) {
+		intersectionPointPGA0_a = line0 ^ (M0 - e0 * sqrt(d0_squared));
+		intersectionPointPGA0_b = line0 ^ (M0 + e0 * sqrt(d0_squared));
+	}
+	// Divide out the w
+	intersectionPointPGA0_a = VMath::perspectiveDivide(intersectionPointPGA0_a);
+	intersectionPointPGA0_b = VMath::perspectiveDivide(intersectionPointPGA0_b);
+
+	// Should be one intersection for line1
+	if (fabs(d1_squared) < VERY_SMALL) {
+		intersectionPointPGA1_a = line1 ^ (M1 - e0 * sqrt(d1_squared));
+		intersectionPointPGA1_b = line1 ^ (M1 + e0 * sqrt(d1_squared));
+	}
+	// Divide out the w
+	intersectionPointPGA1_a = VMath::perspectiveDivide(intersectionPointPGA1_a);
+	intersectionPointPGA1_b = VMath::perspectiveDivide(intersectionPointPGA1_b);
+
+	// Should be none for line2
+	if (d2_squared < 0 ) {
+		intersectionPointPGA2_a.set(0, 0, 0, 1);
+		intersectionPointPGA2_b.set(0, 0, 0, 1);
+	}
+
+	// Time to test all intersection points with true values
+	bool test0 = false;
+	diffMag = VMath::mag(correctIntersection0_a - intersectionPoint0_a);
+	if (diffMag < epsilon) {
+		test0 = true;
+	}
+
+	bool test1 = false;
+	diffMag = VMath::mag(correctIntersection0_b - intersectionPoint0_b);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	bool test2 = false;
+	diffMag = VMath::mag(correctIntersection1_a - intersectionPoint1_a);
+	if (diffMag < epsilon) {
+		test2 = true;
+	}
+
+	bool test3 = false;
+	diffMag = VMath::mag(correctIntersection1_b - intersectionPoint1_b);
+	if (diffMag < epsilon) {
+		test3 = true;
+	}
+
+	bool test4 = false;
+	diffMag = VMath::mag(correctIntersection2_a - intersectionPoint2_a);
+	if (diffMag < epsilon) {
+		test4 = true;
+	}
+
+	bool test5 = false;
+	diffMag = VMath::mag(correctIntersection2_b - intersectionPoint2_b);
+	if (diffMag < epsilon) {
+		test5 = true;
+	}
+
+	// Test the PGA versions too
+	bool test6 = false;
+	diffMag = VMath::mag(correctIntersection0_a - intersectionPointPGA0_a);
+	if (diffMag < epsilon) {
+		test6 = true;
+	}
+
+	bool test7 = false;
+	diffMag = VMath::mag(correctIntersection0_b - intersectionPointPGA0_b);
+	if (diffMag < epsilon) {
+		test7 = true;
+	}
+
+	bool test8 = false;
+	diffMag = VMath::mag(correctIntersection1_a - intersectionPointPGA1_a);
+	if (diffMag < epsilon) {
+		test8 = true;
+	}
+
+	bool test9 = false;
+	diffMag = VMath::mag(correctIntersection1_b - intersectionPointPGA1_b);
+	if (diffMag < epsilon) {
+		test9 = true;
+	}
+
+	bool test10 = false;
+	diffMag = VMath::mag(correctIntersection2_a - intersectionPointPGA2_a);
+	if (diffMag < epsilon) {
+		test10 = true;
+	}
+
+	bool test11 = false;
+	diffMag = VMath::mag(correctIntersection2_b - intersectionPointPGA2_b);
+	if (diffMag < epsilon) {
+		test11 = true;
+	}
+
+	bool flag = test0 && test1 && test2 && test3 && test4  && test5 && 
+	        	test6 && test7 && test8 && test9 && test10 && test11;
+	printPassedOrFailed(flag, name);
 }
 
 void slerpTest() {

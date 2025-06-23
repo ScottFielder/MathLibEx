@@ -233,6 +233,20 @@ namespace MATHEX {
 			return result;
 		}
 
+		// Return magnitude of the rotational part or the infinite part
+		static const float mag(const DualQuat& dq) {
+			// Figure out whether this is a pure rotation or not
+			float quatMag = MATH::QMath::magnitude(getRotation(dq));
+			if (quatMag < VERY_SMALL) {
+				// return infinite mag instead here
+				float infiniteMag = sqrt(dq.e01 * dq.e01 + dq.e02 * dq.e02 + dq.e03 * dq.e03 +
+					dq.e0123 * dq.e0123);
+				return infiniteMag;
+			}
+			// Otherwise just use the quaternion magnitude
+			return quatMag;
+		}
+
 		// Divide by the magnitude of the rotational part or the infinite part
 		static const DualQuat normalize(const DualQuat& dq)
 		{
@@ -247,6 +261,7 @@ namespace MATHEX {
 			// Otherwise just use the quaternion magnitude
 			return dq / quatMag;
 		}
+
 
 		// Oriented distance between a point and a line (sign tells you which side of the line)
 		// EXAMPLE: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Oriented_distance_point_and_line.pdf
