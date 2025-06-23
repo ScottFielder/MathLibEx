@@ -90,7 +90,7 @@ void point2dTest();
 void triangleTest();
 void sphereTest();
 void projectTest();
-void quadTest();
+void pointInsideQuadTest();
 void closestPointOnQuadTest();
 void quadAreaTest();
 
@@ -134,9 +134,8 @@ int main(int argc, char* argv[]) {
 	projectTest();					  // GREEN for GOOD!
 	quadAreaTest();				      // GREEN for GOOD!
 	closestPointOnQuadTest();         // GREEN for GOOD!
-	//quadTest();
-	//sphereTest();
-	//triangleTest();
+	pointInsideQuadTest();			  // GREEN for GOOD!
+	triangleTest();					  // GREEN for GOOD!
 	//point2dTest();
 	//planeTest();
 	//QuadraticTest();
@@ -152,6 +151,7 @@ int main(int argc, char* argv[]) {
 	//normalizeLineTest();
 	//rayPlaneTest();
 	//dotTest();
+	//sphereTest();					  // Just a timing test
 }
 
 void dqGetRotationTranslationTest() {
@@ -348,12 +348,15 @@ void closestPointOnQuadTest() {
 }
 
 
-void quadTest() {
+// VISUALIZED: https://github.com/ScottFielder/MathLibrary/blob/master/Images/pointInsideQuad.png
+void pointInsideQuadTest() {
+	const string name = " pointInsideQuadTest";
+
 	Vec4 point1(0, 0, 0, 1);
 	Vec4 point2(2, 0, 0, 1);
 	Vec4 point3(0, 0.5, 0, 1);
 	Vec4 point4(1, 1, 0, 1);
-	Vec4 point5(1.001, 1.001, 0, 1);
+	Vec4 point5(1.05, 1.05, 0, 1);
 
 	// This quad is a unit square
 	Quad quad = Quad(
@@ -362,48 +365,36 @@ void quadTest() {
 		Vec3(1, 1, 0),
 		Vec3(0, 1, 0)
 	);
-	quad.print("Quad");
-	std::cout << std::endl;
+	
+	// Looking at graph, we know points 1, 3, 4 are in quad
+	bool test1 = false;
+	bool test2 = false;
+	bool test3 = false;
+	bool test4 = false;
+	bool test5 = false;
 
-	point1.print("Point1");
 	if (QuadMath::isPointInside(point1, quad)) {
-		printf("Point1 is inside the quad\n\n");
-	}
-	else {
-		printf("Point1 is outside the quad\n\n");
+		test1 = true;
 	}
 
-	point2.print("Point2");
-	if (QuadMath::isPointInside(point2, quad)) {
-		printf("Point2 is inside the quad\n\n");
-	}
-	else {
-		printf("Point2 is outside the quad\n\n");
+	if (QuadMath::isPointInside(point2, quad) == false) {
+		test2 = true;
 	}
 
-	point3.print("Point3");
 	if (QuadMath::isPointInside(point3, quad)) {
-		printf("Point3 is inside the quad\n\n");
-	}
-	else {
-		printf("Point3 is outside the quad\n\n");
+		test3 = true;
 	}
 
-	point4.print("Point4");
 	if (QuadMath::isPointInside(point4, quad)) {
-		printf("Point4 is inside the quad\n\n");
-	}
-	else {
-		printf("Point4 is outside the quad\n\n");
+		test4 = true;
 	}
 
-	point5.print("Point5");
-	if (QuadMath::isPointInside(point5, quad)) {
-		printf("Point5 is inside the quad\n\n");
+	if (QuadMath::isPointInside(point5, quad) == false) {
+		test5 = true;
 	}
-	else {
-		printf("Point5 is outside the quad\n\n");
-	}
+
+	bool flag = test1 && test2 && test3 && test4 && test5;
+	printPassedOrFailed(flag, name);
 }
 
 void projectTest() {
@@ -619,37 +610,48 @@ void sphereTest() {
 }
 
 void triangleTest() {
+	const string name = " triangleTest";
+	const float epsilon = VERY_SMALL * 1;
+
 	// Line below shld throw if you uncomment it
 	// Triangle t(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(2, 0, 0));
 
 	Triangle tri1(Vec3(0, 0, 0), Vec3(0, 1, 0), Vec3(1, 0, 0));
-	tri1.print("Triangle 1");
-	TMath::getNormal(tri1).print("Normal of Triangle 1");
 
-
-	TMath::getPlane(tri1).print("Plane of Triangle 1");
+	Plane p_using_getPlane = TMath::getPlane(tri1);
 	Plane p(Vec3(0, 0, 0), Vec3(0, 1, 0), Vec3(1, 0, 0));
-	p.print("Plane of Triangle 1 SSF");
+	
+	bool test0 = false;
+	Plane pDiff = p - p_using_getPlane;
+	if (fabs(pDiff.x) < epsilon && fabs(pDiff.y) < epsilon && fabs(pDiff.z) < epsilon && fabs(pDiff.d) < epsilon) {
+		test0 = true;
+	}
 
+	// This should be in the triangle
 	Vec3 p1(0, 0, 0);
-	p1.print("Point 1");
-	Vec3 p2(2, 0, 0);
-	p2.print("Point 2");
+	// This should be outside
+	Vec3 p2(1, 1, 0);
+	// This should be outside too
+	Vec3 p3(0, 1.0001, 0);
 
-	if(TMath::isPointInside(p1, tri1)){
-		printf("Point 1 is in Triangle 1\n");
-	}
-	else{
-		printf("Point 1 is not in Triangle 1\n");
-	}
+	bool test1 = false;
+	bool test2 = false;
+	bool test3 = false;
 
-if (TMath::isPointInside(p2, tri1)) {
-		printf("Point 2 is in Triangle 1\n");
-	}
-	else {
-		printf("Point 2 is not in Triangle 1\n");
+	if (TMath::isPointInside(p1, tri1)) {
+		test1 = true;
 	}
 
+	if (TMath::isPointInside(p2, tri1) == false) {
+		test2 = true;
+	}
+
+	if (TMath::isPointInside(p3, tri1) == false) {
+		test3 = true;
+	}
+
+	bool flag = test0 && test1 && test2 && test3;
+	printPassedOrFailed(flag, name);
 }
 
 void point2dTest() {

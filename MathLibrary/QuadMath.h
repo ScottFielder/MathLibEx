@@ -59,11 +59,11 @@ namespace MATHEX {
 
 			// Is the point on the left side of all edges? Or the right side of all the edges?
 			// Leave a bit of wiggle room for numerical error
-			const float smallNumber = VERY_SMALL * 10.0f;
-			if (orientedDist0 >= -smallNumber && orientedDist1 >= -smallNumber && orientedDist2 >= -smallNumber && orientedDist3 >= -smallNumber) {
+			const float epsilon = VERY_SMALL * 10.0f;
+			if (orientedDist0 >= -epsilon && orientedDist1 >= -epsilon && orientedDist2 >= -epsilon && orientedDist3 >= -epsilon) {
 				return true;
 			}
-			else if (orientedDist0 <= smallNumber && orientedDist1 <= smallNumber && orientedDist2 <= smallNumber && orientedDist3 <= smallNumber) {
+			else if (orientedDist0 <= epsilon && orientedDist1 <= epsilon && orientedDist2 <= epsilon && orientedDist3 <= epsilon) {
 				return true;
 			}
 			// If not then we are outside the quad
