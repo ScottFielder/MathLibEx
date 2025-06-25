@@ -80,6 +80,7 @@ void meetTest();
 void joinTest();
 void dualQuatSlerpTest();
 void rotateTest();
+void translateTest();
 void gradeTest();
 void normalizeLineTest();
 void dqTranslateAlongLineTest();
@@ -139,6 +140,7 @@ int main(int argc, char* argv[]) {
 	planeTest();					  // GREEN for GOOD!
 	raySphereTest();			      // GREEN for GOOD!
 	rotateTest();				      // GREEN for GOOD!
+	translateTest();				  // GREEN for GOOD!
 	//QuadraticTest();
 	//RayTest();
 	//flectorTest();
@@ -933,6 +935,56 @@ void rotateTest() {
 
 	bool test2 = false;
 	diffMag = VMath::mag(point_tranformed_mat - point_transformed_q);
+	if (diffMag < epsilon) {
+		test2 = true;
+	}
+
+	bool flag = test0 && test1 && test2;
+	printPassedOrFailed(flag, name);
+}
+
+void translateTest() {
+	string name = " translateTest";
+	const float epsilon = VERY_SMALL * 1;
+	float diffMag;
+
+	const Vec4 point(-4, 2, 34, 1);
+
+	const Vec3 translation1(12, 2, -3);
+	const Vec3 translation2(-54, 62.4, -0.001);
+	const Vec3 translation3(-3, -7, -10);
+
+	// Translate the point three ways
+	Matrix4 T1_mat = MMath::translate(translation1);
+	Matrix4 T2_mat = MMath::translate(translation2);
+	Matrix4 T3_mat = MMath::translate(translation3);
+
+	DualQuat T1_dq = DQMath::translate(translation1);
+	DualQuat T2_dq = DQMath::translate(translation2);
+	DualQuat T3_dq = DQMath::translate(translation3);
+
+	Matrix4  transform_mat = T1_mat * T2_mat * T3_mat;
+	DualQuat transform_dq  = T1_dq  * T2_dq  * T3_dq;
+	Vec3     transform_vec = translation1 + translation2 + translation3;
+
+	Vec4 point_transformed_mat = transform_mat * point;
+	Vec4 point_transformed_dq  = DQMath::rigidTransformation(transform_dq, point);
+	Vec4 point_transformed_vec = point + Vec4(transform_vec, 0.0f);
+
+	bool test0 = false;
+	diffMag = VMath::mag(point_transformed_mat - point_transformed_dq);
+	if (diffMag < epsilon) {
+		test0 = true;
+	}
+
+	bool test1 = false;
+	diffMag = VMath::mag(point_transformed_dq - point_transformed_vec);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	bool test2 = false;
+	diffMag = VMath::mag(point_transformed_mat - point_transformed_vec);
 	if (diffMag < epsilon) {
 		test2 = true;
 	}

@@ -17,12 +17,6 @@ namespace MATHEX {
 		float e02;
 		float e03;
 		float e0123;
-	
-
-		struct {
-			Quaternion oppositeRotation; // real, e23, e31 and e12 are the same as w, -i, -j and -k in a regular quaternion. 
-			float dx, dy, dz, screw;     // Translations are encoded in dx, dy and dz. The last element combines rotation and translation just like a screw motion
-		};
 
 		inline void set(float real_, float e23_, float e31_, float e12_, float e01_, float e02_, float e03_, float e0123_){
 			real = real_; e23 = e23_; e31 = e31_; e12 = e12_; e01 = e01_; e02 = e02_; e03 = e03_; e0123 = e0123_;
