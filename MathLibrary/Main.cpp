@@ -233,12 +233,12 @@ void dqConstructorTest() {
 	float epsilon = VERY_SMALL * 10;
 	float diffMag;
 
-	float angleDeg = -32;
-	Vec3 axis = VMath::normalize(Vec3(1, 2, -1));
-	Vec3 translation(-4.5f, 12.3f, -0.2f);
+	float angleDeg = 180;
+	Vec3 axis = VMath::normalize(Vec3(1, 0, 0));
+	Vec3 translation(2, 0, 0);
 
 	// What happens if we rotate THEN translate the following vector?
-	Vec3 v(1, 2, -3);
+	Vec3 v(0, 1, 0);
 
 	// We know Matrices work. Start with those
 	Matrix4 R = MMath::rotate(angleDeg, axis);

@@ -60,9 +60,9 @@ namespace MATHEX {
 			result.e23 = 0.0f; 
 			result.e31 = 0.0f; 
 			result.e12 = 0.0f;
-			result.e01 = translation.x / 2.0f;
-			result.e02 = translation.y / 2.0f;
-			result.e03 = translation.z / 2.0f;
+			result.e01 = -translation.x / 2.0f;
+			result.e02 = -translation.y / 2.0f;
+			result.e03 = -translation.z / 2.0f;
 			result.e0123 = 0.0f;
 			return result;
 		}
@@ -73,7 +73,9 @@ namespace MATHEX {
 		static const DualQuat translateAlongLine(float dist, const DualQuat& line) {
 			Plane eZero(0.0f, 0.0f, 0.0f, 1.0f);
 			MATH::Vec4 eOneTwoThree(0.0f, 0.0f, 0.0f, 1.0f);
-			return DualQuat() - eZero * (normalize(line) * dist / 2.0f) * eOneTwoThree;
+			// DualQuat() is just the number one
+			// UN - I needed a plus here rather than a minus in the video
+			return DualQuat() + eZero * (normalize(line) * dist / 2.0f) * eOneTwoThree;
 		}
 
 		/// Return just the translation parts of a dual quaternion and the screwiness
@@ -94,17 +96,20 @@ namespace MATHEX {
 		/// REFERENCE: https://bivector.net/PROJECTIVE_GEOMETRIC_ALGEBRA.pdf
 		static const MATH::Vec4 rigidTransformation(const DualQuat& dq, const MATH::Vec4& p){
 			// Turns out the translation part is 1 - delta/2 * (e01, 2, 3) rather that 1 + delta/2 * (e01, 2, 3)
-			DualQuat fix = dq;
-			fix.e01 *= -1.0f;
-			fix.e02 *= -1.0f;
-			fix.e03 *= -1.0f;
+			//DualQuat fix = dq;
+			//fix.e01 *= -1.0f;
+			//fix.e02 *= -1.0f;
+			//fix.e03 *= -1.0f;
 			// Note that the sandwich needs the inverse rather than the congujate in geometric algebra vs traditional dual quat math
 			// TODO: For some reason, I need to flip the sign on the e0123 part when doing the inverse
 			// to have a pure point flector result. Otherwise, I need to combine the plane and the point in the flector
 			// somehow to get the right answer. Need to figure this out...
 			// Flector result = (fix * p * inverse(fix));
+			
+			// TODO: UN - fingers crossed that this works
+			DualQuat fix = dq;
 			DualQuat inverseFix = inverse(fix);
-			inverseFix.e0123 *= -1.0f;
+			//inverseFix.e0123 *= -1.0f;
 			Flector result = (fix * p * inverseFix);
 			return result.point;
 		}
@@ -159,7 +164,8 @@ namespace MATHEX {
 			realPart.e31 *= -1.0f;
 			realPart.e12 *= -1.0f;
 			DualQuat transformed = dualPart * realPart * 2.0f;
-			MATH::Vec3 translation(transformed.e01, transformed.e02, transformed.e03);
+			// TODO: UN - Fingers crossed these minus signs are correct
+			MATH::Vec3 translation(-transformed.e01, -transformed.e02, -transformed.e03);
 			return translation;
 		}
 
@@ -291,7 +297,8 @@ namespace MATHEX {
 			// First iteration where P and Q are points to align the positions
 			result = motorAtoB(Vec4(eye), Vec4(originalEye));
 			// Funny I had to inverse the translation here to make this work, but not the rotation later on
-			result = inverse(result);
+			// TODO: UN - Hope this works
+			//result = inverse(result);
 
 			// Second iteration where P and Q are lines to align the targets
 			DualQuat P = Vec4(originalEye) & rigidTransformation(result, at);

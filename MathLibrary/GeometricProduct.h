@@ -46,7 +46,8 @@ namespace MATHEX {
 	// DERIVATION: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Multiplying_dq_with_point.pdf
 	inline const Flector operator * (const DualQuat& dq, const MATH::Vec4& p){
 		Flector result;
-		result.plane.e0 =  dq.e12 * p.e021 + dq.e31 * p.e013 + dq.e23 * p.e032 + dq.e0123 * p.e123;
+		// TODO: Fingers crossed this minus sign works... If it does, make an edit to the derivation pdf
+		result.plane.e0 =  dq.e12 * p.e021 + dq.e31 * p.e013 + dq.e23 * p.e032 - dq.e0123 * p.e123;
 		result.plane.e1 = -dq.e23 * p.e123;
 		result.plane.e2 = -dq.e31 * p.e123;
 		result.plane.e3 = -dq.e12 * p.e123;
