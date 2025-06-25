@@ -15,9 +15,6 @@ namespace MATHEX {
 	struct DQMath {
 
 		/// Flip the sign on the axis of rotation and translation bivectors
-		/// TODO: Not sure if I need to flip e0123 as well?
- 		/// If I do flip, the rigid transform seems to work for slerping
-		/// If I don't then dq * dq.inverse = 1 which is the definition
 		static const DualQuat inverse(const DualQuat& dq) {
 			DualQuat result = dq;
 			result.e23 *= -1.0f;
@@ -52,7 +49,6 @@ namespace MATHEX {
 		}
 
 		/// Return a pure translation dual quaternion from a Vec3
-		/// TODO: This just behaves like a Constructor.
 		static const DualQuat translate(const MATH::Vec3& translation) {
 			// No rotation, but set the last four floats to be half the translation
 			DualQuat result;
@@ -92,25 +88,11 @@ namespace MATHEX {
 			return result;
 		}
 
-		/// A rigid transform is a rotate and/or translate. Dual quats can't scale reliably
+		/// A rigid transform is a rotate, a translate, or a combination of both.
 		/// REFERENCE: https://bivector.net/PROJECTIVE_GEOMETRIC_ALGEBRA.pdf
 		static const MATH::Vec4 rigidTransformation(const DualQuat& dq, const MATH::Vec4& p){
-			// Turns out the translation part is 1 - delta/2 * (e01, 2, 3) rather that 1 + delta/2 * (e01, 2, 3)
-			//DualQuat fix = dq;
-			//fix.e01 *= -1.0f;
-			//fix.e02 *= -1.0f;
-			//fix.e03 *= -1.0f;
-			// Note that the sandwich needs the inverse rather than the congujate in geometric algebra vs traditional dual quat math
-			// TODO: For some reason, I need to flip the sign on the e0123 part when doing the inverse
-			// to have a pure point flector result. Otherwise, I need to combine the plane and the point in the flector
-			// somehow to get the right answer. Need to figure this out...
-			// Flector result = (fix * p * inverse(fix));
-			
-			// TODO: UN - fingers crossed that this works
-			DualQuat fix = dq;
-			DualQuat inverseFix = inverse(fix);
-			//inverseFix.e0123 *= -1.0f;
-			Flector result = (fix * p * inverseFix);
+			// The famous sandwich
+			Flector result = (dq * p * inverse(dq));
 			return result.point;
 		}
 
@@ -130,7 +112,6 @@ namespace MATHEX {
 			// even if the original transform is, for example, T * R or R * T
 			// Not so easy for translations as you'll see in getTranslation
 			DualQuat result;
-
 			result.real  = dq.real;
 			result.e23   = dq.e23;
 			result.e31   = dq.e31;
@@ -139,7 +120,6 @@ namespace MATHEX {
 			result.e02   = 0.0f;
 			result.e03   = 0.0f;
 			result.e0123 = 0.0f;
-
 			return result;
 		}
 
@@ -164,7 +144,8 @@ namespace MATHEX {
 			realPart.e31 *= -1.0f;
 			realPart.e12 *= -1.0f;
 			DualQuat transformed = dualPart * realPart * 2.0f;
-			// TODO: UN - Fingers crossed these minus signs are correct
+			// Remember a translation dual quat is 1 - deltaX/2 e01 - deltaY/2 e02 - deltaZ/2 e03
+			// So we need minus signs for the next step
 			MATH::Vec3 translation(-transformed.e01, -transformed.e02, -transformed.e03);
 			return translation;
 		}
@@ -296,14 +277,12 @@ namespace MATHEX {
 			DualQuat result;
 			// First iteration where P and Q are points to align the positions
 			result = motorAtoB(Vec4(eye), Vec4(originalEye));
-			// Funny I had to inverse the translation here to make this work, but not the rotation later on
-			// TODO: UN - Hope this works
-			//result = inverse(result);
 
 			// Second iteration where P and Q are lines to align the targets
 			DualQuat P = Vec4(originalEye) & rigidTransformation(result, at);
 			DualQuat Q = Vec4(originalEye) & originalAt;
 			result = motorAtoB(normalize(P), normalize(Q)) * result;
+
 			// Third and final iteration where P and Q are planes to align the up directions
 			Plane Pplane = Q & rigidTransformation(result, up);
 			Plane Qplane = Q & originalUp;
