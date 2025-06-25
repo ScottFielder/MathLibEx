@@ -138,6 +138,7 @@ int main(int argc, char* argv[]) {
 	triangleTest();					  // GREEN for GOOD!
 	planeTest();					  // GREEN for GOOD!
 	raySphereTest();			      // GREEN for GOOD!
+	rotateTest();				      // GREEN for GOOD!
 	//QuadraticTest();
 	//RayTest();
 	//flectorTest();
@@ -883,10 +884,61 @@ void gradeTest() {
 }
 
 void rotateTest() {
-	DualQuat dq1 = DQMath::rotate(QMath::angleAxisRotation(90, Vec3(0, 1, 0)));
-	DualQuat dq2 = DQMath::rotate(90, Vec3(0, 1, 0));
-	dq1.print("Rotated dq using a quaternion");
-	dq2.print("Rotated dq using angle and vector");
+	const string name = " rotateTest";
+	const float epsilon = VERY_SMALL * 10;
+	float diffMag;
+
+	const Vec4 point(1, 2, -3, 1);
+	
+	const float angle1 = 32.0f;
+	const float angle2 = 235.0f;
+	const float angle3 = -52.0f;
+
+	const Vec3 axis1 = VMath::normalize(Vec3(1, 2, -2));
+	const Vec3 axis2 = VMath::normalize(Vec3(5, -2, 0));
+	const Vec3 axis3 = VMath::normalize(Vec3(0, 2, 2));
+
+	// Rotate the point three ways
+	Matrix4 R1_mat = MMath::rotate(angle1, axis1);
+	Matrix4 R2_mat = MMath::rotate(angle2, axis2);
+	Matrix4 R3_mat = MMath::rotate(angle3, axis3);
+
+	Quaternion R1_q = QMath::angleAxisRotation(angle1, axis1);
+	Quaternion R2_q = QMath::angleAxisRotation(angle2, axis2);
+	Quaternion R3_q = QMath::angleAxisRotation(angle3, axis3);
+
+	DualQuat R1_dq = DQMath::rotate(angle1, axis1);
+	DualQuat R2_dq = DQMath::rotate(angle2, axis2);
+	DualQuat R3_dq = DQMath::rotate(angle3, axis3);
+
+	Matrix4    transform_mat = R1_mat * R2_mat * R3_mat;
+	Quaternion transform_q   = R1_q   * R2_q   * R3_q;
+	DualQuat   transform_dq  = R1_dq  * R2_dq  * R3_dq;
+
+	Vec4 point_tranformed_mat = transform_mat * point;
+	Vec4 point_transformed_q  = QMath::rotate(point, transform_q);
+	Vec4 point_transformed_dq = DQMath::rigidTransformation(transform_dq, point);
+
+	bool test0 = false;
+	diffMag = VMath::mag(point_tranformed_mat - point_transformed_dq);
+	if (diffMag < epsilon) {
+		test0 = true;
+	}
+
+	bool test1 = false;
+	diffMag = VMath::mag(point_transformed_q - point_transformed_dq);
+	if (diffMag < epsilon) {
+		test1 = true;
+	}
+
+	bool test2 = false;
+	diffMag = VMath::mag(point_tranformed_mat - point_transformed_q);
+	if (diffMag < epsilon) {
+		test2 = true;
+	}
+
+	bool flag = test0 && test1 && test2;
+	printPassedOrFailed(flag, name);
 }
 
 void dualQuatSlerpTest() {
