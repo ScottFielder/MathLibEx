@@ -67,12 +67,14 @@ namespace MATHEX {
 		return dot(line1, line2);
 	}
 
-	inline float dot(const MATH::Vec4& v1, const MATH::Vec4& v2) {
-		return (v1 * v2).real;
-	}
-	inline float operator | (const MATH::Vec4& v1, const MATH::Vec4& v2) {
-		return dot(v1, v2);
-	}
+	// Dotting two points together is different to VMath::dot. 
+	// I like to think of VMath::dot as dotting two plane normals together
+	// To avoid confusion, I won't code up a dot product for points (I haven't found a use for it yet)
+	// It would look like this if I did code it:
+	// inline float dot(const MATH::Vec4& v1, const MATH::Vec4& v2) {
+	//	return (v1 * v2).real;
+	// }
+
 }
 #endif
 
