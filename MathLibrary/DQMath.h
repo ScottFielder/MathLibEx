@@ -339,6 +339,7 @@ namespace MATHEX {
 		}
 
 		// REFERENCE: https://hamishtodd1.substack.com/p/sphere-circle-and-cylinder-intersections
+		// EXAMPLE: https://github.com/ScottFielder/MathLibrary/blob/master/Notes/Line_intersection_sphere.pdf
 		// Returns true or false, and also two intersection points passed in by reference
 		static const bool lineSphereIntersection(const DualQuat& line, const MATH::Vec3& centre, float radius, MATH::Vec3& intersection1, MATH::Vec3& intersection2) {
 			DualQuat normalizedLine = normalize(line);
