@@ -63,15 +63,27 @@ namespace MATHEX {
 			return result;
 		}
 
-		// TODO (UN): Why do the eZero and eOneTwoThree do the magic?
 		//	Reference: https://www.youtube.com/watch?v=2DgxeizE3E8	New Hope I
 		/// Return a pure translation dual quaternion using a distance and a Dual Quat line
 		static const DualQuat translateAlongLine(float dist, const DualQuat& line) {
-			Plane eZero(0.0f, 0.0f, 0.0f, 1.0f);
-			MATH::Vec4 eOneTwoThree(0.0f, 0.0f, 0.0f, 1.0f);
-			// DualQuat() is just the number one
-			// UN - I needed a plus here rather than a minus in the video
-			return DualQuat() + eZero * (normalize(line) * dist / 2.0f) * eOneTwoThree;
+			// UN - Video has this eqn, but it's a little confusing:
+			// return DualQuat() + eZero * (normalize(line) * dist / 2.0f) * eOneTwoThree;
+
+			// I prefer this:
+			// Grab the line and throw out any displacement from the origin
+			// In other words, it's a parallel line through the origin
+			DualQuat lineThruOrigin;
+			lineThruOrigin.real = 0.0f;
+			lineThruOrigin.e23 = line.e23;
+			lineThruOrigin.e31 = line.e31;
+			lineThruOrigin.e12 = line.e12;
+			lineThruOrigin = normalize(lineThruOrigin);
+
+			// lineThruOrigin points to which way we are translating
+			// the dual of that gives the lineAtInfinity that we rotate about to translate
+			DualQuat lineAtInfinity = dual(lineThruOrigin);
+			// Translation dual quaternion = 1 - L_inf * dist / 2;
+			return DualQuat() - lineAtInfinity * dist / 2.0f;
 		}
 
 		/// Return just the translation parts of a dual quaternion and the screwiness
