@@ -337,6 +337,26 @@ namespace MATHEX {
 			// Ooh, looks like we might actually need the geometric product here compared to the project point onto line
 			return (point | line) * point;
 		}
+
+		// REFERENCE: https://hamishtodd1.substack.com/p/sphere-circle-and-cylinder-intersections
+		// Returns true or false, and also two intersection points passed in by reference
+		static const bool lineSphereIntersection(const DualQuat& line, const MATH::Vec3& centre, float radius, MATH::Vec3& intersection1, MATH::Vec3& intersection2) {
+			DualQuat normalizedLine = normalize(line);
+			Vec4 sphereCentre = Vec4(centre.x, centre.y, centre.z, 1.0f);
+			Flector M = normalizedLine * sphereCentre;
+			// UN - Instead of taking the dual of the points in the next step, I got the idea from Andrew LM to just use mag
+			float dSquared = radius * radius - VMath::mag(M.point) * VMath::mag(M.point);
+			if (dSquared < 0) {
+				return false;
+			}
+			// We have an intersection, so figure out the intersection points
+			float d = sqrt(dSquared);
+			Vec4 result1 = normalizedLine ^ (M.plane + Plane(0, 0, 0, d));
+			Vec4 result2 = normalizedLine ^ (M.plane - Plane(0, 0, 0, d));
+			intersection1 = VMath::perspectiveDivide(result1);
+			intersection2 = VMath::perspectiveDivide(result2);
+			return true;
+		}
 	};
 }
 #endif
