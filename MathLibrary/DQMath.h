@@ -345,7 +345,7 @@ namespace MATHEX {
 			DualQuat normalizedLine = normalize(line);
 			Vec4 sphereCentre = Vec4(centre.x, centre.y, centre.z, 1.0f);
 			Flector M = normalizedLine * sphereCentre;
-			// UN - Instead of taking the dual of the points in the next step, I got the idea from Andrew LM to just use mag
+			// UN - Instead of taking the dual of the points in the next step, I got the idea from Andrew LN to just use mag
 			float dSquared = radius * radius - VMath::mag(M.point) * VMath::mag(M.point);
 			if (dSquared < 0) {
 				return false;
