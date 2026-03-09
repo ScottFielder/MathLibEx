@@ -390,7 +390,7 @@ namespace MATHEX {
 				return true;
 			}
 
-			if (fabs(result1.w) < VERY_SMALL || fabs(result1.w) < VERY_SMALL) {
+			if (fabs(result1.w) < VERY_SMALL || fabs(result2.w) < VERY_SMALL) {
 				// Line is parallel to the cylinder axis, will never hit curved edge
 				intersection1 = VMath::perspectiveDivide(result3);
 				intersection2 = VMath::perspectiveDivide(result4);
