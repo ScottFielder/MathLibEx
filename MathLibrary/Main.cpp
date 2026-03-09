@@ -95,6 +95,8 @@ void pointInsideQuadTest();
 void closestPointOnQuadTest();
 void quadAreaTest();
 void lineSphereTest();
+void lineCylinderTest();
+
 
 
 /// Utility print() calls for glm to math library format 
@@ -144,6 +146,7 @@ int main(int argc, char* argv[]) {
 	translateTest();				  // GREEN for GOOD!
 	translateTest();				  // GREEN for GOOD!
 	lineSphereTest();                 // GREEN for GOOD!
+	lineCylinderTest();				  // GREEN for GOOD!
 	//QuadraticTest();
 	//RayTest();
 	//flectorTest();
@@ -158,6 +161,75 @@ int main(int argc, char* argv[]) {
 	//dotTest();
 	//point2dTest();				  // Just simple operator tests
 	//sphereTest();					  // Just a timing test
+}
+
+void lineCylinderTest() {
+	const string name = " lineCylinderTest";
+	float epsilon = VERY_SMALL;
+	// Try an example of a ray grazing the edge of a cylinder
+	Vec3 capCentreA = Vec3(0, 0, 1);
+	Vec3 capCentreB = Vec3(0, 0, -1);
+	float radius = 2.0f;
+	// Line joining points A and B
+	Vec4 A = Vec4(2, -4, 0, 1);
+	Vec4 B = Vec4(2, -3, 0, 1);
+	DualQuat line = A & B;
+
+	// Pass in potential intersection points by reference
+	Vec3 intersection1;
+	Vec3 intersection2;
+	bool hasIntersected1 = DQMath::lineCylinderIntersection(line, capCentreA, capCentreB, radius, intersection1, intersection2);
+	// If my quiz is correct, the answer should be
+	Vec3 correctAnswer1 = Vec3(2, 0, 0);
+	Vec3 correctAnswer2 = Vec3(2, 0, 0);
+
+	// Try another example of a ray firing at an endcap directly
+	capCentreA.set(1, 0, 0);
+	capCentreB.set(6, 0, 0);
+	radius = 2.0f;
+	A.set(-2, 1.5, 0, 1);
+	B.set(-1, 1.5, 0, 1);
+	line = A & B;
+	// Pass in potential intersection points by reference
+	Vec3 intersection3;
+	Vec3 intersection4;
+	bool hasIntersected2 = DQMath::lineCylinderIntersection(line, capCentreA, capCentreB, radius, intersection3, intersection4);
+	// If my quiz is correct, the answer should be
+	Vec3 correctAnswer3 = Vec3(1, 1.5, 0);
+	Vec3 correctAnswer4 = Vec3(6, 1.5, 0);
+
+	bool test0 = hasIntersected1;
+	bool test1 = false;
+	float diffMag1, diffMag2;
+	diffMag1 = VMath::mag(correctAnswer1 - intersection1);
+	diffMag2 = VMath::mag(correctAnswer1 - intersection2);
+	if (diffMag1 < epsilon || diffMag2 < epsilon) {
+		test1 = true;
+	}
+	bool test2 = false;
+	diffMag1 = VMath::mag(correctAnswer2 - intersection1);
+	diffMag2 = VMath::mag(correctAnswer2 - intersection2);
+	if (diffMag1 < epsilon || diffMag2 < epsilon) {
+		test2 = true;
+	}
+
+	bool test3 = hasIntersected2;
+	bool test4 = false;
+	float diffMag3, diffMag4;
+	diffMag3 = VMath::mag(correctAnswer3 - intersection3);
+	diffMag4 = VMath::mag(correctAnswer3 - intersection4);
+	if (diffMag3 < epsilon || diffMag4 < epsilon) {
+		test4 = true;
+	}
+	bool test5 = false;
+	diffMag3 = VMath::mag(correctAnswer4 - intersection3);
+	diffMag4 = VMath::mag(correctAnswer4 - intersection4);
+	if (diffMag3 < epsilon || diffMag4 < epsilon) {
+		test5 = true;
+	}
+
+	bool flag = test0 && test1 && test2 && test3 && test4 && test5;
+	printPassedOrFailed(flag, name);
 }
 
 void lineSphereTest() {

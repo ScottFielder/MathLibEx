@@ -358,6 +358,112 @@ namespace MATHEX {
 			intersection2 = VMath::perspectiveDivide(result2);
 			return true;
 		}
+
+		// REFERENCE: https://hamishtodd1.substack.com/p/sphere-circle-and-cylinder-intersections
+		// Returns true or false, and also two intersection points passed in by reference
+		static const bool lineCylinderIntersection(const DualQuat& line, const MATH::Vec3& capCentreA, const MATH::Vec3& capCentreB, float radius, MATH::Vec3& intersection1, MATH::Vec3& intersection2) {
+			DualQuat normalizedLine = normalize(line);
+			DualQuat axis = normalize(Vec4(capCentreA, 1) & Vec4(capCentreB, 1));
+			Plane P = PMath::normalize(normalizedLine & (axis ^ Plane(0, 0, 0, 1)));
+			Flector M = P * axis;
+			// UN - Instead of taking the dual of the points in the next step, I got the idea from Andrew LN to just use mag
+			float dSquared = radius * radius - VMath::mag(M.point) * VMath::mag(M.point);
+			if (dSquared < 0) {
+				return false;
+			}
+			// We have an intersection, so figure out the intersection points with infinitely long cylinder
+			float d = sqrt(dSquared);
+			Vec4 result1 = normalizedLine ^ (M.plane + Plane(0, 0, 0, d));
+			Vec4 result2 = normalizedLine ^ (M.plane - Plane(0, 0, 0, d));
+
+			// Start with end cap planes which are perpendicular to the axis and thru endcap
+			Plane A = axis | Vec4(capCentreA, 1);
+			Plane B = axis | Vec4(capCentreB, 1);
+			// Intersect the line with the endcaps
+			Vec4 result3 = normalizedLine ^ A;
+			Vec4 result4 = normalizedLine ^ B;
+
+			if (fabs(result3.w) < VERY_SMALL || fabs(result4.w) < VERY_SMALL) {
+				// Line is parallel to the endcap planes, will never hit them
+				intersection1 = VMath::perspectiveDivide(result1);
+				intersection2 = VMath::perspectiveDivide(result2);
+				return true;
+			}
+
+			if (fabs(result1.w) < VERY_SMALL || fabs(result1.w) < VERY_SMALL) {
+				// Line is parallel to the cylinder axis, will never hit curved edge
+				intersection1 = VMath::perspectiveDivide(result3);
+				intersection2 = VMath::perspectiveDivide(result4);
+				return true;
+			}
+
+			// Now that we have taken care of the edge cases (parallel to axis or planes)
+			// we can safely do a persective divide
+			result1 = VMath::perspectiveDivide(result1);
+			result2 = VMath::perspectiveDivide(result2);
+			result3 = VMath::perspectiveDivide(result3);
+			result4 = VMath::perspectiveDivide(result4);
+
+			// The two cylinder intersections are the ones that are
+			// within the radius and height of the cylinder
+			Plane midPlane = A + B;
+			float height = VMath::distance(capCentreA, capCentreB);
+			bool test1 = false;
+			if (fabs(orientedDist(result1, axis)) < radius
+				&&
+				PMath::distance(result1, midPlane) < 0.5f * height)
+			{
+				test1 = true;
+			}
+			bool test2 = false;
+			if (fabs(orientedDist(result2, axis)) < radius
+				&&
+				PMath::distance(result2, midPlane) < 0.5f * height)
+			{
+				test2 = true;
+			}
+			bool test3 = false;
+			if (fabs(orientedDist(result3, axis)) < radius
+				&&
+				PMath::distance(result3, midPlane) < 0.5f * height)
+			{
+				test3 = true;
+			}
+			bool test4 = false;
+			if (fabs(orientedDist(result4, axis)) < radius
+				&&
+				PMath::distance(result4, midPlane) < 0.5f * height)
+			{
+				test4 = true;
+			}
+
+			if (test1) {
+				intersection1 = result1;
+				if (test2) {
+					intersection2 = result2;
+				}
+				else if (test3) {
+					intersection2 = result3;
+				}
+				else {
+					intersection2 = result4;
+				}
+			}
+			else if (test2) {
+				intersection1 = result2;
+				if (test3) {
+					intersection2 = result3;
+				}
+				else {
+					intersection2 = result4;
+				}
+			}
+			else {
+				intersection1 = result3;
+				intersection2 = result4;
+			}
+			return true;
+		}
 	};
 }
 #endif
